@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "*")
 @Tag(name = "Autenticación", description = "Operaciones relacionadas con el inicio de sesión y registro")
 public class AuthController {
 
