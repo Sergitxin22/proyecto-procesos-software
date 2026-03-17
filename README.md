@@ -63,3 +63,35 @@ Para verlo en acción:
    ¿Es válido el token en el proveedor externo? true
    ```
 4. Si cambias el `AuthService` para que llame a `AuthProvider.GITHUB`, la salida automática cambiará hacia la estrategia de la API de Github.
+
+---
+
+## Panel Frontend de Pruebas (React + Vite)
+
+Para facilitar la interacción con los endpoints del API sin depender únicamente de Swagger, el proyecto cuenta con un cliente web integrado en la carpeta `/frontend` construido con React JS.
+
+### Características del Frontend:
+- **UI Moderna**: Desarrollada mediante CSS puro estructurado en Tarjetas (Cards), utilizando un sistema de diseño minimalista con notificaciones (toasts) que se auto-ocultan.
+- **Formularios Reactivos**: Manejo de estados de Registro de nuevos usuarios y confirmación visual de credenciales inválidas.
+- **Gestor de Sesión**: Contiene un módulo "Estado Actual" que verifica si tienes un JWT/Token vivo, e incluye la invocación con el Token hacia el final de la sesión (`/api/auth/logout`).
+- **Integración CORS Completa**: El `AuthController` de backend en Spring Boot contiene la directiva `@CrossOrigin(origins = "*")` permitiendo el puente entre `http://localhost:5173` (Vite) hacia el puerto `8080` de Spring.
+
+### Cómo ejecutar ambos entornos:
+
+Dado que hay dos tecnologías conviviendo en paralelo, se deben arrancar en **ventanas de terminal separadas**:
+
+**1. Levantar el Backend (Spring Boot)**
+Abre una terminal en la carpeta principal del proyecto y ejecuta:
+```bash
+./gradlew bootRun
+```
+*Esto activará el API en el puerto `8080`.*
+
+**2. Levantar el Frontend (React)**
+Una vez que el backend esté arriba, abre otra ventana de terminal en VS Code y navega al cliente web y arráncalo:
+```bash
+cd frontend
+npm install  # (Solo la primera vez si no lo has clonado o instalado antes)
+npm run dev
+```
+*Se desplegará una ruta local (como `http://localhost:5173`). Haz click sobre ella para probar el sistema visual.*
