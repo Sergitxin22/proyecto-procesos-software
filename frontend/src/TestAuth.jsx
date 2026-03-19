@@ -177,7 +177,7 @@ export default function TestAuth() {
                   <p><strong>ID:</strong> {userInfo.id}</p>
                   <p><strong>Nombre:</strong> {userInfo.nombre}</p>
                   <p><strong>Email:</strong> {userInfo.email}</p>
-                  <p><strong>Rol:</strong> {userInfo.rol}</p>
+                  <p><strong>Token Actual:</strong> <span style={{ wordBreak: 'break-all', fontSize: '0.85em', color: '#666' }}>{userInfo.token || "Sin token"}</span></p>
                 </div>
               )}
             </div>
@@ -207,7 +207,7 @@ export default function TestAuth() {
                       <th style={{ padding: '10px', border: '1px solid #ddd' }}>ID</th>
                       <th style={{ padding: '10px', border: '1px solid #ddd' }}>Nombre</th>
                       <th style={{ padding: '10px', border: '1px solid #ddd' }}>Email</th>
-                      <th style={{ padding: '10px', border: '1px solid #ddd' }}>Rol</th>
+                      <th style={{ padding: '10px', border: '1px solid #ddd' }}>Token</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -216,7 +216,9 @@ export default function TestAuth() {
                         <td style={{ padding: '10px', border: '1px solid #ddd' }}>{user.id}</td>
                         <td style={{ padding: '10px', border: '1px solid #ddd' }}>{user.nombre}</td>
                         <td style={{ padding: '10px', border: '1px solid #ddd' }}>{user.email}</td>
-                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{user.rol}</td>
+                        <td style={{ padding: '10px', border: '1px solid #ddd', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={user.token || "Sin token activo"}>
+                          {user.token ? user.token : <i style={{ color: '#999' }}>Sin token activo</i>}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
