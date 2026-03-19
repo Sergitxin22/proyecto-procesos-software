@@ -2,6 +2,12 @@ import React from 'react';
 import './Landing.css';
 
 export default function Landing() {
+    const navigateToAuth = () => {
+        window.history.pushState({}, '', '/auth');
+        const navEvent = new PopStateEvent('popstate');
+        window.dispatchEvent(navEvent);
+    };
+
     return (
         <div className="landing-container">
             <nav className="navbar">
@@ -11,7 +17,7 @@ export default function Landing() {
                 <div className="navbar-links">
                     <a href="#about">Sobre nosotros</a>
                     <a href="#features">Características</a>
-                    <button className="btn-primary">Entrar</button>
+                    <button onClick={navigateToAuth} className="btn-primary">Entrar</button>
                 </div>
             </nav>
 
@@ -23,8 +29,8 @@ export default function Landing() {
                             Flexilearn es tu plataforma gratuita de <strong>openlearning</strong>. Apúntate a cursos o crea los tuyos propios enfocados en la práctica real.
                         </p>
                         <div className="hero-actions">
-                            <button className="btn-primary btn-large">Comenzar a aprender</button>
-                            <button className="btn-secondary btn-large">Crear un curso</button>
+                            <button onClick={navigateToAuth} className="btn-primary btn-large">Comenzar a aprender</button>
+                            <button onClick={navigateToAuth} className="btn-secondary btn-large">Crear un curso</button>
                         </div>
                     </div>
                     <div className="hero-image">

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import TestAuth from './TestAuth'
 import Landing from './Landing'
+import Auth from './Auth'
 import './index.css'
 
 export default function App() {
@@ -14,6 +15,10 @@ export default function App() {
 
   if (currentPath === '/test/auth') {
     return <TestAuth />
+  }
+
+  if (currentPath === '/auth') {
+    return <Auth />
   }
 
   return <Landing />
