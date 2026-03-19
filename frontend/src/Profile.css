@@ -1,0 +1,144 @@
+.profile-layout {
+    min-height: 100vh;
+    background: #f8f9fa;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 3rem 1rem;
+}
+
+.profile-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #f8f9fa;
+}
+
+.profile-card {
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    position: relative;
+}
+
+.error-card {
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.error-card h2 {
+    color: #d32f2f;
+    margin-bottom: 1rem;
+}
+
+.profile-header-banner {
+    height: 120px;
+    background: linear-gradient(135deg, #3f51b5 0%, #2c3e50 100%);
+}
+
+.profile-avatar {
+    width: 90px;
+    height: 90px;
+    background: white;
+    border: 4px solid white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #3f51b5;
+    margin: -45px auto 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.profile-info {
+    text-align: center;
+    padding: 1.5rem 2rem 0;
+}
+
+.profile-info h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    color: #2c3e50;
+}
+
+.profile-email {
+    color: #6c757d;
+    margin: 0.5rem 0 1rem;
+    font-size: 0.95rem;
+}
+
+.badge-role {
+    display: inline-block;
+    background: #e8eaf6;
+    color: #3f51b5;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.profile-stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 2rem;
+    margin-top: 1rem;
+    border-top: 1px solid #f1f3f5;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.stat-box {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.profile-actions {
+    padding: 2rem;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.loading-spinner {
+    font-size: 1.2rem;
+    color: #3f51b5;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .navbar-links {
+        display: flex !important;
+        gap: 0.5rem;
+    }
+
+    .navbar-links a {
+        display: none;
+    }
+}
