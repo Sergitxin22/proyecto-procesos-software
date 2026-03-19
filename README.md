@@ -86,13 +86,12 @@ Abre una terminal de linux (wsl) en la carpeta principal del proyecto y levanta 
 wsl
 cd docker
 docker compose up -d
-exit
 ```
 
 **2. Levantar el Backend (Spring Boot)**
 Abre una terminal en la carpeta principal del proyecto y ejecuta:
 ```bash
-./gradlew bootRun
+gradlew bootRun
 ```
 *Esto activará el API en el puerto `8080`.*
 
