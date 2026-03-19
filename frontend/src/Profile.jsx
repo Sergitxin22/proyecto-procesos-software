@@ -19,7 +19,11 @@ export default function Profile() {
 
         const fetchUserProfile = async () => {
             try {
-                const res = await fetch(`${API_URL}/user?token=${token}`);
+                const res = await fetch(`${API_URL}/user`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token })
+                });
                 const data = await res.json();
 
                 if (res.ok) {
