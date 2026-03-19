@@ -131,3 +131,14 @@
     color: #3f51b5;
     font-weight: 600;
 }
+
+@media (max-width: 768px) {
+    .navbar-links {
+        display: flex !important;
+        gap: 0.5rem;
+    }
+
+    .navbar-links a {
+        display: none;
+    }
+}
