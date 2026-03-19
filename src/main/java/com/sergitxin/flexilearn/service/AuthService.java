@@ -38,6 +38,15 @@ public class AuthService {
     public List<Usuario> obtenerTodosLosUsuarios() {
         return usuarioDao.findAll();
     }
+    
+    public Usuario obtenerUsuarioByToken(String token) {
+    	Optional<Usuario> usuarioOpt = usuarioDao.findByToken(token);
+    			if (usuarioOpt.isPresent()) {
+			return usuarioOpt.get();
+		} else {
+			throw new RuntimeException("Usuario no encontrado para el token proporcionado");
+		}
+    }
 
     public String iniciarSesion(String email, String password) {
         // --- PRUEBA DEL FACTORY HARDCODEADO ---

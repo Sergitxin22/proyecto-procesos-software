@@ -57,8 +57,19 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto(e.getMessage()));
         }
     }
+    
+     @Operation(summary = "Obtener usuario por token (comentar en produción)", description = "Recupera la información del usuario asociado al token proporcionado")
+     @GetMapping("/user")
+     public ResponseEntity<?> getUsuarioByToken(@RequestParam String token) {
+		 try {
+			 Usuario usuario = authService.obtenerUsuarioByToken(token);
+			 return ResponseEntity.ok(usuario);
+		 } catch (RuntimeException e) {
+			 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponseDto(e.getMessage()));
+		 }
+	 }
 
-    @Operation(summary = "Obtener todos los usuarios", description = "Recupera la lista de todos los usuarios registrados")
+    @Operation(summary = "Obtener todos los usuarios (comentar en produción)", description = "Recupera la lista de todos los usuarios registrados")
     @GetMapping("/users")
     public ResponseEntity<java.util.List<Usuario>> getAllUsers() {
         return ResponseEntity.ok(authService.obtenerTodosLosUsuarios());
