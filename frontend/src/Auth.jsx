@@ -45,7 +45,7 @@ export default function Auth() {
                     // Here you would save the token to localStorage and redirect to a dashboard
                     localStorage.setItem('token', data.token);
                     setTimeout(() => {
-                        window.history.pushState({}, '', '/');
+                        window.history.pushState({}, '', '/profile');
                         window.dispatchEvent(new PopStateEvent('popstate'));
                     }, 1500);
                 }
