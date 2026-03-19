@@ -1,5 +1,6 @@
 package com.sergitxin.flexilearn.facade;
 
+import com.sergitxin.flexilearn.dto.GetUserInfoRequestDto;
 import com.sergitxin.flexilearn.dto.LoginRequestDto;
 import com.sergitxin.flexilearn.dto.LoginResponseDto;
 import com.sergitxin.flexilearn.dto.RegisterRequestDto;
@@ -59,13 +60,13 @@ public class AuthController {
     }
     
      @Operation(summary = "Obtener usuario por token (comentar en produción)", description = "Recupera la información del usuario asociado al token proporcionado")
-     @GetMapping("/user")
-     public ResponseEntity<?> getUsuarioByToken(@RequestParam String token) {
+     @PostMapping("/user")
+     public ResponseEntity<?> getUsuarioByToken(@RequestBody GetUserInfoRequestDto request) {
 		 try {
-			 Usuario usuario = authService.obtenerUsuarioByToken(token);
+			 Usuario usuario = authService.obtenerUsuarioByToken(request.getToken());
 			 return ResponseEntity.ok(usuario);
 		 } catch (RuntimeException e) {
-			 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponseDto(e.getMessage()));
+			 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto(e.getMessage()));
 		 }
 	 }
 
