@@ -3,6 +3,7 @@ package com.sergitxin.flexilearn.facade;
 import com.sergitxin.flexilearn.dto.LoginRequestDto;
 import com.sergitxin.flexilearn.dto.LoginResponseDto;
 import com.sergitxin.flexilearn.dto.RegisterRequestDto;
+import com.sergitxin.flexilearn.entity.Usuario;
 import com.sergitxin.flexilearn.dto.LogoutRequestDto;
 import com.sergitxin.flexilearn.dto.MessageResponseDto;
 import com.sergitxin.flexilearn.service.AuthService;
@@ -55,5 +56,11 @@ public class AuthController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto(e.getMessage()));
         }
+    }
+
+    @Operation(summary = "Obtener todos los usuarios", description = "Recupera la lista de todos los usuarios registrados")
+    @GetMapping("/users")
+    public ResponseEntity<java.util.List<Usuario>> getAllUsers() {
+        return ResponseEntity.ok(authService.obtenerTodosLosUsuarios());
     }
 }

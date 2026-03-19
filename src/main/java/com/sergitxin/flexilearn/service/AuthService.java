@@ -7,6 +7,7 @@ import com.sergitxin.flexilearn.external.AuthExternalPort;
 import com.sergitxin.flexilearn.external.AuthProvider;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,6 +33,10 @@ public class AuthService {
         nuevoUsuario.setPassword(password); // Recordar hacer hash de password después
         
         usuarioDao.save(nuevoUsuario);
+    }
+
+    public List<Usuario> obtenerTodosLosUsuarios() {
+        return usuarioDao.findAll();
     }
 
     public String iniciarSesion(String email, String password) {
