@@ -76,18 +76,27 @@ Para facilitar la interacción con los endpoints del API sin depender únicament
 - **Gestor de Sesión**: Contiene un módulo "Estado Actual" que verifica si tienes un JWT/Token vivo, e incluye la invocación con el Token hacia el final de la sesión (`/api/auth/logout`).
 - **Integración CORS Completa**: El `AuthController` de backend en Spring Boot contiene la directiva `@CrossOrigin(origins = "*")` permitiendo el puente entre `http://localhost:5173` (Vite) hacia el puerto `8080` de Spring.
 
-### Cómo ejecutar ambos entornos:
+### Cómo ejecutar los entornos:
 
-Dado que hay dos tecnologías conviviendo en paralelo, se deben arrancar en **ventanas de terminal separadas**:
+Dado que hay varias tecnologías conviviendo en paralelo, se deben arrancar en **ventanas de terminal separadas**:
 
-**1. Levantar el Backend (Spring Boot)**
+**1. Levantar la Base de Datos (Docker)**
+Abre una terminal de linux (wsl) en la carpeta principal del proyecto y levanta el contenedor de la base de datos:
+```bash
+wsl
+cd docker
+docker compose up -d
+exit
+```
+
+**2. Levantar el Backend (Spring Boot)**
 Abre una terminal en la carpeta principal del proyecto y ejecuta:
 ```bash
 ./gradlew bootRun
 ```
 *Esto activará el API en el puerto `8080`.*
 
-**2. Levantar el Frontend (React)**
+**3. Levantar el Frontend (React)**
 Una vez que el backend esté arriba, abre otra ventana de terminal en VS Code y navega al cliente web y arráncalo:
 ```bash
 cd frontend
