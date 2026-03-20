@@ -1,18 +1,25 @@
 package com.sergitxin.flexilearn.facade;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.sergitxin.flexilearn.dto.GetUserInfoRequestDto;
 import com.sergitxin.flexilearn.dto.LoginRequestDto;
 import com.sergitxin.flexilearn.dto.LoginResponseDto;
-import com.sergitxin.flexilearn.dto.RegisterRequestDto;
-import com.sergitxin.flexilearn.entity.Usuario;
 import com.sergitxin.flexilearn.dto.LogoutRequestDto;
 import com.sergitxin.flexilearn.dto.MessageResponseDto;
+import com.sergitxin.flexilearn.dto.RegisterRequestDto;
+import com.sergitxin.flexilearn.entity.Usuario;
 import com.sergitxin.flexilearn.service.AuthService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -59,16 +66,16 @@ public class AuthController {
         }
     }
     
-     @Operation(summary = "Obtener usuario por token (comentar en produción)", description = "Recupera la información del usuario asociado al token proporcionado")
-     @PostMapping("/user")
-     public ResponseEntity<?> getUsuarioByToken(@RequestBody GetUserInfoRequestDto request) {
-		 try {
-			 Usuario usuario = authService.obtenerUsuarioByToken(request.getToken());
-			 return ResponseEntity.ok(usuario);
-		 } catch (RuntimeException e) {
-			 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto(e.getMessage()));
-		 }
-	 }
+    @Operation(summary = "Obtener usuario por token (comentar en produción)", description = "Recupera la información del usuario asociado al token proporcionado")
+    @PostMapping("/user")
+    public ResponseEntity<?> getUsuarioByToken(@RequestBody GetUserInfoRequestDto request) {
+		try {
+			Usuario usuario = authService.obtenerUsuarioByToken(request.getToken());
+			return ResponseEntity.ok(usuario);
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto(e.getMessage()));
+		}
+	}
 
     @Operation(summary = "Obtener todos los usuarios (comentar en produción)", description = "Recupera la lista de todos los usuarios registrados")
     @GetMapping("/users")
