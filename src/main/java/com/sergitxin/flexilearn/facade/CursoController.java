@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sergitxin.flexilearn.dto.CursoRequestDTO;
+import com.sergitxin.flexilearn.dto.EjercicioRequestDTO;
 import com.sergitxin.flexilearn.dto.ModuloRequestDTO;
 import com.sergitxin.flexilearn.entity.Dificultad;
 import com.sergitxin.flexilearn.service.CursoService;
@@ -37,5 +38,11 @@ public class CursoController {
     @PostMapping("/modules")
     public ResponseEntity<Long> createModulo(@RequestBody ModuloRequestDTO request) {
         return ResponseEntity.ok(cursoService.crearModulo(request.getNombre(), request.getDescripcion(), request.getIdCurso()));
+    }
+
+    @Operation(summary = "Añade un ejercicio a un módulo", description = "Añade en la base de datos un ejercicio a un módulo con los datos introducidos")
+    @PostMapping("/exercises")
+    public ResponseEntity<Long> createEjercicio(@RequestBody EjercicioRequestDTO request) {
+        return ResponseEntity.ok(cursoService.crearEjercicio(request.getNombre(), request.getTeoria(), request.getCodigoInicial(), request.getPuntos(), request.getEnunciado(), request.getLenguaje(), request.getIdModulo()));
     }
 }

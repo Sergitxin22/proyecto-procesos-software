@@ -1,11 +1,14 @@
 package com.sergitxin.flexilearn.entity;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -20,6 +23,9 @@ public class Modulo {
     @ManyToOne
     @JoinColumn(name = "curso_id")
     private Curso curso;
+
+    @OneToMany(mappedBy = "modulo")
+    private List<Ejercicio> ejercicios;
 
     public Long getId() {
         return id;
@@ -51,5 +57,13 @@ public class Modulo {
 
     public void setCurso(Curso curso) {
         this.curso = curso;
+    }
+
+    public List<Ejercicio> getEjercicios() {
+        return ejercicios;
+    }
+
+    public void setEjercicios(List<Ejercicio> ejercicios) {
+        this.ejercicios = ejercicios;
     }
 }
