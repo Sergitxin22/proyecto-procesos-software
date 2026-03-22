@@ -1,5 +1,7 @@
 package com.sergitxin.flexilearn.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,6 +25,7 @@ public class Ejercicio {
 
     @ManyToOne
     @JoinColumn(name = "modulo_id")
+    @JsonIgnore // NOTA: Añadir esto probablemente nos la lie parda más tarde. Buena suerte!
     private Modulo modulo;
 
     public Long getId() {

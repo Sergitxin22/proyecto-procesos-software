@@ -62,4 +62,8 @@ public class CursoService {
         moduloDAO.save(modulo);
         return ejercicioDAO.save(ejercicio).getId();
     }
+
+    public Curso getCurso(Long id) {
+        return cursoDAO.findById(id).get();
+    }
 }

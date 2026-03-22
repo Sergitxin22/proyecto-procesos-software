@@ -2,6 +2,8 @@ package com.sergitxin.flexilearn.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,6 +24,7 @@ public class Modulo {
 
     @ManyToOne
     @JoinColumn(name = "curso_id")
+    @JsonIgnore // NOTA: Añadir esto probablemente nos la lie parda más tarde. Buena suerte!
     private Curso curso;
 
     @OneToMany(mappedBy = "modulo")
