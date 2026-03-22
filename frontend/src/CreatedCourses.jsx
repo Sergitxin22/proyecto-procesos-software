@@ -57,7 +57,7 @@ export default function CourseList() {
     };
 
     const navigateToCourse = (id) => {
-        window.history.pushState({}, '', `/course/${id}`);
+        window.history.pushState({}, '', `/created_courses/${id}`);
         window.dispatchEvent(new PopStateEvent('popstate'));
     };
 

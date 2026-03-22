@@ -4,7 +4,9 @@ import Landing from './Landing'
 import Auth from './Auth'
 import Profile from './Profile'
 import CreateCourse from './CreateCourse'
+import UserCourse from './UserCourse'
 import CreatedCourses from './CreatedCourses'
+import CreateExercise from './CreateExercise'
 import './index.css'
 
 export default function App() {
@@ -36,5 +38,17 @@ export default function App() {
     return <CreatedCourses />
   }
 
+  if (currentPath.startsWith('/created_courses/') && currentPath.includes('/modules/') && currentPath.endsWith('/create_exercise')) {
+      return <CreateExercise />
+  }
+
+  if (currentPath.startsWith('/created_courses/') && currentPath.endsWith('/create_module')) {
+      return <CreateModule />
+  }
+
+  if (currentPath.startsWith('/created_courses/')) {
+      return <UserCourse />
+  }
+  
   return <Landing />
 }

@@ -92,3 +92,11 @@
     align-items: center;
     width: 100%;
 }
+
+.form-code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    border-color: #444;
+}
