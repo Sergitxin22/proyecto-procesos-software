@@ -3,6 +3,7 @@ import TestAuth from './TestAuth'
 import Landing from './Landing'
 import Auth from './Auth'
 import Profile from './Profile'
+import CreateCourse from './CreateCourse'
 import './index.css'
 
 export default function App() {
@@ -24,6 +25,10 @@ export default function App() {
 
   if (currentPath === '/profile') {
     return <Profile />
+  }
+
+    if (currentPath === '/create_course') {
+    return <CreateCourse />
   }
 
   return <Landing />

@@ -65,6 +65,11 @@ export default function Profile() {
         window.dispatchEvent(new PopStateEvent('popstate'));
     };
 
+    const navigateToCreateCourse = () => {
+        window.history.pushState({}, '', '/create_course');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+    };
+
     if (loading) {
         return (
             <div className="profile-wrapper">
@@ -124,6 +129,10 @@ export default function Profile() {
                     <div className="profile-actions">
                         <button className="btn-primary btn-full" onClick={navigateToHome}>
                             Ir al Playground
+                        </button>
+
+                            <button className="btn-primary btn-full" onClick={navigateToCreateCourse}>
+                            Crear curso
                         </button>
                     </div>
                 </div>
