@@ -1,9 +1,14 @@
 package com.sergitxin.flexilearn.entity;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -18,6 +23,10 @@ public class Usuario {
     
     private String nombre;
     private String token; // Para guardar la sesión en BBDD
+
+    @OneToMany(mappedBy = "usuario")
+    @JsonIgnore // NOTA: Añadir esto probablemente nos la lie parda más tarde. Buena suerte!
+    private List<Curso> cursosCreados;
 
     public Long getId() {
         return id;
@@ -57,5 +66,13 @@ public class Usuario {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public List<Curso> getCursosCreados() {
+        return cursosCreados;
+    }
+
+    public void setCursosCreados(List<Curso> cursosCreados) {
+        this.cursosCreados = cursosCreados;
     }
 }

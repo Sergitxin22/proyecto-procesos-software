@@ -5,26 +5,31 @@ import org.springframework.stereotype.Service;
 import com.sergitxin.flexilearn.dao.CursoDAO;
 import com.sergitxin.flexilearn.dao.EjercicioDAO;
 import com.sergitxin.flexilearn.dao.ModuloDAO;
+import com.sergitxin.flexilearn.dao.UsuarioDao;
 import com.sergitxin.flexilearn.entity.Curso;
 import com.sergitxin.flexilearn.entity.Dificultad;
 import com.sergitxin.flexilearn.entity.Ejercicio;
 import com.sergitxin.flexilearn.entity.Modulo;
+import com.sergitxin.flexilearn.entity.Usuario;
 
 @Service
 public class CursoService {
-
+    private final UsuarioDao usuarioDAO;
     private final CursoDAO cursoDAO;
     private final ModuloDAO moduloDAO;
     private final EjercicioDAO ejercicioDAO;
 
-    public CursoService(CursoDAO cursoDAO, ModuloDAO moduloDAO, EjercicioDAO ejercicioDAO) {
+    public CursoService(UsuarioDao usuarioDAO, CursoDAO cursoDAO, ModuloDAO moduloDAO, EjercicioDAO ejercicioDAO) {
+        this.usuarioDAO = usuarioDAO;
         this.cursoDAO = cursoDAO;
         this.moduloDAO = moduloDAO;
         this.ejercicioDAO = ejercicioDAO;
     }
 
-    public Long crearCurso(String nombre, String categoria, String descripcion, Dificultad dificultad) {
+    public Long crearCurso(String token, String nombre, String categoria, String descripcion, Dificultad dificultad) {
         Curso curso = new Curso();
+        Usuario user = usuarioDAO.findByToken(token).get();
+        curso.setUsuario(user);
         curso.setNombre(nombre);
         curso.setCategoria(categoria);
         curso.setDescripcion(descripcion);

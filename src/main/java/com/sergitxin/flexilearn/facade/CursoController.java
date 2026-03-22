@@ -31,7 +31,7 @@ public class CursoController {
     @Operation(summary = "Crea un curso", description = "Añade en la base de datos un curso con los datos introducidos")
     @PostMapping("/")
     public ResponseEntity<Long> createCurso(@RequestBody CursoRequestDTO request) {
-        return ResponseEntity.ok(cursoService.crearCurso(request.getNombre(), request.getCategoria(), request.getDescripcion(), Dificultad.stringToDificultad(request.getDificultad())));
+        return ResponseEntity.ok(cursoService.crearCurso(request.getToken(), request.getNombre(), request.getCategoria(), request.getDescripcion(), Dificultad.stringToDificultad(request.getDificultad())));
     }
 
     @Operation(summary = "Añade un módulo a un curso", description = "Añade en la base de datos un módulo a un curso con los datos introducidos")
