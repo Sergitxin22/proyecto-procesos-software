@@ -4,6 +4,7 @@ import Landing from './Landing'
 import Auth from './Auth'
 import Profile from './Profile'
 import CreateCourse from './CreateCourse'
+import CreatedCourses from './CreatedCourses'
 import './index.css'
 
 export default function App() {
@@ -27,8 +28,12 @@ export default function App() {
     return <Profile />
   }
 
-    if (currentPath === '/create_course') {
+  if (currentPath === '/create_course') {
     return <CreateCourse />
+  }
+
+  if (currentPath === '/created_courses') {
+    return <CreatedCourses />
   }
 
   return <Landing />

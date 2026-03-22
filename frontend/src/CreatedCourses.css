@@ -1,0 +1,94 @@
+.courses-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.courses-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.course-card {
+    background: var(--card-bg, #fff);
+    border: 1.5px solid var(--border, #eee);
+    border-radius: 12px;
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.course-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.course-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.course-category {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary, #888);
+}
+
+.badge-difficulty {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+}
+
+.badge-easy   { background: #dcfce7; color: #16a34a; }
+.badge-medium { background: #fef9c3; color: #ca8a04; }
+.badge-hard   { background: #fee2e2; color: #dc2626; }
+
+.course-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.course-description {
+    font-size: 0.9rem;
+    color: var(--text-secondary, #666);
+    margin: 0;
+    flex: 1;
+}
+
+.course-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.course-modules {
+    font-size: 0.8rem;
+    color: var(--text-secondary, #888);
+}
+
+.courses-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}

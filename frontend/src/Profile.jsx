@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './Profile.css';
 
 export default function Profile() {
+    const [courses, setCourses] = useState([]);
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -16,6 +17,29 @@ export default function Profile() {
             window.dispatchEvent(new PopStateEvent('popstate'));
             return;
         }
+
+        const fetchCourses = async () => {
+            try {
+                const res = await fetch(`http://localhost:8080/api/users/createdCourses`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({token})
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    setCourses(data);
+                } else {
+                    setError(data.mensaje || "Error al cargar los cursos.");
+                }
+            } catch (err) {
+                setError(`Error de conexión: ${err.message}`);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCourses();
 
         const fetchUserProfile = async () => {
             try {
@@ -70,6 +94,11 @@ export default function Profile() {
         window.dispatchEvent(new PopStateEvent('popstate'));
     };
 
+    const navigateToCreatedCourses = () => {
+        window.history.pushState({}, '', '/created_courses');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+    };
+
     if (loading) {
         return (
             <div className="profile-wrapper">
@@ -121,7 +150,7 @@ export default function Profile() {
                             <span className="stat-label">Cursos completados</span>
                         </div>
                         <div className="stat-box">
-                            <span className="stat-number">0</span>
+                            <span className="stat-number">{courses.length}</span>
                             <span className="stat-label">Cursos creados</span>
                         </div>
                     </div>
@@ -131,8 +160,12 @@ export default function Profile() {
                             Ir al Playground
                         </button>
 
-                            <button className="btn-primary btn-full" onClick={navigateToCreateCourse}>
+                        <button className="btn-primary btn-full" onClick={navigateToCreateCourse}>
                             Crear curso
+                        </button>
+
+                        <button className="btn-primary btn-full" onClick={navigateToCreatedCourses}>
+                            Cursos creados
                         </button>
                     </div>
                 </div>
