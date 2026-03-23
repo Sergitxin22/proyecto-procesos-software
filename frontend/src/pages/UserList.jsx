@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './Admin.css';
 import './UserList.css';
@@ -103,15 +104,10 @@ export default function UserList() {
 
     return (
         <div className="profile-layout">
-            <nav className="navbar">
-                <div className="navbar-logo" onClick={navigateToHome} style={{ cursor: 'pointer' }}>
-                    🎓 Flexilearn
-                </div>
-                <div className="navbar-links">
-                    <a onClick={navigateToAdmin} style={{ cursor: 'pointer' }}>Panel Admin</a>
+            <Navbar>
+                <a onClick={navigateToAdmin} style={{ cursor: 'pointer' }}>Panel Admin</a>
                     <button onClick={handleLogout} className="btn-secondary">Cerrar sesión</button>
-                </div>
-            </nav>
+            </Navbar>
 
             <main className="profile-main">
                 <div className="userlist-card" style={{

@@ -1,4 +1,5 @@
 import React from 'react';
+import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './Landing.css';
 
@@ -12,16 +13,11 @@ export default function Landing() {
 
     return (
         <div className="landing-container">
-            <nav className="navbar">
-                <div className="navbar-logo">
-                    🎓 Flexilearn
-                </div>
-                <div className="navbar-links">
-                    <a href="#about">Sobre nosotros</a>
+            <Navbar>
+                <a href="#about">Sobre nosotros</a>
                     <a href="#features">Características</a>
                     <button onClick={navigateToAuth} className="btn-primary">Entrar</button>
-                </div>
-            </nav>
+            </Navbar>
 
             <main>
                 <header className="hero">

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 import { authService, userService } from '../services/api.service';
@@ -91,15 +92,10 @@ export default function Profile() {
 
     return (
         <div className="profile-layout">
-            <nav className="navbar">
-                <div className="navbar-logo" onClick={navigateToHome} style={{ cursor: 'pointer' }}>
-                    🎓 Flexilearn
-                </div>
-                <div className="navbar-links">
-                    <a href="#cursos">Mis Cursos</a>
+            <Navbar>
+                <a href="#cursos">Mis Cursos</a>
                     <button onClick={handleLogout} className="btn-secondary">Cerrar sesión</button>
-                </div>
-            </nav>
+            </Navbar>
 
             <main className="profile-main">
                 <div className="profile-card">

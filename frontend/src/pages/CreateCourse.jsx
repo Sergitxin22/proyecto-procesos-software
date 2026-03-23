@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './CreateCourse.css';
 import { courseService } from '../services/api.service';
@@ -45,15 +46,10 @@ export default function CreateCourse() {
 
     return (
         <div className="profile-layout">
-            <nav className="navbar">
-                <div className="navbar-logo" onClick={navigateToHome} style={{ cursor: 'pointer' }}>
-                    🎓 Flexilearn
-                </div>
-                <div className="navbar-links">
-                    <a href="#cursos">Mis Cursos</a>
+            <Navbar>
+                <a href="#cursos">Mis Cursos</a>
                     <button onClick={navigateToProfile} className="btn-secondary">Volver al perfil</button>
-                </div>
-            </nav>
+            </Navbar>
 
             <main className="profile-main">
                 <div className="profile-card create-course-card">
