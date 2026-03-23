@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
+import Navbar from '../../components/layout/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './CreateCourse.css';
-import { courseService } from '../services/api.service';
+import { courseService } from '../../services/api.service';
 
 export default function CreateCourse() {
     const navigate = useNavigate();
@@ -32,11 +32,6 @@ export default function CreateCourse() {
         } catch (err) {
             alert(`Error: ${err.message}`);
         }
-    };
-
-    const navigateToHome = () => {
-        navigate('/');
-
     };
 
     const navigateToProfile = () => {
@@ -134,3 +129,7 @@ export default function CreateCourse() {
         </div>
     );
 }
+
+
+
+

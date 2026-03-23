@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
+import Navbar from '../../components/layout/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './CreateCourse.css';
-import { courseService } from '../services/api.service';
+import { courseService } from '../../services/api.service';
 
 export default function CreateExercise() {
     const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function CreateExercise() {
             navigate('/auth');
 
         }
-    }, []);
+    }, [navigate, token]);
 
     const handleCreateExercise = async () => {
         try {
@@ -48,11 +48,6 @@ export default function CreateExercise() {
 
     const navigateBack = () => {
         navigate(`/created_courses/${courseId}`);
-
-    };
-
-    const navigateToHome = () => {
-        navigate('/');
 
     };
 
@@ -171,3 +166,7 @@ export default function CreateExercise() {
         </div>
     );
 }
+
+
+
+

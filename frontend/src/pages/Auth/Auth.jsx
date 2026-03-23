@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Auth.css';
-import { authService } from '../services/api.service';
+import { authService } from '../../services/api.service';
 
 export default function Auth() {
     const navigate = useNavigate();
@@ -123,3 +123,7 @@ export default function Auth() {
         </div>
     );
 }
+
+
+
+

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
+import Navbar from '../../components/layout/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './CreateCourse.css';
-import { courseService } from '../services/api.service';
+import { courseService } from '../../services/api.service';
 
 export default function CreateModule() {
     const navigate = useNavigate();
@@ -19,7 +19,7 @@ export default function CreateModule() {
             navigate('/auth');
 
         }
-    }, []);
+    }, [navigate, token]);
 
     const handleCreateModule = async () => {
         try {
@@ -38,11 +38,6 @@ export default function CreateModule() {
 
     const navigateBack = () => {
         navigate(`/created_courses/${courseId}`);
-
-    };
-
-    const navigateToHome = () => {
-        navigate('/');
 
     };
 
@@ -104,3 +99,7 @@ export default function CreateModule() {
         </div>
     );
 }
+
+
+
+

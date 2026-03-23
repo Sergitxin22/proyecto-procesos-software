@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
+import Navbar from '../../components/layout/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './CreatedCourses.css';
-import { userService } from '../services/api.service';
+import { userService } from '../../services/api.service';
 
 const DIFFICULTY_LABELS = {
     FACIL: { label: 'Fácil', className: 'badge-easy' },
@@ -37,12 +37,7 @@ export default function CourseList() {
         };
 
         fetchCourses();
-    }, []);
-
-    const navigateToHome = () => {
-        navigate('/');
-
-    };
+    }, [navigate, token]);
 
     const navigateToProfile = () => {
         navigate('/profile');
@@ -105,3 +100,7 @@ export default function CourseList() {
         </div>
     );
 }
+
+
+
+

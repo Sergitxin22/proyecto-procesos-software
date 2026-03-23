@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
+import Navbar from '../../components/layout/Navbar';
 import { useNavigate } from 'react-router-dom';
-import './Admin.css';
-import { authService, userService } from '../services/api.service';
+import './Profile.css';
+import { authService, userService } from '../../services/api.service';
 
-export default function Admin() {
+export default function Profile() {
     const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [user, setUser] = useState(null);
@@ -36,7 +36,7 @@ export default function Admin() {
         };
 
         loadData();
-    }, [token]);
+    }, [navigate, token]);
 
     const handleLogout = async () => {
         try {
@@ -50,13 +50,18 @@ export default function Admin() {
 
     };
 
-    const navigateToHome = () => {
-        navigate('/');
+    const navigateToCreateCourse = () => {
+        navigate('/create_course');
 
     };
 
-    const navigateToUserList = () => {
-        navigate('/admin/users');
+    const navigateToCreatedCourses = () => {
+        navigate('/created_courses');
+
+    };
+
+    const navigateToAdminPanel = () => {
+        navigate('/admin');
 
     };
 
@@ -84,7 +89,7 @@ export default function Admin() {
         <div className="profile-layout">
             <Navbar>
                 <a href="#cursos">Mis Cursos</a>
-                    <button onClick={handleLogout} className="btn-secondary">Cerrar sesión</button>
+                <button onClick={handleLogout} className="btn-secondary">Cerrar sesión</button>
             </Navbar>
 
             <main className="profile-main">
@@ -94,20 +99,50 @@ export default function Admin() {
                         {user.nombre.charAt(0).toUpperCase()}
                     </div>
 
-
                     <div className="profile-info">
                         <h1>{user.nombre}</h1>
-                        <p className="profile-email">Panel de administración</p>
+                        <p className="profile-email">{user.email}</p>
                         <span className="badge-role">{user.rol}</span>
                     </div>
 
-                    <div className="profile-actions">
-                        <button className="btn-primary btn-full" onClick={navigateToUserList}>
-                            Lista de usuarios
-                        </button>
+                    <div className="profile-stats">
+                        <div className="stat-box">
+                            <span className="stat-number">0</span>
+                            <span className="stat-label">Cursos completados</span>
+                        </div>
+                        <div className="stat-box">
+                            <span className="stat-number">{courses.length}</span>
+                            <span className="stat-label">Cursos creados</span>
+                        </div>
                     </div>
+
+                    <div className="profile-actions">
+                        <button className="btn-primary btn-full" onClick={() => navigate('/')}>
+                            Ir al Playground
+                        </button>
+
+                        <button className="btn-primary btn-full" onClick={navigateToCreateCourse}>
+                            Crear curso
+                        </button>
+
+                        <button className="btn-primary btn-full" onClick={navigateToCreatedCourses}>
+                            Cursos creados
+                        </button>
+
+                        {user.esAdmin && (
+                            <button className="btn-primary btn-full" onClick={navigateToAdminPanel}>
+                                Panel de administración
+                            </button>
+                        )}
+                    </div>
+
+
                 </div>
             </main>
         </div>
     );
 }
+
+
+
+

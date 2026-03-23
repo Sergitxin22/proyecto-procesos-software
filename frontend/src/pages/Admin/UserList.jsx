@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
+import Navbar from '../../components/layout/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './Admin.css';
 import './UserList.css';
-import { adminService, authService } from '../services/api.service';
+import { adminService, authService } from '../../services/api.service';
 
 export default function UserList() {
     const navigate = useNavigate();
@@ -34,7 +34,7 @@ export default function UserList() {
         };
 
         fetchUsers();
-    }, [token]);
+    }, [navigate, token]);
 
     const handleLogout = async () => {
         try {
@@ -44,11 +44,6 @@ export default function UserList() {
         }
 
         localStorage.removeItem('token');
-        navigate('/');
-
-    };
-
-    const navigateToHome = () => {
         navigate('/');
 
     };
@@ -235,3 +230,7 @@ const avatarStyle = {
     fontSize: '0.85rem',
     flexShrink: 0
 };
+
+
+
+

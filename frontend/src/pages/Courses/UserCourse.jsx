@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
+import Navbar from '../../components/layout/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './UserCourse.css';
-import { courseService } from '../services/api.service';
+import { courseService } from '../../services/api.service';
 
 export default function CourseDetail() {
     const navigate = useNavigate();
@@ -29,7 +29,8 @@ export default function CourseDetail() {
             return;
         }
         fetchModules();
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [navigate, token]);
 
     const fetchModules = async () => {
         try {
@@ -79,11 +80,6 @@ export default function CourseDetail() {
 
     const toggleExerciseForm = (moduleId) => {
         setShowExerciseForm(prev => ({ ...prev, [moduleId]: !prev[moduleId] }));
-    };
-
-    const navigateToHome = () => {
-        navigate('/');
-
     };
 
     const navigateToCourses = () => {
@@ -244,3 +240,7 @@ export default function CourseDetail() {
         </div>
     );
 }
+
+
+
+
