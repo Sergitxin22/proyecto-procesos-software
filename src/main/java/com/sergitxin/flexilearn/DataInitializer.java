@@ -36,17 +36,17 @@ public class DataInitializer {
             Usuario u1 = new Usuario();
             u1.setNombre("Aitor");
             u1.setEmail("aitor@aitor.com");
-            u1.setPassword("aitor123");
+            u1.setPassword("N87uqYU4dBVcPw5hyw+tQg==:uDuMYMhqbUJbUZ3vKnWFlSciW0Nnevjss7I6iSgjGPA=");
 
             Usuario u2 = new Usuario();
             u2.setNombre("Markel");
             u2.setEmail("markel@markel.com");
-            u2.setPassword("markel123");
+            u2.setPassword("N87uqYU4dBVcPw5hyw+tQg==:uDuMYMhqbUJbUZ3vKnWFlSciW0Nnevjss7I6iSgjGPA=");
 
             Usuario u3 = new Usuario();
             u3.setNombre("Aroa");
             u3.setEmail("aroa@aroa.com");
-            u3.setPassword("aroa123");
+            u3.setPassword("N87uqYU4dBVcPw5hyw+tQg==:uDuMYMhqbUJbUZ3vKnWFlSciW0Nnevjss7I6iSgjGPA=");
 
             // Guardamos los usuarios
             usuarioDao.saveAll(List.of(u1, u2, u3));
