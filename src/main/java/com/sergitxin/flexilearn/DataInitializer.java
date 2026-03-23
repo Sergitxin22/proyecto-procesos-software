@@ -46,6 +46,7 @@ public class DataInitializer {
             Usuario u3 = new Usuario();
             u3.setNombre("Aroa");
             u3.setEmail("aroa@aroa.com");
+            u3.setEsAdmin(true);
             u3.setPassword("N87uqYU4dBVcPw5hyw+tQg==:uDuMYMhqbUJbUZ3vKnWFlSciW0Nnevjss7I6iSgjGPA=");
 
             // Guardamos los usuarios
