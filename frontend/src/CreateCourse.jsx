@@ -8,7 +8,7 @@ export default function CreateCourse() {
     const [courseDifficulty, setCourseDifficulty] = useState('');
     const token = localStorage.getItem('token');
     const API_URL = "http://localhost:8080/api/courses/";
-    
+
     useEffect(() => {
         // Si no hay token, redirigir directo a autenticarse
         if (!token) {
@@ -19,32 +19,32 @@ export default function CreateCourse() {
     })
 
     const createCourse = async () => {
-    try {
-        const res = await fetch(`${API_URL}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                token: token,
-                nombre: courseName,
-                categoria: courseCategory,
-                descripcion: courseDescription,
-                dificultad: courseDifficulty,
-            })
-        });
+        try {
+            const res = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    nombre: courseName,
+                    categoria: courseCategory,
+                    descripcion: courseDescription,
+                    dificultad: courseDifficulty,
+                })
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (res.ok) {
-            navigateToProfile();
-        } else {
-            alert(data.mensaje || "Error al crear el curso.");
+            if (res.ok) {
+                navigateToProfile();
+            } else {
+                alert(data.mensaje || "Error al crear el curso.");
+            }
+        } catch (err) {
+            alert(`Error de conexión: ${err.message}`);
         }
-    } catch (err) {
-        alert(`Error de conexión: ${err.message}`);
-    }
-};
+    };
 
     const navigateToHome = () => {
         window.history.pushState({}, '', '/');

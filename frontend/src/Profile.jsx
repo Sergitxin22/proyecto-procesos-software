@@ -21,9 +21,11 @@ export default function Profile() {
         const fetchCourses = async () => {
             try {
                 const res = await fetch(`http://localhost:8080/api/users/createdCourses`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token })
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
                 const data = await res.json();
 
