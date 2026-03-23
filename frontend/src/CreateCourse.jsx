@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './CreateCourse.css';
+import { courseService } from './services/api.service';
 
 export default function CreateCourse() {
     const [courseName, setCourseName] = useState('');
@@ -7,10 +8,8 @@ export default function CreateCourse() {
     const [courseDescription, setCourseDescription] = useState('');
     const [courseDifficulty, setCourseDifficulty] = useState('');
     const token = localStorage.getItem('token');
-    const API_URL = "http://localhost:8080/api/courses/";
 
     useEffect(() => {
-        // Si no hay token, redirigir directo a autenticarse
         if (!token) {
             window.history.pushState({}, '', '/auth');
             window.dispatchEvent(new PopStateEvent('popstate'));
@@ -20,29 +19,15 @@ export default function CreateCourse() {
 
     const createCourse = async () => {
         try {
-            const res = await fetch(`${API_URL}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    nombre: courseName,
-                    categoria: courseCategory,
-                    descripcion: courseDescription,
-                    dificultad: courseDifficulty,
-                })
+            await courseService.createCourse({
+                nombre: courseName,
+                categoria: courseCategory,
+                descripcion: courseDescription,
+                dificultad: courseDifficulty,
             });
-
-            const data = await res.json();
-
-            if (res.ok) {
-                navigateToProfile();
-            } else {
-                alert(data.mensaje || "Error al crear el curso.");
-            }
+            navigateToProfile();
         } catch (err) {
-            alert(`Error de conexión: ${err.message}`);
+            alert(`Error: ${err.message}`);
         }
     };
 

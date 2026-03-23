@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Admin.css';
 import './UserList.css';
+import { adminService, authService } from './services/api.service';
 
 export default function UserList() {
     const [users, setUsers] = useState([]);
@@ -10,7 +11,6 @@ export default function UserList() {
     const [deletingId, setDeletingId] = useState(null);
 
     const token = localStorage.getItem('token');
-    const API_URL = "http://localhost:8080/api/auth";
 
     useEffect(() => {
         if (!token) {
@@ -21,20 +21,10 @@ export default function UserList() {
 
         const fetchUsers = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/admin/users`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token })
-                });
-                const data = await res.json();
-
-                if (res.ok) {
-                    setUsers(data);
-                } else {
-                    setError(data.mensaje || "Error al cargar los usuarios.");
-                }
+                const data = await adminService.getUsers();
+                setUsers(data);
             } catch (err) {
-                setError(`Error de conexión: ${err.message}`);
+                setError(err.message);
             } finally {
                 setLoading(false);
             }
@@ -45,13 +35,7 @@ export default function UserList() {
 
     const handleLogout = async () => {
         try {
-            await fetch(`${API_URL}/logout`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            await authService.logout();
         } catch (e) {
             console.error(e);
         }
@@ -76,17 +60,12 @@ export default function UserList() {
 
         setDeletingId(usuario.id);
         try {
-            const res = await fetch(`http://localhost:8080/api/admin/deleteUser`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token, nombreUsuario: usuario.nombre })
-            });
-            const data = await res.json();
+            const data = await adminService.deleteUser(usuario.nombre);
 
-            if (res.ok) {
+            if (data === 1) { // According to AdminController, returns 1 if successful
                 setUsers(prev => prev.filter(u => u.id !== usuario.id));
             } else {
-                alert(data.mensaje || "Error al eliminar el usuario.");
+                alert("Error al eliminar el usuario, no se pudo realizar la acción.");
             }
         } catch (err) {
             alert(`Error de conexión: ${err.message}`);

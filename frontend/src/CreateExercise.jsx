@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './CreateCourse.css';
+import { courseService } from './services/api.service';
 
 export default function CreateExercise() {
     const [nombre, setNombre] = useState('');
@@ -10,7 +11,6 @@ export default function CreateExercise() {
     const [puntos, setPuntos] = useState('');
 
     const token = localStorage.getItem('token');
-    const API_URL = "http://localhost:8080/api/courses";
 
     // URL pattern: /created_courses/{courseId}/modules/{moduleId}/create_exercise
     const pathParts = window.location.pathname.split('/');
@@ -26,28 +26,18 @@ export default function CreateExercise() {
 
     const handleCreateExercise = async () => {
         try {
-            const res = await fetch(`${API_URL}/exercises`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    nombre,
-                    lenguaje,
-                    teoria,
-                    enunciado,
-                    codigoInicial,
-                    puntos: parseInt(puntos),
-                    idModulo: moduleId,
-                })
+            await courseService.createExercise({
+                nombre,
+                lenguaje,
+                teoria,
+                enunciado,
+                codigoInicial,
+                puntos: parseInt(puntos),
+                idModulo: moduleId,
             });
 
-            const data = await res.json();
-
-            if (res.ok) {
-                window.history.pushState({}, '', `/created_courses/${courseId}`);
-                window.dispatchEvent(new PopStateEvent('popstate'));
-            } else {
-                alert(data.mensaje || "Error al crear el ejercicio.");
-            }
+            window.history.pushState({}, '', `/created_courses/${courseId}`);
+            window.dispatchEvent(new PopStateEvent('popstate'));
         } catch (err) {
             alert(`Error de conexión: ${err.message}`);
         }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './UserCourse.css';
+import { courseService } from './services/api.service';
 
 export default function CourseDetail() {
     const [modules, setModules] = useState([]);
@@ -15,7 +16,6 @@ export default function CourseDetail() {
     const [exercisePoints, setExercisePoints] = useState('');
 
     const token = localStorage.getItem('token');
-    const API_URL = "http://localhost:8080/api/courses";
 
     const courseId = window.location.pathname.split('/').pop();
 
@@ -30,19 +30,11 @@ export default function CourseDetail() {
 
     const fetchModules = async () => {
         try {
-            const res = await fetch(`${API_URL}/${courseId}/`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-            });
-            const data = await res.json();
-            if (res.ok) {
-                setCourseName(data.nombre);
-                setModules(data.modulos ?? []);
-            } else {
-                setError(data.mensaje || "Error al cargar los módulos.");
-            }
+            const data = await courseService.getCourse(courseId);
+            setCourseName(data.nombre);
+            setModules(data.modulos ?? []);
         } catch (err) {
-            setError(`Error de conexión: ${err.message}`);
+            setError(err.message);
         } finally {
             setLoading(false);
         }
@@ -50,53 +42,35 @@ export default function CourseDetail() {
 
     const handleCreateModule = async () => {
         try {
-            const res = await fetch(`${API_URL}/modules`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    nombre: moduleName,
-                    descripcion: moduleDescription,
-                    idCurso: courseId,
-                })
+            await courseService.createModule({
+                nombre: moduleName,
+                descripcion: moduleDescription,
+                idCurso: courseId,
             });
-            if (res.ok) {
-                setModuleName('');
-                setModuleDescription('');
-                setShowModuleForm(false);
-                fetchModules();
-            } else {
-                const data = await res.json();
-                alert(data.mensaje || "Error al crear el módulo.");
-            }
+            setModuleName('');
+            setModuleDescription('');
+            setShowModuleForm(false);
+            fetchModules();
         } catch (err) {
-            alert(`Error de conexión: ${err.message}`);
+            alert(err.message);
         }
     };
 
     const handleCreateExercise = async (moduleId) => {
         try {
-            const res = await fetch(`${API_URL}/exercises`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    nombre: exerciseName,
-                    enunciado: exerciseStatement,
-                    puntos: parseInt(exercisePoints),
-                    idModulo: moduleId,
-                })
+            await courseService.createExercise({
+                nombre: exerciseName,
+                enunciado: exerciseStatement,
+                puntos: parseInt(exercisePoints),
+                idModulo: moduleId,
             });
-            if (res.ok) {
-                setExerciseName('');
-                setExerciseStatement('');
-                setExercisePoints('');
-                setShowExerciseForm({ ...showExerciseForm, [moduleId]: false });
-                fetchModules();
-            } else {
-                const data = await res.json();
-                alert(data.mensaje || "Error al crear el ejercicio.");
-            }
+            setExerciseName('');
+            setExerciseStatement('');
+            setExercisePoints('');
+            setShowExerciseForm({ ...showExerciseForm, [moduleId]: false });
+            fetchModules();
         } catch (err) {
-            alert(`Error de conexión: ${err.message}`);
+            alert(`Error: ${err.message}`);
         }
     };
 
@@ -147,15 +121,15 @@ export default function CourseDetail() {
                                                 <h2 className="module-name">{mod.nombre}</h2>
                                                 <p className="module-description">{mod.descripcion}</p>
                                             </div>
-                                                <button
-                                                    className="btn-primary"
-                                                    onClick={() => {
-                                                        window.history.pushState({}, '', `/created_courses/${courseId}/modules/${mod.id}/create_exercise`);
-                                                        window.dispatchEvent(new PopStateEvent('popstate'));
-                                                    }}
-                                                >
-                                                    + Ejercicio
-                                                </button>
+                                            <button
+                                                className="btn-primary"
+                                                onClick={() => {
+                                                    window.history.pushState({}, '', `/created_courses/${courseId}/modules/${mod.id}/create_exercise`);
+                                                    window.dispatchEvent(new PopStateEvent('popstate'));
+                                                }}
+                                            >
+                                                + Ejercicio
+                                            </button>
                                         </div>
 
                                         {/* Exercise form */}

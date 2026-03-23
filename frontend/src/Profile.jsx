@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Profile.css';
+import { authService, userService } from './services/api.service';
 
 export default function Profile() {
     const [courses, setCourses] = useState([]);
@@ -8,83 +9,39 @@ export default function Profile() {
     const [loading, setLoading] = useState(true);
 
     const token = localStorage.getItem('token');
-    const API_URL = "http://localhost:8080/api/auth";
 
     useEffect(() => {
-        // Si no hay token, redirigir directo a autenticarse
         if (!token) {
             window.history.pushState({}, '', '/auth');
             window.dispatchEvent(new PopStateEvent('popstate'));
             return;
         }
 
-        const fetchCourses = async () => {
+        const loadData = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/users/createdCourses`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const data = await res.json();
-
-                if (res.ok) {
-                    setCourses(data);
-                } else {
-                    setError(data.mensaje || "Error al cargar los cursos.");
-                }
+                const [coursesData, userData] = await Promise.all([
+                    userService.getCreatedCourses(),
+                    authService.getUserProfile()
+                ]);
+                setCourses(coursesData);
+                setUser(userData);
             } catch (err) {
-                setError(`Error de conexión: ${err.message}`);
+                setError(err.message);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchCourses();
-
-        const fetchUserProfile = async () => {
-            try {
-                const res = await fetch(`${API_URL}/user`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const data = await res.json();
-
-                if (res.ok) {
-                    setUser(data);
-                } else {
-                    setError(data.mensaje || "Error al recuperar el perfil.");
-                    // Si el token es inválido, deberíamos forzar a que vuelvan a loguearse tras mostrar el error
-                }
-            } catch (err) {
-                setError(`Error de conexión: ${err.message}`);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUserProfile();
+        loadData();
     }, [token]);
 
     const handleLogout = async () => {
         try {
-            // Intentar avisar al backend (aunque falle nos deslogueamos localmente igual)
-            await fetch(`${API_URL}/logout`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            await authService.logout();
         } catch (e) {
             console.error(e);
         }
 
-        // Limpiamos token y volvemos al inicio
         localStorage.removeItem('token');
         window.history.pushState({}, '', '/');
         window.dispatchEvent(new PopStateEvent('popstate'));

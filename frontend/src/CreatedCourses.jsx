@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './CreatedCourses.css';
+import { userService } from './services/api.service';
 
 const DIFFICULTY_LABELS = {
     FACIL: { label: 'Fácil', className: 'badge-easy' },
@@ -13,7 +14,6 @@ export default function CourseList() {
     const [error, setError] = useState(null);
 
     const token = localStorage.getItem('token');
-    const API_URL = "http://localhost:8080/api/users/createdCourses";
 
     useEffect(() => {
         if (!token) {
@@ -24,22 +24,10 @@ export default function CourseList() {
 
         const fetchCourses = async () => {
             try {
-                const res = await fetch(`${API_URL}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const data = await res.json();
-
-                if (res.ok) {
-                    setCourses(data);
-                } else {
-                    setError(data.mensaje || "Error al cargar los cursos.");
-                }
+                const data = await userService.getCreatedCourses();
+                setCourses(data);
             } catch (err) {
-                setError(`Error de conexión: ${err.message}`);
+                setError(err.message);
             } finally {
                 setLoading(false);
             }

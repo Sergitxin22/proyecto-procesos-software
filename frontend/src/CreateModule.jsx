@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import './CreateCourse.css';
+import { courseService } from './services/api.service';
 
 export default function CreateModule() {
     const [moduleName, setModuleName] = useState('');
     const [moduleDescription, setModuleDescription] = useState('');
 
     const token = localStorage.getItem('token');
-    const API_URL = "http://localhost:8080/api/courses/modules";
 
     // Get course ID from URL e.g. /created_courses/1/create_module
     const courseId = window.location.pathname.split('/')[2];
@@ -20,24 +20,14 @@ export default function CreateModule() {
 
     const handleCreateModule = async () => {
         try {
-            const res = await fetch(`${API_URL}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    nombre: moduleName,
-                    descripcion: moduleDescription,
-                    idCurso: courseId,
-                })
+            await courseService.createModule({
+                nombre: moduleName,
+                descripcion: moduleDescription,
+                idCurso: courseId,
             });
 
-            const data = await res.json();
-
-            if (res.ok) {
-                window.history.pushState({}, '', `/created_courses/${courseId}`);
-                window.dispatchEvent(new PopStateEvent('popstate'));
-            } else {
-                alert(data.mensaje || "Error al crear el módulo.");
-            }
+            window.history.pushState({}, '', `/created_courses/${courseId}`);
+            window.dispatchEvent(new PopStateEvent('popstate'));
         } catch (err) {
             alert(`Error de conexión: ${err.message}`);
         }
