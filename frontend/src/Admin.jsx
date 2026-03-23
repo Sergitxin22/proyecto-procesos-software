@@ -23,7 +23,7 @@ export default function Admin() {
                 const res = await fetch(`http://localhost:8080/api/users/createdCourses`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({token})
+                    body: JSON.stringify({ token })
                 });
                 const data = await res.json();
 
@@ -44,9 +44,11 @@ export default function Admin() {
         const fetchUserProfile = async () => {
             try {
                 const res = await fetch(`${API_URL}/user`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token })
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
                 const data = await res.json();
 
@@ -71,8 +73,10 @@ export default function Admin() {
             // Intentar avisar al backend (aunque falle nos deslogueamos localmente igual)
             await fetch(`${API_URL}/logout`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token })
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
             });
         } catch (e) {
             console.error(e);
