@@ -1,7 +1,6 @@
 package com.sergitxin.flexilearn.dto;
 
 public class CursoRequestDTO {
-    private String token;
     private String nombre;
     private String categoria;
     private String descripcion;
@@ -37,14 +36,6 @@ public class CursoRequestDTO {
 
     public void setDificultad(String dificultad) {
         this.dificultad = dificultad;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 
 

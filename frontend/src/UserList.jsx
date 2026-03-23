@@ -47,8 +47,10 @@ export default function UserList() {
         try {
             await fetch(`${API_URL}/logout`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token })
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
             });
         } catch (e) {
             console.error(e);

@@ -6,25 +6,34 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sergitxin.flexilearn.dto.GetUserInfoRequestDto;
 import com.sergitxin.flexilearn.dto.LoginRequestDto;
 import com.sergitxin.flexilearn.dto.LoginResponseDto;
-import com.sergitxin.flexilearn.dto.LogoutRequestDto;
 import com.sergitxin.flexilearn.dto.MessageResponseDto;
 import com.sergitxin.flexilearn.dto.RegisterRequestDto;
 import com.sergitxin.flexilearn.entity.Usuario;
 import com.sergitxin.flexilearn.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*")
 @Tag(name = "Autenticación", description = "Operaciones relacionadas con el inicio de sesión y registro")
+@SecurityScheme(
+    name = "bearerAuth",
+    type = SecuritySchemeType.HTTP,
+    bearerFormat = "JWT",
+    scheme = "bearer"
+)
 public class AuthController {
 
     private final AuthService authService;
@@ -56,10 +65,16 @@ public class AuthController {
     }
 
     @Operation(summary = "Cerrar sesión", description = "Invalida el token activo del usuario")
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/logout")
-    public ResponseEntity<?> cerrarSesion(@RequestBody LogoutRequestDto request) {
+    public ResponseEntity<?> cerrarSesion(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
-            authService.cerrarSesion(request.getToken());
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
+            }
+            
+            String token = authHeader.substring(7);
+            authService.cerrarSesion(token);
             return ResponseEntity.ok(new MessageResponseDto("Sesión finalizada correctamente"));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto(e.getMessage()));
@@ -67,10 +82,17 @@ public class AuthController {
     }
     
     @Operation(summary = "Obtener usuario por token (comentar en produción)", description = "Recupera la información del usuario asociado al token proporcionado")
-    @PostMapping("/user")
-    public ResponseEntity<?> getUsuarioByToken(@RequestBody GetUserInfoRequestDto request) {
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/user")
+    public ResponseEntity<?> getUsuarioByToken(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader) {
 		try {
-			Usuario usuario = authService.obtenerUsuarioByToken(request.getToken());
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
+            }
+            
+            String token = authHeader.substring(7);
+            
+			Usuario usuario = authService.obtenerUsuarioByToken(token);
 			return ResponseEntity.ok(usuario);
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto(e.getMessage()));

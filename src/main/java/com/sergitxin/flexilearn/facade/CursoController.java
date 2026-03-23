@@ -1,19 +1,19 @@
 package com.sergitxin.flexilearn.facade;
 
-import java.util.List;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sergitxin.flexilearn.dto.CursoRequestDTO;
 import com.sergitxin.flexilearn.dto.EjercicioRequestDTO;
+import com.sergitxin.flexilearn.dto.MessageResponseDto;
 import com.sergitxin.flexilearn.dto.ModuloRequestDTO;
 import com.sergitxin.flexilearn.entity.Curso;
 import com.sergitxin.flexilearn.entity.Dificultad;
@@ -21,6 +21,7 @@ import com.sergitxin.flexilearn.service.CursoService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -36,9 +37,16 @@ public class CursoController {
     }
 
     @Operation(summary = "Crea un curso", description = "Añade en la base de datos un curso con los datos introducidos")
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/")
-    public ResponseEntity<Long> createCurso(@RequestBody CursoRequestDTO request) {
-        return ResponseEntity.ok(cursoService.crearCurso(request.getToken(), request.getNombre(), request.getCategoria(), request.getDescripcion(), Dificultad.stringToDificultad(request.getDificultad())));
+    public ResponseEntity<?> createCurso(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestBody CursoRequestDTO request) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
+        }
+            
+        String token = authHeader.substring(7);
+
+        return ResponseEntity.ok(cursoService.crearCurso(token, request.getNombre(), request.getCategoria(), request.getDescripcion(), Dificultad.stringToDificultad(request.getDificultad())));
     }
 
     @Operation(summary = "Añade un módulo a un curso", description = "Añade en la base de datos un módulo a un curso con los datos introducidos")
