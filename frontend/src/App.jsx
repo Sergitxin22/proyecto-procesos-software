@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import TestAuth from './TestAuth'
 import Landing from './Landing'
 import Auth from './Auth'
@@ -9,56 +9,23 @@ import CreateCourse from './CreateCourse'
 import UserCourse from './UserCourse'
 import CreatedCourses from './CreatedCourses'
 import CreateExercise from './CreateExercise'
+import CreateModule from './CreateModule'
 import './index.css'
 
 export default function App() {
-  const [currentPath, setCurrentPath] = useState(window.location.pathname)
-
-  useEffect(() => {
-    const handleLocationChange = () => setCurrentPath(window.location.pathname)
-    window.addEventListener('popstate', handleLocationChange)
-    return () => window.removeEventListener('popstate', handleLocationChange)
-  }, [])
-
-  if (currentPath === '/test/auth') {
-    return <TestAuth />
-  }
-
-  if (currentPath === '/auth') {
-    return <Auth />
-  }
-
-  if (currentPath === '/profile') {
-    return <Profile />
-  }
-
-  if (currentPath === '/create_course') {
-    return <CreateCourse />
-  }
-
-  if (currentPath === '/created_courses') {
-    return <CreatedCourses />
-  }
-
-  if (currentPath.startsWith('/created_courses/') && currentPath.includes('/modules/') && currentPath.endsWith('/create_exercise')) {
-      return <CreateExercise />
-  }
-
-  if (currentPath.startsWith('/created_courses/') && currentPath.endsWith('/create_module')) {
-      return <CreateModule />
-  }
-
-  if (currentPath.startsWith('/created_courses/')) {
-      return <UserCourse />
-  }
-
-  if (currentPath === '/admin') {
-    return <Admin />
-  }
-
-  if (currentPath === '/admin/users') {
-    return <UserList />
-  }
-  
-  return <Landing />
+  return (
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/test/auth" element={<TestAuth />} />
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/create_course" element={<CreateCourse />} />
+      <Route path="/created_courses" element={<CreatedCourses />} />
+      <Route path="/created_courses/:courseId" element={<UserCourse />} />
+      <Route path="/created_courses/:courseId/create_module" element={<CreateModule />} />
+      <Route path="/created_courses/:courseId/modules/:moduleId/create_exercise" element={<CreateExercise />} />
+      <Route path="/admin" element={<Admin />} />
+      <Route path="/admin/users" element={<UserList />} />
+    </Routes>
+  )
 }
