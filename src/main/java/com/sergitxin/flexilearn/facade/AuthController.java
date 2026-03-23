@@ -91,6 +91,7 @@ public class AuthController {
             }
             
             String token = authHeader.substring(7);
+            
 			Usuario usuario = authService.obtenerUsuarioByToken(token);
 			return ResponseEntity.ok(usuario);
 		} catch (RuntimeException e) {
