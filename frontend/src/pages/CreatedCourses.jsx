@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './CreatedCourses.css';
 import { userService } from '../services/api.service';
 
@@ -9,6 +10,7 @@ const DIFFICULTY_LABELS = {
 };
 
 export default function CourseList() {
+    const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -17,8 +19,8 @@ export default function CourseList() {
 
     useEffect(() => {
         if (!token) {
-            window.history.pushState({}, '', '/auth');
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            navigate('/auth');
+
             return;
         }
 
@@ -37,18 +39,18 @@ export default function CourseList() {
     }, []);
 
     const navigateToHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/');
+
     };
 
     const navigateToProfile = () => {
-        window.history.pushState({}, '', '/profile');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/profile');
+
     };
 
     const navigateToCourse = (id) => {
-        window.history.pushState({}, '', `/created_courses/${id}`);
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate(`/created_courses/${id}`);
+
     };
 
     return (

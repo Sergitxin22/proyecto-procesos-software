@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './UserCourse.css';
 import { courseService } from '../services/api.service';
 
 export default function CourseDetail() {
+    const navigate = useNavigate();
     const [modules, setModules] = useState([]);
     const [courseName, setCourseName] = useState('');
     const [loading, setLoading] = useState(true);
@@ -21,8 +23,8 @@ export default function CourseDetail() {
 
     useEffect(() => {
         if (!token) {
-            window.history.pushState({}, '', '/auth');
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            navigate('/auth');
+
             return;
         }
         fetchModules();
@@ -79,13 +81,13 @@ export default function CourseDetail() {
     };
 
     const navigateToHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/');
+
     };
 
     const navigateToCourses = () => {
-        window.history.pushState({}, '', '/courses');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/courses');
+
     };
 
     return (
@@ -124,8 +126,8 @@ export default function CourseDetail() {
                                             <button
                                                 className="btn-primary"
                                                 onClick={() => {
-                                                    window.history.pushState({}, '', `/created_courses/${courseId}/modules/${mod.id}/create_exercise`);
-                                                    window.dispatchEvent(new PopStateEvent('popstate'));
+                                                    navigate(`/created_courses/${courseId}/modules/${mod.id}/create_exercise`);
+
                                                 }}
                                             >
                                                 + Ejercicio

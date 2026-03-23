@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './CreateCourse.css';
 import { courseService } from '../services/api.service';
 
 export default function CreateModule() {
+    const navigate = useNavigate();
     const [moduleName, setModuleName] = useState('');
     const [moduleDescription, setModuleDescription] = useState('');
 
@@ -13,8 +15,8 @@ export default function CreateModule() {
 
     useEffect(() => {
         if (!token) {
-            window.history.pushState({}, '', '/auth');
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            navigate('/auth');
+
         }
     }, []);
 
@@ -26,21 +28,21 @@ export default function CreateModule() {
                 idCurso: courseId,
             });
 
-            window.history.pushState({}, '', `/created_courses/${courseId}`);
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            navigate(`/created_courses/${courseId}`);
+
         } catch (err) {
             alert(`Error de conexión: ${err.message}`);
         }
     };
 
     const navigateBack = () => {
-        window.history.pushState({}, '', `/created_courses/${courseId}`);
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate(`/created_courses/${courseId}`);
+
     };
 
     const navigateToHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/');
+
     };
 
     return (

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Admin.css';
 import './UserList.css';
 import { adminService, authService } from '../services/api.service';
 
 export default function UserList() {
+    const navigate = useNavigate();
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -14,8 +16,8 @@ export default function UserList() {
 
     useEffect(() => {
         if (!token) {
-            window.history.pushState({}, '', '/auth');
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            navigate('/auth');
+
             return;
         }
 
@@ -41,18 +43,18 @@ export default function UserList() {
         }
 
         localStorage.removeItem('token');
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/');
+
     };
 
     const navigateToHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/');
+
     };
 
     const navigateToAdmin = () => {
-        window.history.pushState({}, '', '/admin');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/admin');
+
     };
 
     const handleDelete = async (usuario) => {

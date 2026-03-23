@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './CreateCourse.css';
 import { courseService } from '../services/api.service';
 
 export default function CreateCourse() {
+    const navigate = useNavigate();
     const [courseName, setCourseName] = useState('');
     const [courseCategory, setCourseCategory] = useState('');
     const [courseDescription, setCourseDescription] = useState('');
@@ -11,8 +13,8 @@ export default function CreateCourse() {
 
     useEffect(() => {
         if (!token) {
-            window.history.pushState({}, '', '/auth');
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            navigate('/auth');
+
             return;
         }
     })
@@ -32,13 +34,13 @@ export default function CreateCourse() {
     };
 
     const navigateToHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/');
+
     };
 
     const navigateToProfile = () => {
-        window.history.pushState({}, '', '/profile');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/profile');
+
     };
 
     return (

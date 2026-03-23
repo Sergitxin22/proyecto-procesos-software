@@ -1,9 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Landing.css';
 
 export default function Landing() {
+    const navigate = useNavigate();
     const navigateToAuth = () => {
-        window.history.pushState({}, '', '/auth');
+        navigate('/auth');
         const navEvent = new PopStateEvent('popstate');
         window.dispatchEvent(navEvent);
     };

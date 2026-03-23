@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Admin.css';
 import { authService, userService } from '../services/api.service';
 
 export default function Admin() {
+    const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
@@ -12,8 +14,8 @@ export default function Admin() {
 
     useEffect(() => {
         if (!token) {
-            window.history.pushState({}, '', '/auth');
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            navigate('/auth');
+
             return;
         }
 
@@ -43,18 +45,18 @@ export default function Admin() {
         }
 
         localStorage.removeItem('token');
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/');
+
     };
 
     const navigateToHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/');
+
     };
 
     const navigateToUserList = () => {
-        window.history.pushState({}, '', '/admin/users');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/admin/users');
+
     };
 
     if (loading) {

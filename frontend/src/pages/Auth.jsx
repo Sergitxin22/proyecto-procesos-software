@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Auth.css';
 import { authService } from '../services/api.service';
 
 export default function Auth() {
+    const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({
         nombre: '',
@@ -31,8 +33,8 @@ export default function Auth() {
                 showMessage('Inicio de sesión exitoso', 'success');
                 localStorage.setItem('token', data.token);
                 setTimeout(() => {
-                    window.history.pushState({}, '', '/profile');
-                    window.dispatchEvent(new PopStateEvent('popstate'));
+                    navigate('/profile');
+
                 }, 1500);
             } else {
                 await authService.register(formData.nombre, formData.email, formData.password);
@@ -45,8 +47,8 @@ export default function Auth() {
     };
 
     const navigateHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/');
+
     };
 
     return (

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 import { authService, userService } from '../services/api.service';
 
 export default function Profile() {
+    const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
@@ -12,8 +14,8 @@ export default function Profile() {
 
     useEffect(() => {
         if (!token) {
-            window.history.pushState({}, '', '/auth');
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            navigate('/auth');
+
             return;
         }
 
@@ -43,28 +45,28 @@ export default function Profile() {
         }
 
         localStorage.removeItem('token');
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/');
+
     };
 
     const navigateToHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/');
+
     };
 
     const navigateToCreateCourse = () => {
-        window.history.pushState({}, '', '/create_course');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/create_course');
+
     };
 
     const navigateToCreatedCourses = () => {
-        window.history.pushState({}, '', '/created_courses');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/created_courses');
+
     };
 
     const navigateToAdminPanel = () => {
-        window.history.pushState({}, '', '/admin');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/admin');
+
     };
 
     if (loading) {
