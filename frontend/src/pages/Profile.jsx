@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Profile.css';
-import { authService, userService } from './services/api.service';
+import { authService, userService } from '../services/api.service';
 
 export default function Profile() {
     const [courses, setCourses] = useState([]);

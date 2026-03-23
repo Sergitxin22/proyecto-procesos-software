@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Admin.css';
 import './UserList.css';
-import { adminService, authService } from './services/api.service';
+import { adminService, authService } from '../services/api.service';
 
 export default function UserList() {
     const [users, setUsers] = useState([]);

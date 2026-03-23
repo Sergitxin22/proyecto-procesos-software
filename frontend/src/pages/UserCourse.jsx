@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './UserCourse.css';
-import { courseService } from './services/api.service';
+import { courseService } from '../services/api.service';
 
 export default function CourseDetail() {
     const [modules, setModules] = useState([]);

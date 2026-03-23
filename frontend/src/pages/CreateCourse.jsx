@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './CreateCourse.css';
-import { courseService } from './services/api.service';
+import { courseService } from '../services/api.service';
 
 export default function CreateCourse() {
     const [courseName, setCourseName] = useState('');

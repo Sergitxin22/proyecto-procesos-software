@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './CreatedCourses.css';
-import { userService } from './services/api.service';
+import { userService } from '../services/api.service';
 
 const DIFFICULTY_LABELS = {
     FACIL: { label: 'Fácil', className: 'badge-easy' },

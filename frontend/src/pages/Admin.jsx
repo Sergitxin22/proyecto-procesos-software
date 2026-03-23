@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Admin.css';
-import { authService, userService } from './services/api.service';
+import { authService, userService } from '../services/api.service';
 
 export default function Admin() {
     const [courses, setCourses] = useState([]);
