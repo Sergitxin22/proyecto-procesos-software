@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import TestAuth from './TestAuth'
 import Landing from './Landing'
 import Auth from './Auth'
+import Admin from './Admin'
+import UserList from './UserList'
 import Profile from './Profile'
 import CreateCourse from './CreateCourse'
 import UserCourse from './UserCourse'
@@ -48,6 +50,14 @@ export default function App() {
 
   if (currentPath.startsWith('/created_courses/')) {
       return <UserCourse />
+  }
+
+  if (currentPath === '/admin') {
+    return <Admin />
+  }
+
+  if (currentPath === '/admin/users') {
+    return <UserList />
   }
   
   return <Landing />

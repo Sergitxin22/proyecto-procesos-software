@@ -1,0 +1,17 @@
+.userlist-card {
+    background: white;
+    width: 100%;
+    max-width: 900px;
+    border-radius: 16px;
+    overflow: visible;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    position: relative;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.badge-admin {
+    background-color: #e8f0fe;
+    color: #3b5bdb;
+    border: 1px solid #a5b4fc;
+}

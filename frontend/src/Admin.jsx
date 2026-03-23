@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import './Profile.css';
+import './Admin.css';
 
-export default function Profile() {
+export default function Admin() {
     const [courses, setCourses] = useState([]);
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
@@ -89,18 +89,8 @@ export default function Profile() {
         window.dispatchEvent(new PopStateEvent('popstate'));
     };
 
-    const navigateToCreateCourse = () => {
-        window.history.pushState({}, '', '/create_course');
-        window.dispatchEvent(new PopStateEvent('popstate'));
-    };
-
-    const navigateToCreatedCourses = () => {
-        window.history.pushState({}, '', '/created_courses');
-        window.dispatchEvent(new PopStateEvent('popstate'));
-    };
-
-    const navigateToAdminPanel = () => {
-        window.history.pushState({}, '', '/admin');
+    const navigateToUserList = () => {
+        window.history.pushState({}, '', '/admin/users');
         window.dispatchEvent(new PopStateEvent('popstate'));
     };
 
@@ -143,44 +133,18 @@ export default function Profile() {
                         {user.nombre.charAt(0).toUpperCase()}
                     </div>
 
+
                     <div className="profile-info">
                         <h1>{user.nombre}</h1>
-                        <p className="profile-email">{user.email}</p>
+                        <p className="profile-email">Panel de administración</p>
                         <span className="badge-role">{user.rol}</span>
                     </div>
 
-                    <div className="profile-stats">
-                        <div className="stat-box">
-                            <span className="stat-number">0</span>
-                            <span className="stat-label">Cursos completados</span>
-                        </div>
-                        <div className="stat-box">
-                            <span className="stat-number">{courses.length}</span>
-                            <span className="stat-label">Cursos creados</span>
-                        </div>
-                    </div>
-
                     <div className="profile-actions">
-                        <button className="btn-primary btn-full" onClick={navigateToHome}>
-                            Ir al Playground
+                        <button className="btn-primary btn-full" onClick={navigateToUserList}>
+                            Lista de usuarios
                         </button>
-
-                        <button className="btn-primary btn-full" onClick={navigateToCreateCourse}>
-                            Crear curso
-                        </button>
-
-                        <button className="btn-primary btn-full" onClick={navigateToCreatedCourses}>
-                            Cursos creados
-                        </button>
-
-                        {user.esAdmin && (
-                            <button className="btn-primary btn-full" onClick={navigateToAdminPanel}>
-                                Panel de administración
-                            </button>
-                        )}
                     </div>
-
-
                 </div>
             </main>
         </div>
