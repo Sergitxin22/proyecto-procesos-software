@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
+import Navbar from '../../components/layout/Navbar';
+import { useNavigate } from 'react-router-dom';
 import './CreateCourse.css';
+import { courseService } from '../../services/api.service';
 
 export default function CreateExercise() {
+    const navigate = useNavigate();
     const [nombre, setNombre] = useState('');
     const [lenguaje, setLenguaje] = useState('');
     const [teoria, setTeoria] = useState('');
@@ -10,7 +14,6 @@ export default function CreateExercise() {
     const [puntos, setPuntos] = useState('');
 
     const token = localStorage.getItem('token');
-    const API_URL = "http://localhost:8080/api/courses";
 
     // URL pattern: /created_courses/{courseId}/modules/{moduleId}/create_exercise
     const pathParts = window.location.pathname.split('/');
@@ -19,60 +22,40 @@ export default function CreateExercise() {
 
     useEffect(() => {
         if (!token) {
-            window.history.pushState({}, '', '/auth');
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            navigate('/auth');
+
         }
-    }, []);
+    }, [navigate, token]);
 
     const handleCreateExercise = async () => {
         try {
-            const res = await fetch(`${API_URL}/exercises`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    nombre,
-                    lenguaje,
-                    teoria,
-                    enunciado,
-                    codigoInicial,
-                    puntos: parseInt(puntos),
-                    idModulo: moduleId,
-                })
+            await courseService.createExercise({
+                nombre,
+                lenguaje,
+                teoria,
+                enunciado,
+                codigoInicial,
+                puntos: parseInt(puntos),
+                idModulo: moduleId,
             });
 
-            const data = await res.json();
+            navigate(`/created_courses/${courseId}`);
 
-            if (res.ok) {
-                window.history.pushState({}, '', `/created_courses/${courseId}`);
-                window.dispatchEvent(new PopStateEvent('popstate'));
-            } else {
-                alert(data.mensaje || "Error al crear el ejercicio.");
-            }
         } catch (err) {
             alert(`Error de conexión: ${err.message}`);
         }
     };
 
     const navigateBack = () => {
-        window.history.pushState({}, '', `/created_courses/${courseId}`);
-        window.dispatchEvent(new PopStateEvent('popstate'));
-    };
+        navigate(`/created_courses/${courseId}`);
 
-    const navigateToHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
     };
 
     return (
         <div className="profile-layout">
-            <nav className="navbar">
-                <div className="navbar-logo" onClick={navigateToHome} style={{ cursor: 'pointer' }}>
-                    🎓 Flexilearn
-                </div>
-                <div className="navbar-links">
-                    <button onClick={navigateBack} className="btn-secondary">Volver al curso</button>
-                </div>
-            </nav>
+            <Navbar>
+                <button onClick={navigateBack} className="btn-secondary">Volver al curso</button>
+            </Navbar>
 
             <main className="profile-main">
                 <div className="profile-card create-course-card">
@@ -183,3 +166,7 @@ export default function CreateExercise() {
         </div>
     );
 }
+
+
+
+

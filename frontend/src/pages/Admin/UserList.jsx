@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
+import Navbar from '../../components/layout/Navbar';
+import { useNavigate } from 'react-router-dom';
 import './Admin.css';
 import './UserList.css';
+import { adminService, authService } from '../../services/api.service';
 
 export default function UserList() {
+    const navigate = useNavigate();
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -10,65 +14,43 @@ export default function UserList() {
     const [deletingId, setDeletingId] = useState(null);
 
     const token = localStorage.getItem('token');
-    const API_URL = "http://localhost:8080/api/auth";
 
     useEffect(() => {
         if (!token) {
-            window.history.pushState({}, '', '/auth');
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            navigate('/auth');
+
             return;
         }
 
         const fetchUsers = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/admin/users`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token })
-                });
-                const data = await res.json();
-
-                if (res.ok) {
-                    setUsers(data);
-                } else {
-                    setError(data.mensaje || "Error al cargar los usuarios.");
-                }
+                const data = await adminService.getUsers();
+                setUsers(data);
             } catch (err) {
-                setError(`Error de conexión: ${err.message}`);
+                setError(err.message);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchUsers();
-    }, [token]);
+    }, [navigate, token]);
 
     const handleLogout = async () => {
         try {
-            await fetch(`${API_URL}/logout`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            await authService.logout();
         } catch (e) {
             console.error(e);
         }
 
         localStorage.removeItem('token');
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
-    };
+        navigate('/');
 
-    const navigateToHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
     };
 
     const navigateToAdmin = () => {
-        window.history.pushState({}, '', '/admin');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/admin');
+
     };
 
     const handleDelete = async (usuario) => {
@@ -76,17 +58,12 @@ export default function UserList() {
 
         setDeletingId(usuario.id);
         try {
-            const res = await fetch(`http://localhost:8080/api/admin/deleteUser`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token, nombreUsuario: usuario.nombre })
-            });
-            const data = await res.json();
+            const data = await adminService.deleteUser(usuario.nombre);
 
-            if (res.ok) {
+            if (data === 1) { // According to AdminController, returns 1 if successful
                 setUsers(prev => prev.filter(u => u.id !== usuario.id));
             } else {
-                alert(data.mensaje || "Error al eliminar el usuario.");
+                alert("Error al eliminar el usuario, no se pudo realizar la acción.");
             }
         } catch (err) {
             alert(`Error de conexión: ${err.message}`);
@@ -122,15 +99,10 @@ export default function UserList() {
 
     return (
         <div className="profile-layout">
-            <nav className="navbar">
-                <div className="navbar-logo" onClick={navigateToHome} style={{ cursor: 'pointer' }}>
-                    🎓 Flexilearn
-                </div>
-                <div className="navbar-links">
-                    <a onClick={navigateToAdmin} style={{ cursor: 'pointer' }}>Panel Admin</a>
+            <Navbar>
+                <a onClick={navigateToAdmin} style={{ cursor: 'pointer' }}>Panel Admin</a>
                     <button onClick={handleLogout} className="btn-secondary">Cerrar sesión</button>
-                </div>
-            </nav>
+            </Navbar>
 
             <main className="profile-main">
                 <div className="userlist-card" style={{
@@ -258,3 +230,7 @@ const avatarStyle = {
     fontSize: '0.85rem',
     flexShrink: 0
 };
+
+
+
+

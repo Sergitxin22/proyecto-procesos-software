@@ -1,72 +1,50 @@
 import { useState, useEffect } from 'react';
+import Navbar from '../../components/layout/Navbar';
+import { useNavigate } from 'react-router-dom';
 import './CreateCourse.css';
+import { courseService } from '../../services/api.service';
 
 export default function CreateCourse() {
+    const navigate = useNavigate();
     const [courseName, setCourseName] = useState('');
     const [courseCategory, setCourseCategory] = useState('');
     const [courseDescription, setCourseDescription] = useState('');
     const [courseDifficulty, setCourseDifficulty] = useState('');
     const token = localStorage.getItem('token');
-    const API_URL = "http://localhost:8080/api/courses/";
 
     useEffect(() => {
-        // Si no hay token, redirigir directo a autenticarse
         if (!token) {
-            window.history.pushState({}, '', '/auth');
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            navigate('/auth');
+
             return;
         }
     })
 
     const createCourse = async () => {
         try {
-            const res = await fetch(`${API_URL}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    nombre: courseName,
-                    categoria: courseCategory,
-                    descripcion: courseDescription,
-                    dificultad: courseDifficulty,
-                })
+            await courseService.createCourse({
+                nombre: courseName,
+                categoria: courseCategory,
+                descripcion: courseDescription,
+                dificultad: courseDifficulty,
             });
-
-            const data = await res.json();
-
-            if (res.ok) {
-                navigateToProfile();
-            } else {
-                alert(data.mensaje || "Error al crear el curso.");
-            }
+            navigateToProfile();
         } catch (err) {
-            alert(`Error de conexión: ${err.message}`);
+            alert(`Error: ${err.message}`);
         }
     };
 
-    const navigateToHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
-    };
-
     const navigateToProfile = () => {
-        window.history.pushState({}, '', '/profile');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/profile');
+
     };
 
     return (
         <div className="profile-layout">
-            <nav className="navbar">
-                <div className="navbar-logo" onClick={navigateToHome} style={{ cursor: 'pointer' }}>
-                    🎓 Flexilearn
-                </div>
-                <div className="navbar-links">
-                    <a href="#cursos">Mis Cursos</a>
+            <Navbar>
+                <a href="#cursos">Mis Cursos</a>
                     <button onClick={navigateToProfile} className="btn-secondary">Volver al perfil</button>
-                </div>
-            </nav>
+            </Navbar>
 
             <main className="profile-main">
                 <div className="profile-card create-course-card">
@@ -151,3 +129,7 @@ export default function CreateCourse() {
         </div>
     );
 }
+
+
+
+

@@ -1,113 +1,68 @@
 import { useState, useEffect } from 'react';
+import Navbar from '../../components/layout/Navbar';
+import { useNavigate } from 'react-router-dom';
 import './Profile.css';
+import { authService, userService } from '../../services/api.service';
 
 export default function Profile() {
+    const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const token = localStorage.getItem('token');
-    const API_URL = "http://localhost:8080/api/auth";
 
     useEffect(() => {
-        // Si no hay token, redirigir directo a autenticarse
         if (!token) {
-            window.history.pushState({}, '', '/auth');
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            navigate('/auth');
+
             return;
         }
 
-        const fetchCourses = async () => {
+        const loadData = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/users/createdCourses`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const data = await res.json();
-
-                if (res.ok) {
-                    setCourses(data);
-                } else {
-                    setError(data.mensaje || "Error al cargar los cursos.");
-                }
+                const [coursesData, userData] = await Promise.all([
+                    userService.getCreatedCourses(),
+                    authService.getUserProfile()
+                ]);
+                setCourses(coursesData);
+                setUser(userData);
             } catch (err) {
-                setError(`Error de conexión: ${err.message}`);
+                setError(err.message);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchCourses();
-
-        const fetchUserProfile = async () => {
-            try {
-                const res = await fetch(`${API_URL}/user`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const data = await res.json();
-
-                if (res.ok) {
-                    setUser(data);
-                } else {
-                    setError(data.mensaje || "Error al recuperar el perfil.");
-                    // Si el token es inválido, deberíamos forzar a que vuelvan a loguearse tras mostrar el error
-                }
-            } catch (err) {
-                setError(`Error de conexión: ${err.message}`);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUserProfile();
-    }, [token]);
+        loadData();
+    }, [navigate, token]);
 
     const handleLogout = async () => {
         try {
-            // Intentar avisar al backend (aunque falle nos deslogueamos localmente igual)
-            await fetch(`${API_URL}/logout`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            await authService.logout();
         } catch (e) {
             console.error(e);
         }
 
-        // Limpiamos token y volvemos al inicio
         localStorage.removeItem('token');
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
-    };
+        navigate('/');
 
-    const navigateToHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
     };
 
     const navigateToCreateCourse = () => {
-        window.history.pushState({}, '', '/create_course');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/create_course');
+
     };
 
     const navigateToCreatedCourses = () => {
-        window.history.pushState({}, '', '/created_courses');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/created_courses');
+
     };
 
     const navigateToAdminPanel = () => {
-        window.history.pushState({}, '', '/admin');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/admin');
+
     };
 
     if (loading) {
@@ -132,15 +87,10 @@ export default function Profile() {
 
     return (
         <div className="profile-layout">
-            <nav className="navbar">
-                <div className="navbar-logo" onClick={navigateToHome} style={{ cursor: 'pointer' }}>
-                    🎓 Flexilearn
-                </div>
-                <div className="navbar-links">
-                    <a href="#cursos">Mis Cursos</a>
-                    <button onClick={handleLogout} className="btn-secondary">Cerrar sesión</button>
-                </div>
-            </nav>
+            <Navbar>
+                <a href="#cursos">Mis Cursos</a>
+                <button onClick={handleLogout} className="btn-secondary">Cerrar sesión</button>
+            </Navbar>
 
             <main className="profile-main">
                 <div className="profile-card">
@@ -167,7 +117,7 @@ export default function Profile() {
                     </div>
 
                     <div className="profile-actions">
-                        <button className="btn-primary btn-full" onClick={navigateToHome}>
+                        <button className="btn-primary btn-full" onClick={() => navigate('/')}>
                             Ir al Playground
                         </button>
 
@@ -192,3 +142,7 @@ export default function Profile() {
         </div>
     );
 }
+
+
+
+

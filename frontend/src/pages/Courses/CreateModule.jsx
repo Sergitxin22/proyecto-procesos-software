@@ -1,68 +1,51 @@
 import { useState, useEffect } from 'react';
+import Navbar from '../../components/layout/Navbar';
+import { useNavigate } from 'react-router-dom';
 import './CreateCourse.css';
+import { courseService } from '../../services/api.service';
 
 export default function CreateModule() {
+    const navigate = useNavigate();
     const [moduleName, setModuleName] = useState('');
     const [moduleDescription, setModuleDescription] = useState('');
 
     const token = localStorage.getItem('token');
-    const API_URL = "http://localhost:8080/api/courses/modules";
 
     // Get course ID from URL e.g. /created_courses/1/create_module
     const courseId = window.location.pathname.split('/')[2];
 
     useEffect(() => {
         if (!token) {
-            window.history.pushState({}, '', '/auth');
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            navigate('/auth');
+
         }
-    }, []);
+    }, [navigate, token]);
 
     const handleCreateModule = async () => {
         try {
-            const res = await fetch(`${API_URL}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    nombre: moduleName,
-                    descripcion: moduleDescription,
-                    idCurso: courseId,
-                })
+            await courseService.createModule({
+                nombre: moduleName,
+                descripcion: moduleDescription,
+                idCurso: courseId,
             });
 
-            const data = await res.json();
+            navigate(`/created_courses/${courseId}`);
 
-            if (res.ok) {
-                window.history.pushState({}, '', `/created_courses/${courseId}`);
-                window.dispatchEvent(new PopStateEvent('popstate'));
-            } else {
-                alert(data.mensaje || "Error al crear el módulo.");
-            }
         } catch (err) {
             alert(`Error de conexión: ${err.message}`);
         }
     };
 
     const navigateBack = () => {
-        window.history.pushState({}, '', `/created_courses/${courseId}`);
-        window.dispatchEvent(new PopStateEvent('popstate'));
-    };
+        navigate(`/created_courses/${courseId}`);
 
-    const navigateToHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
     };
 
     return (
         <div className="profile-layout">
-            <nav className="navbar">
-                <div className="navbar-logo" onClick={navigateToHome} style={{ cursor: 'pointer' }}>
-                    🎓 Flexilearn
-                </div>
-                <div className="navbar-links">
-                    <button onClick={navigateBack} className="btn-secondary">Volver al curso</button>
-                </div>
-            </nav>
+            <Navbar>
+                <button onClick={navigateBack} className="btn-secondary">Volver al curso</button>
+            </Navbar>
 
             <main className="profile-main">
                 <div className="profile-card create-course-card">
@@ -116,3 +99,7 @@ export default function CreateModule() {
         </div>
     );
 }
+
+
+
+

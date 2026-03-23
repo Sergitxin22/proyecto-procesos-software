@@ -1,5 +1,6 @@
 import { useState } from "react"
 import "./TestAuth.css"
+import { authService } from "../../services/api.service"
 
 export default function TestAuth() {
   const [token, setToken] = useState(null)
@@ -10,8 +11,6 @@ export default function TestAuth() {
   const [userInfo, setUserInfo] = useState(null)
   const [userList, setUserList] = useState(null)
 
-  const API_URL = "http://localhost:8080/api/auth"
-
   const showMessage = (msg) => {
     setMessage(msg)
     setTimeout(() => setMessage(''), 5000)
@@ -20,53 +19,34 @@ export default function TestAuth() {
   const handleRegister = async (e) => {
     e.preventDefault()
     try {
-      const res = await fetch(`${API_URL}/registro`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(regForm)
-      })
-      const data = await res.json()
-      if (res.ok) {
-        showMessage(`Registro exitoso: ${data.mensaje}`)
-        setRegForm({ nombre: "", email: "", password: "" })
-      } else showMessage(`Error en registro: ${data.mensaje || "Error"}`)
-    } catch (err) { showMessage(`Error de conexión: ${err.message}`) }
+      const data = await authService.register(regForm.nombre, regForm.email, regForm.password)
+      showMessage(`Registro exitoso: ${data.mensaje || 'OK'}`)
+      setRegForm({ nombre: "", email: "", password: "" })
+    } catch (err) { showMessage(`Error en registro: ${err.message}`) }
   }
 
   const handleLogin = async (e) => {
     e.preventDefault()
     try {
-      const res = await fetch(`${API_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(loginForm)
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setToken(data.token)
-        showMessage(`Inicio de sesión exitoso`)
-      } else showMessage(`Error en login: ${data.mensaje || "Error"}`)
-    } catch (err) { showMessage(`Error de conexión: ${err.message}`) }
+      const data = await authService.login(loginForm.email, loginForm.password)
+      setToken(data.token)
+      localStorage.setItem('token', data.token); // Store token for authService internal usage
+      showMessage(`Inicio de sesión exitoso`)
+    } catch (err) { showMessage(`Error en login: ${err.message}`) }
   }
 
   const handleLogout = async () => {
     if (!token) return
     try {
-      const res = await fetch(`${API_URL}/logout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        }
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setToken(null)
-        setUserInfo(null)
-        showMessage(`Logout exitoso: ${data.mensaje}`)
-        setLoginForm({ email: "", password: "" })
-      } else showMessage(`Error en logout: ${data.mensaje || "Error"}`)
-    } catch (err) { showMessage(`Error de conexión: ${err.message}`) }
+      // Setup the token temporarily if missing in localStorage because authService uses localStorage
+      localStorage.setItem('token', token);
+      const data = await authService.logout()
+      setToken(null)
+      setUserInfo(null)
+      localStorage.removeItem('token')
+      showMessage(`Logout exitoso: ${data?.mensaje || 'OK'}`)
+      setLoginForm({ email: "", password: "" })
+    } catch (err) { showMessage(`Error en logout: ${err.message}`) }
   }
 
   const handleGetUser = async () => {
@@ -75,36 +55,26 @@ export default function TestAuth() {
       return
     }
     try {
-      const res = await fetch(`${API_URL}/user`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        }
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setUserInfo(data)
-        showMessage("Datos de usuario obtenidos correctamente")
-      } else {
-        setUserInfo(null)
-        showMessage(`Error al obtener usuario: ${data.mensaje || "Error"}`)
-      }
-    } catch (err) { showMessage(`Error de conexión: ${err.message}`) }
+      localStorage.setItem('token', token);
+      const data = await authService.getUserProfile()
+      setUserInfo(data)
+      showMessage("Datos de usuario obtenidos correctamente")
+    } catch (err) {
+      setUserInfo(null)
+      showMessage(`Error al obtener usuario: ${err.message}`)
+    }
   }
 
   const handleGetAllUsers = async () => {
     try {
-      const res = await fetch(`${API_URL}/users`)
-      const data = await res.json()
-      if (res.ok) {
-        setUserList(data)
-        showMessage(`Se obtuvieron ${data.length} usuarios`)
-      } else {
-        setUserList(null)
-        showMessage(`Error al obtener usuarios: ${data.mensaje || "Error"}`)
-      }
-    } catch (err) { showMessage(`Error de conexión: ${err.message}`) }
+      if (token) localStorage.setItem('token', token);
+      const data = await authService.getAllUsers()
+      setUserList(data)
+      showMessage(`Se obtuvieron ${data.length} usuarios`)
+    } catch (err) {
+      setUserList(null)
+      showMessage(`Error al obtener usuarios: ${err.message}`)
+    }
   }
 
   return (
@@ -240,3 +210,7 @@ export default function TestAuth() {
     </div>
   )
 }
+
+
+
+

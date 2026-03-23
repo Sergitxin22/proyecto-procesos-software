@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
+import Navbar from '../../components/layout/Navbar';
+import { useNavigate } from 'react-router-dom';
 import './CreatedCourses.css';
+import { userService } from '../../services/api.service';
 
 const DIFFICULTY_LABELS = {
     FACIL: { label: 'Fácil', className: 'badge-easy' },
@@ -8,71 +11,49 @@ const DIFFICULTY_LABELS = {
 };
 
 export default function CourseList() {
+    const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const token = localStorage.getItem('token');
-    const API_URL = "http://localhost:8080/api/users/createdCourses";
 
     useEffect(() => {
         if (!token) {
-            window.history.pushState({}, '', '/auth');
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            navigate('/auth');
+
             return;
         }
 
         const fetchCourses = async () => {
             try {
-                const res = await fetch(`${API_URL}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const data = await res.json();
-
-                if (res.ok) {
-                    setCourses(data);
-                } else {
-                    setError(data.mensaje || "Error al cargar los cursos.");
-                }
+                const data = await userService.getCreatedCourses();
+                setCourses(data);
             } catch (err) {
-                setError(`Error de conexión: ${err.message}`);
+                setError(err.message);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchCourses();
-    }, []);
-
-    const navigateToHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
-    };
+    }, [navigate, token]);
 
     const navigateToProfile = () => {
-        window.history.pushState({}, '', '/profile');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/profile');
+
     };
 
     const navigateToCourse = (id) => {
-        window.history.pushState({}, '', `/created_courses/${id}`);
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate(`/created_courses/${id}`);
+
     };
 
     return (
         <div className="profile-layout">
-            <nav className="navbar">
-                <div className="navbar-logo" onClick={navigateToHome} style={{ cursor: 'pointer' }}>
-                    🎓 Flexilearn
-                </div>
-                <div className="navbar-links">
-                    <button onClick={navigateToProfile} className="btn-secondary">Volver al perfil</button>
-                </div>
-            </nav>
+            <Navbar>
+                <button onClick={navigateToProfile} className="btn-secondary">Volver al perfil</button>
+            </Navbar>
 
             <main className="profile-main">
                 <div className="courses-container">
@@ -119,3 +100,7 @@ export default function CourseList() {
         </div>
     );
 }
+
+
+
+

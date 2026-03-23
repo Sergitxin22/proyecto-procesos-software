@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Auth.css';
+import { authService } from '../../services/api.service';
 
 export default function Auth() {
+    const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({
         nombre: '',
@@ -23,43 +26,29 @@ export default function Auth() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const endpoint = isLogin ? '/login' : '/registro';
 
         try {
-            const res = await fetch(`${API_URL}${endpoint}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(
-                    isLogin
-                        ? { email: formData.email, password: formData.password }
-                        : formData
-                )
-            });
-            const data = await res.json();
+            if (isLogin) {
+                const data = await authService.login(formData.email, formData.password);
+                showMessage('Inicio de sesión exitoso', 'success');
+                localStorage.setItem('token', data.token);
+                setTimeout(() => {
+                    navigate('/profile');
 
-            if (res.ok) {
-                showMessage(isLogin ? 'Inicio de sesión exitoso' : 'Registro exitoso. Ahora puedes entrar.', 'success');
-                if (!isLogin) {
-                    setIsLogin(true); // switch to login after successful register
-                } else {
-                    // Here you would save the token to localStorage and redirect to a dashboard
-                    localStorage.setItem('token', data.token);
-                    setTimeout(() => {
-                        window.history.pushState({}, '', '/profile');
-                        window.dispatchEvent(new PopStateEvent('popstate'));
-                    }, 1500);
-                }
+                }, 1500);
             } else {
-                showMessage(data.mensaje || 'Error en la autenticación');
+                await authService.register(formData.nombre, formData.email, formData.password);
+                showMessage('Registro exitoso. Ahora puedes entrar.', 'success');
+                setIsLogin(true); // switch to login after successful register
             }
         } catch (err) {
-            showMessage(`Error de conexión: ${err.message}`);
+            showMessage(err.message);
         }
     };
 
     const navigateHome = () => {
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigate('/');
+
     };
 
     return (
@@ -134,3 +123,7 @@ export default function Auth() {
         </div>
     );
 }
+
+
+
+
