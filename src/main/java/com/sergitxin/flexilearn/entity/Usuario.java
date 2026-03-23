@@ -23,6 +23,7 @@ public class Usuario {
     
     private String nombre;
     private String token; // Para guardar la sesión en BBDD
+    private boolean esAdmin;
 
     @OneToMany(mappedBy = "usuario")
     @JsonIgnore // NOTA: Añadir esto probablemente nos la lie parda más tarde. Buena suerte!
@@ -56,6 +57,10 @@ public class Usuario {
         return nombre;
     }
 
+    public boolean getEsAdmin(){
+        return esAdmin;
+    }
+
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
@@ -66,6 +71,10 @@ public class Usuario {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public void setEsAdmin(boolean esAdmin){
+        this.esAdmin = esAdmin;
     }
 
     public List<Curso> getCursosCreados() {
