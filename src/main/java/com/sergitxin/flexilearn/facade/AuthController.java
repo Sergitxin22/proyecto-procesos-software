@@ -10,10 +10,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sergitxin.flexilearn.dto.GetUserInfoRequestDto;
 import com.sergitxin.flexilearn.dto.LoginRequestDto;
 import com.sergitxin.flexilearn.dto.LoginResponseDto;
-import com.sergitxin.flexilearn.dto.LogoutRequestDto;
 import com.sergitxin.flexilearn.dto.MessageResponseDto;
 import com.sergitxin.flexilearn.dto.RegisterRequestDto;
 import com.sergitxin.flexilearn.entity.Usuario;
