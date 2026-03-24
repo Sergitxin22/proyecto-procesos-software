@@ -1,6 +1,7 @@
 package com.sergitxin.flexilearn.entity;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +10,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "cursos")
@@ -28,6 +32,10 @@ public class Curso {
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+    
+    @ManyToMany(mappedBy = "cursosMatriculados")
+    @JsonIgnore
+    private List<Usuario> usuariosMatriculados = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -83,5 +91,13 @@ public class Curso {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+    
+    public List<Usuario> getUsuariosMatriculados() { 
+    	return usuariosMatriculados; 
+    }
+    
+    public void setUsuariosMatriculados(List<Usuario> usuariosMatriculados) { 
+    	this.usuariosMatriculados = usuariosMatriculados; 
     }
 }

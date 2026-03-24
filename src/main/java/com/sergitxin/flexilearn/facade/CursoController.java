@@ -1,5 +1,7 @@
 package com.sergitxin.flexilearn.facade;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -66,5 +68,29 @@ public class CursoController {
     @Parameter(name = "id", description = "El identificador único del contenedor a cambiar", required = true)
 	@PathVariable("id") Long id) {
     	return ResponseEntity.ok(cursoService.getCurso(id));
+    }
+    
+    @Operation(summary = "Matricula al usuario en un curso")
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping("/{id}/enroll")
+    public ResponseEntity<?> enrollCourse(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @PathVariable("id") Long cursoId) {
+        if (authHeader == null || !authHeader.startsWith("Bearer "))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
+        String token = authHeader.substring(7);
+        cursoService.matricularUsuario(token, cursoId);
+        return ResponseEntity.ok(new MessageResponseDto("Matriculado correctamente"));
+    }
+
+    @Operation(summary = "Obtiene los cursos en los que está matriculado el usuario")
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/enrolled")
+    public ResponseEntity<?> getEnrolledCourses(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer "))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
+        String token = authHeader.substring(7);
+        return ResponseEntity.ok(cursoService.getCursosMatriculados(token));
     }
 }

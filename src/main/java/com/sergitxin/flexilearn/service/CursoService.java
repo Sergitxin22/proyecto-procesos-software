@@ -1,5 +1,7 @@
 package com.sergitxin.flexilearn.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.sergitxin.flexilearn.dao.CursoDAO;
@@ -65,5 +67,19 @@ public class CursoService {
 
     public Curso getCurso(Long id) {
         return cursoDAO.findById(id).get();
+    }
+    
+    public void matricularUsuario(String token, Long cursoId) {
+        Usuario user = usuarioDAO.findByToken(token).get();
+        Curso curso = cursoDAO.findById(cursoId).get();
+        if (!user.getCursosMatriculados().contains(curso)) {
+            user.getCursosMatriculados().add(curso);
+            usuarioDAO.save(user);
+        }
+    }
+
+    public List<Curso> getCursosMatriculados(String token) {
+        Usuario user = usuarioDAO.findByToken(token).get();
+        return user.getCursosMatriculados();
     }
 }
