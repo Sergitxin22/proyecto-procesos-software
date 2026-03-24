@@ -65,9 +65,14 @@ public class CursoController {
 
     @GetMapping("/{id}/")
     public ResponseEntity<Curso> getCourse(
-    @Parameter(name = "id", description = "El identificador único del contenedor a cambiar", required = true)
 	@PathVariable("id") Long id) {
     	return ResponseEntity.ok(cursoService.getCurso(id));
+    }
+
+    @Operation(summary = "Obtener cursos", description = "Obtiene todos los cursos")
+    @GetMapping("/")
+    public ResponseEntity<List<Curso>> getCourses() {
+    	return ResponseEntity.ok(cursoService.getAllCursos());
     }
     
     @Operation(summary = "Matricula al usuario en un curso")

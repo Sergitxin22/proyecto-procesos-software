@@ -11,6 +11,13 @@ export default function Landing() {
         window.dispatchEvent(navEvent);
     };
 
+    const navigateToCourses = () => {
+        navigate('/courses');
+        const navEvent = new PopStateEvent('popstate');
+        window.dispatchEvent(navEvent);
+    };
+
+
     return (
         <div className="landing-container">
             <Navbar>
@@ -28,7 +35,7 @@ export default function Landing() {
                         </p>
                         <div className="hero-actions">
                             <button onClick={navigateToAuth} className="btn-primary btn-large">Comenzar a aprender</button>
-                            <button onClick={navigateToAuth} className="btn-secondary btn-large">Crear un curso</button>
+                            <button onClick={navigateToCourses} className="btn-secondary btn-large">Ver cursos disponibles</button>
                         </div>
                     </div>
                     <div className="hero-image">

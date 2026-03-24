@@ -5,6 +5,7 @@ import Auth from './pages/Auth/Auth'
 import Admin from './pages/Admin/Admin'
 import UserList from './pages/Admin/UserList'
 import Profile from './pages/Profile/Profile'
+import Courses from './pages/Courses/Courses'
 import CreateCourse from './pages/Courses/CreateCourse'
 import UserCourse from './pages/Courses/UserCourse'
 import CreatedCourses from './pages/Courses/CreatedCourses'
@@ -26,6 +27,7 @@ export default function App() {
       <Route path="/created_courses/:courseId/modules/:moduleId/create_exercise" element={<CreateExercise />} />
       <Route path="/admin" element={<Admin />} />
       <Route path="/admin/users" element={<UserList />} />
+      <Route path="/courses" element={<Courses />} />
     </Routes>
   )
 }

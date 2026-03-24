@@ -90,10 +90,33 @@ export const courseService = {
         return handleResponse(res);
     },
 
+    getEnrolledCourses: async () => {
+        const res = await fetch(`${API_BASE_URL}/courses/enrolled`, {
+            method: 'GET',
+            headers: getHeaders(true),
+        });
+        return handleResponse(res);
+    },
+
+    enroll: async (id) => {
+        const res = await fetch(`${API_BASE_URL}/courses/${id}/enroll`, {
+            method: 'POST',
+            headers: getHeaders(true),
+        });
+        return handleResponse(res);
+    },
+
     getCourse: async (id) => {
         const res = await fetch(`${API_BASE_URL}/courses/${id}/`, {
             method: 'GET',
             headers: getHeaders(true)
+        });
+        return handleResponse(res);
+    },
+
+    getAllCourses: async () => {
+        const res = await fetch(`${API_BASE_URL}/courses/`, {
+            method: 'GET',
         });
         return handleResponse(res);
     },
