@@ -123,9 +123,8 @@ export const adminService = {
     getUsers: async () => {
         const token = localStorage.getItem('token');
         const res = await fetch(`${API_BASE_URL}/admin/users`, {
-            method: 'POST', // Siguiendo tu backend actual que usa POST para requerir el DTO
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token }) // Lo mandas en el body por cómo está el adminService ahora
+            method: 'GET', // Siguiendo tu backend actual que usa POST para requerir el DTO
+            headers: getHeaders(true)
         });
         return handleResponse(res);
     },
@@ -133,9 +132,9 @@ export const adminService = {
     deleteUser: async (nombreUsuario) => {
         const token = localStorage.getItem('token');
         const res = await fetch(`${API_BASE_URL}/admin/deleteUser`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token, nombreUsuario })
+            method: 'DELETE',
+            headers: getHeaders(true),
+            body: JSON.stringify({ nombreUsuario })
         });
         return handleResponse(res);
     }
