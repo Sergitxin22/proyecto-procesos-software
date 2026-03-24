@@ -98,7 +98,15 @@ export default function CourseList() {
                                 const isEnrolled = enrolledCourses.includes(course.id);
                                 const diff = DIFFICULTY_LABELS[course.dificultad] || { label: course.dificultad, className: '' };
                                 return (
-                                    <div key={course.id} className="course-card" onClick={() => enroll(course.id)}>
+                                    <div key={course.id} className="course-card"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (isEnrolled) {
+                                                            navigate(`/courses/${course.id}`);
+                                                        } else {
+                                                            enroll(course.id);
+                                                        }
+                                                    }}>
                                         <span className="course-category">{course.usuario.nombre}</span>
                                         <div className="course-card-header">
                                             <span className="course-category">{course.categoria}</span>
@@ -111,9 +119,7 @@ export default function CourseList() {
                                                 📦 {course.modulos.length} módulo{course.modulos.length !== 1 ? 's' : ''}
                                             </span>
                                                 <button
-                                                    className={isEnrolled ? "btn-secondary" : "btn-primary"}
-                                                    onClick={(e) => { e.stopPropagation(); if (!isEnrolled) enroll(course.id); }}
-                                                >
+                                                    className={isEnrolled ? "btn-secondary" : "btn-primary"}>
                                                     {isEnrolled ? 'Ver curso →' : 'Matricúlate →'}
                                                 </button>
                                         </div>

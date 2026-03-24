@@ -12,9 +12,12 @@ export default function Landing() {
     };
 
     const navigateToCourses = () => {
-        navigate('/courses');
-        const navEvent = new PopStateEvent('popstate');
-        window.dispatchEvent(navEvent);
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/auth');
+        } else {
+            navigate('/courses');
+        }
     };
 
 
