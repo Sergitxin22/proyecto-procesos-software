@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: flexilearn
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_flexilearn:/var/lib/postgresql
+  
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/backend/Dockerfile
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/frontend/Dockerfile
+    ports:
+      - "5173:80"
+
+volumes:
+  postgres_flexilearn:
