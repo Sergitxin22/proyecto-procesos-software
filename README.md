@@ -1,99 +1,188 @@
 # Flexilearn - Sistema de Gestión de Aprendizaje (LMS)
 
-Flexilearn es un proyecto integral de plataforma educativa (LMS) que abarca no solo un sólido sistema de autenticación, sino también la gestión completa de cursos, módulos, ejercicios y perfiles de usuario. Este documento explica el flujo general de la aplicación, su arquitectura orientada a servicios y las integraciones tecnológicas aplicadas.
+Flexilearn es un proyecto integral de plataforma educativa interactiva (LMS) que abarca gestión completa de autenticación, administración de cursos, módulos, ejercicios, perfiles de usuario y roles administrativos. Este documento describe en detalle la arquitectura, tecnologías clave establecidas y las instrucciones exactas de ejecución en todos sus modos.
 
-## Arquitectura y Capas
+## 🛠️ Tecnologías y Arquitectura
 
-El backend está construido con **Spring Boot (Java)** siguiendo una arquitectura en capas para separar responsabilidades adecuadamente y un frontend reactivo mediante **React + Vite**:
+El sistema está construido siguiendo un esquema cliente-servidor, con tecnologías modernas para facilitar su mantenimiento y escalabilidad.
 
-1. **Controller / Facade:** Define los puntos de entrada (p.ej., `AuthController`, `CursoController`) y se comunica mediante REST API y DTOs generados e interceptados.
-2. **Service / Lógica de Negocio:** Encarga de todo el flujo (creación de usuarios, creación de cursos, asociación de módulos y validaciones).
-3. **Repository / DAO (`UsuarioDao`, `CursoDAO`, `ModuloDAO`, `EjercicioDAO`):** Interfaces que se comunican con persistencia (vía Spring Data JPA).
-4. **Entity:** Las clases de persistencia representativas de la lógica del LMS (`Usuario`, `Curso`, `Modulo`, `Ejercicio`).
-5. **Port & Adapter / Factory (`AuthExternalFactory`):** Define un punto de conexión hacia sistemas externos (Google, GitHub) para en un futuro delegar la validación de tokens o Single Sign-On.
+### ⚙️ Backend (Spring Boot 3 + Java)
+La API REST funciona bajo una estructura multicapas (Arquitectura Hexagonal/Capas):
+1. **Controller / Facade:** Define los puntos de entrada (p.ej., `AuthController`, `CursoController`) recibiendo y despachando DTOs (Data Transfer Objects).
+2. **Service / Lógica de Negocio:** Encargada de agrupar todo el flujo de trabajo funcional y algoritmos del sistema (validaciones, hasheo de contraseñas, etc.).
+3. **Repository / DAO:** Capa de persistencia haciendo uso de **Spring Data JPA**. Gestiona interfaces como `UsuarioDao`, `CursoDAO`, `ModuloDAO` y `EjercicioDAO`.
+4. **Entity:** Modelado relacional mapeado a base de datos (`Usuario`, `Curso`, `Modulo`, `Ejercicio`).
+5. **Port & Adapter / Factory:** Se diseñó un patrón *Abstract Factory* (`AuthExternalFactory`) preparado para delegar autenticaciones hacia sistemas SSO externos (Google/GitHub).
 
----
+### 🖥️ Frontend (React 18 + Vite)
+El panel cliente está desarrollado como una SPA (Single Page Application) en la carpeta `/frontend`:
+- **Tecnologías:** React, Vite para bundler ultrarrápido, React Router para navegación, CSS responsivo basado en Cards y Axios/Fetch para consumir la API.
+- **Rutas Principales:**
+  - `Landing Page`: Presentación del sistema o plataforma.
+  - `Autenticación`: Formularios para login y registro (`Auth.jsx`, `TestAuth.jsx`).
+  - `Cursos`: Creación, despliegue y edición de estructura (Módulos/Ejercicios) para el rol de profesor y estudiante.
+  - `Admin`: Panel exclusivo de gestión global (`UsersList`).
+  - `Profile`: Panel personal por cuenta.
 
-## Funcionalidades Principales
+### 💾 Base de Datos (PostgreSQL + Docker)
+El sistema emplea una instancia íntegra en **PostgreSQL**, provisionada automáticamente mediante contenedores Docker, e incluye un `DataInitializer` preconfigurado en Spring para inyectar cuentas locales base.
 
-El proyecto cubre los siguientes módulos:
+#### 📊 Modelo de Datos (Diagrama E-R)
+La estructura relacional principal que soporta toda la lógica de los cursos, módulos, ejercicios y usuarios, se resume en el siguiente diagrama:
 
-### 1. Gestión de Autenticación
-- **Registro:** Crea un usuario validando credenciales y correo en BD.
-- **Login:** Autentica cuentas y genera tokens (actualmente se integran pruebas del patrón Factory simulando validaciones tipo Google/GitHub SSO).
-- **Logout:** Permite invalidar sesiones registradas en BD.
-
-### 2. Gestión de Cursos (LMS)
-- Creación, edición, y listado de Cursos.
-- Creación y asociación de **Módulos** por cada curso asignado.
-- Creación de **Ejercicios** dentro de cada módulo.
-- Existen roles como Profesor y Administrador para el control de la información (ver `frontend/src/pages/Courses/` y `Admin/`).
-
----
-
-## Implementación del Patrón Factory (Validadores Externos)
-
-Como parte de la estructura hemos implementado un patrón de diseño **Abtract Factory / Factory Method** preparado para habilitar single-sign-on (SSO) con proveedores externos.
-
-1. Hemos creado una interfaz (Puerto de salida) de nombre `AuthExternalPort` que expone un único contrato llamado `validarTokenExterno`.
-2. Se definieron múltiples adaptadores a esta interfaz: `GoogleAuthExternalAdapter` y `GithubAuthExternalAdapter`.
-3. Hemos definido los tipos de proveedores soportados en el enum `AuthProvider`.
-4. El archivo principal de la estrategia es el inyectable `AuthExternalFactory`. Su propósito es construir y devolver el adaptador correcto dinámicamente dependiendo del Enum de entrada utilizando cláusulas `switch`.
-
-### Probando el Factory en la Práctica
-Actualmente hay un test "hardcodeado" incrustado el momento de validar el Login (`POST /api/auth/login`).
-
-Para verlo en acción:
-1. Inicia en local tu proyecto en Spring Boot.
-2. Usando SwaggerUI, lanza una petición hacia `/login`. 
-3. Revisa la consola interna de Spring Boot. Se verá el siguiente registro demostrando el funcionamiento inyectado con Google:
-   ```
-   Validando token con Google OAuth2 API...
-   ¿Es válido el token en el proveedor externo? true
-   ```
-4. Si cambias el `AuthService` para que llame a `AuthProvider.GITHUB`, la salida automática cambiará hacia la estrategia de la API de Github.
+![Diagrama Entidad-Relación](src/main/resources/static/Diagrama%20E-R.png)
 
 ---
 
-## Panel Frontend (React + Vite)
+## 🌟 Funcionalidades Principales
 
-El proyecto incluye una Interfaz de Usuario robusta en la carpeta `/frontend` construida con **React JS**. 
+1. **Gestión de Autenticación y Seguridad:**
+   - Registro de usuarios con hasheo de contraseñas de alta seguridad.
+   - Login por validaciones locales con generación de **Tokens de sesión en base de datos**.
+   - Integración funcional del Patrón Factory para testing de validadores de tokens externos.
+2. **Gestión Estructural de Cursos (LMS):**
+   - Sistema de jerarquía pura: Cursos → Módulos → Ejercicios.
+   - Perfil de estudiante vs. Creador de Curso.
+   - Entorno precargado con cursos de ejemplo (Introducción a Java, Spring Boot Avanzado), organizados con módulos didácticos y ejercicios interactivos puntuados.
+3. **Gestión de Usuarios y Roles:**
+   - Usuarios base generados automáticamente (`aitor@aitor.com`, `markel@markel.com` como usuarios estándar; `aroa@aroa.com` como **admin**).
+   - Panel de control de administradores.
 
-### Características del Frontend:
-- **UI Moderna**: Desarrollada mediante CSS puro estructurado en Tarjetas (Cards), utilizando un sistema de diseño minimalista con notificaciones.
-- **Rutas y Vistas**:
-  - `Landing Page / Dashboard`: Vista principal inicial de bienvenida/panel.
-  - `Autenticación`: Formularios Reactivos para Registro e Inicio de sesión.
-  - `Cursos`: Vistas para visualizar listados (`CreatedCourses`), o herramientas para docentes (`CreateCourse`, `CreateModule`, `CreateExercise`).
-  - `Panel Admin`: Espacios de control, por ejemplo un visualizador de usuarios (`UserList`).
-  - `Perfil`: Vista de usuario individual (`Profile`).
-- **Gestor de Sesión**: Contiene un módulo "Estado Actual" que verifica si tienes un JWT/Token vivo, e incluye la invocación con el Token hacia el final de la sesión.
-- **Integración API/CORS**: Comunicación fluida con los endpoints de Spring Boot mediante Axios o Fetch integrados en `/services/api.service.js`.
+## 📁 Estructura del Proyecto
 
-### Cómo ejecutar los entornos:
+El repositorio está organizado en varios módulos clave para mantener la separación entre cliente y servidor.
 
-Dado que hay varias tecnologías conviviendo en paralelo, se deben arrancar en **ventanas de terminal separadas**:
+```text
+proyecto-procesos-software/
+├── docker/                 # Archivos de orquestación (Contenedores y BD Postgres)
+│   ├── deploy.yaml         # Compose pre-configurado para producción
+│   └── compose.yaml        # Compose clásico local de DB
+├── frontend/               # Aplicación cliente React + Vite
+│   ├── src/
+│   │   ├── components/     # Piezas visuales reusables (Navbar, Cards)
+│   │   ├── pages/          # Vistas (Admin, Autenticación, Cursos)
+│   │   ├── services/       # Módulo API para consumir el backend
+│   │   └── ...
+├── src/                    # Código fuente del Backend Spring Boot (Java)
+│   ├── main/java/.../flexilearn/
+│   │   ├── dao/            # Data Access Objects (JPA Repositories)
+│   │   ├── dto/            # Data Transfer Objects
+│   │   ├── entity/         # Modelos de Base de Datos
+│   │   ├── service/        # Lógica de Negocio Central
+│   │   └── facade/         # Controladores REST API
+│   └── main/resources/     # Opciones globales de JPA, PostgreSQL e imágenes
+└── build.gradle            # Gestor de dependencias backend
+```
 
-**1. Levantar la Base de Datos (Docker)**
-Abre una terminal de linux (wsl) en la carpeta principal del proyecto y levanta el contenedor de la base de datos:
+---
+
+## 🚀 Guía de Despliegue y Ejecución
+
+### Prerrequisitos
+Para ejecutar y colaborar en este proyecto, necesitas instalar el siguiente software en tu entorno local:
+- **Java JDK (17 o superior)** (para compilar y ejecutar el backend de Spring Boot).
+- **Node.js (18+) y NPM** (para la gestión de dependencias y ejecución del frontend).
+- **Docker y Docker Compose** (para levantar la base de datos y/o los contenedores orquestados).
+- Entorno **Linux/macOS** o **WSL 2** (Windows Subsystem for Linux), altamente recomendado.
+
+---
+
+El proyecto soporta dos modos de ejecución, dependiendo de la etapa en la que te encuentres:
+
+### Opción A: Entorno de Desarrollo (Develop / Hot-Reload)
+Ideal para modificar código en tiempo real (con _hot-reloading_ en React y modo debug para el API). Se deben arrancar sus 3 fragmentos vitales en **ventanas de terminal separadas**:
+
+**Paso 1: Levantar la Base de Datos (PostgreSQL)**
+Abre una terminal de linux (como WSL) en la raíz del proyecto y enciende el contenedor:
 ```bash
 wsl
 cd docker
 docker compose up -d
 ```
 
-**2. Levantar el Backend (Spring Boot)**
-Abre una terminal en la carpeta principal del proyecto y ejecuta:
+**Paso 2: Levantar el Backend (Spring Boot)**
+Abre una segunda terminal en la raíz del proyecto y ejecuta:
 ```bash
-gradlew bootRun
+./gradlew bootRun
 ```
-*Esto activará el API en el puerto `8080`.*
+*(En terminales de comandos Windows tradicionales usa `gradlew.bat bootRun`). Su arranque exitoso conectará Spring con la BD en el puerto `8080` e inyectará los usuarios de prueba automáticamente si está vacía.*
 
-**3. Levantar el Frontend (React)**
-Una vez que el backend esté arriba, abre otra ventana de terminal en VS Code y navega al cliente web y arráncalo:
+**Paso 3: Levantar el Frontend (React)**
+Una vez que el backend esté arriba, abre una tercera ventana de terminal, dirígete al cliente web y arráncalo:
 ```bash
 cd frontend
-npm install  # (Solo la primera vez si no lo has clonado o instalado antes)
+npm install  # (Solo la primera vez para instalar dependencias desde package.json)
 npm run dev
 ```
-*Se desplegará una ruta local (como `http://localhost:5173`). Haz click sobre ella para probar el sistema visual.*
+*Se desplegará una ruta local (usualmente `http://localhost:5173`). Haz clic sobre ella para disfrutar visualmente de Flexilearn en tu navegador.*
+
+#### 📄 Documentación API (Swagger UI)
+Ya sea que inicies en modo desarrollador o de producción, el backend en Sprint Boot autogenera la tabla visual de los endpoints disponibles al momento de ejecutarse.
+Puedes lanzar consultas crudas hacia la API accediendo al entorno integrado de Swagger en:
+> **[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)**
+
+---
+
+### Opción B: Entorno de Producción (Deploy Orquestado / Full Docker)
+Ideal para probar su instalación en un servidor de producción. Este método **obvia las instalaciones de Node y Java**, envolviendo por completo backend y frontend y base de datos con `deploy.yaml`.
+
+⚠️ **Importante antes de desplegar:** Tienes que modificar una línea en el archivo de configuración del backend `pplication.properties`. 
+En la propiedad `spring.datasource.url`, donde pone `"localhost"` debes cambiarlo a `"db"` (el nombre del servicio de la base de datos en Docker).
+`spring.datasource.url=jdbc:postgresql://db:5432/postgres`
+
+Una vez cambiado, abre una terminal en la raíz del proyecto y ejecuta:
+```bash
+wsl
+cd docker
+docker compose -f deploy.yaml up -d --build
+```
+
+Una vez que el building process finalice, todo estará corriendo y sincronizado de forma autónoma:
+- **Frontend web público:** [http://localhost:5173](http://localhost:5173) (redirecciona internamente sus llamadas al backend).
+- **Backend API local:** `http://localhost:8080`.
+- **Base de Datos Postgres:** Expuesta y persistida internamente por los volúmenes del motor Docker.
+
+---
+
+### 🧹 Comandos Útiles (Troubleshooting y Reseteo)
+
+Si en algún momento necesitas resetear el entorno (limpiar la base de datos, purgar usuarios o forzar una reconstrucción total del backend/frontend tras cambios drásticos), puedes utilizar los siguientes comandos de Docker estando en la ruta `/docker`:
+
+**1. Detener todos los contenedores de desarrollo (solo Base de datos):**
+```bash
+docker compose down
+```
+
+**2. Resetear/Eliminar la Base de Datos al completo:**
+Al hacer esto, eliminarás el volumen persistente de Postgres. La próxima vez que inicies, Spring Boot ejecutará el `DataInitializer` desde cero:
+```bash
+docker compose down -v
+```
+
+**3. Forzar reconstrucción de contenedores de Producción (deploy):**
+Si hiciste cambios en el código y el comando `up -d` normal no los refleja, necesitas forzar a los contenedores a reconstruir las imágenes ignorando el caché:
+```bash
+docker compose -f deploy.yaml down
+docker compose -f deploy.yaml build --no-cache
+docker compose -f deploy.yaml up -d
+```
+
+**4. Resetearlo todo (Peligro - Nuke):**
+Para limpiar todos los contenedores y los volúmenes de datos mapeados del entorno de producción:
+```bash
+docker compose -f deploy.yaml down -v
+```
+
+---
+
+## 👥 Contribución y Buenas Prácticas
+
+Si deseas colaborar en el repositorio o realizar un branch, sigue estas directrices:
+- **Commits descriptivos:** Utiliza verbos de acción y referencias claras (ej. `feat: agregar controlador de cursos`, `fix: corregir CORS en AuthController`). Para conocer más buenas prácticas de cómo crear buenos commits puedes utilizar la web: **[Commiteando](https://commiteando.sergiomorales.dev/)**.
+- **Ramas (Branches):** Trabaja en ramas independientes como `feature/nueva-vista` o `fix/bug-login` y haz un *Pull Request* hacia la rama principal.
+
+---
+
+## 📄 Licencia
+
+Este proyecto está desarrollado bajo la licencia **MIT**. Puedes usar, copiar, modificar, fusionar, publicar, distribuir, sublicenciar y/o vender copias del software bajo las condiciones estipuladas.
