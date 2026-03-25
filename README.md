@@ -55,14 +55,16 @@ El repositorio está organizado en varios módulos clave para mantener la separa
 ```text
 proyecto-procesos-software/
 ├── docker/                 # Archivos de orquestación (Contenedores y BD Postgres)
+|   ├── frontend/           # Contiene el Dockerfile de la imagen del frontend
+|   ├── backend/            # Contiene el Dockerfile de la imagen del backend
 │   ├── deploy.yaml         # Compose pre-configurado para producción
-│   └── compose.yaml        # Compose clásico local de DB
+│   └── compose.yaml        # Compose clásico local de DB, para desarrollo
 ├── frontend/               # Aplicación cliente React + Vite
 │   ├── src/
 │   │   ├── components/     # Piezas visuales reusables (Navbar, Cards)
 │   │   ├── pages/          # Vistas (Admin, Autenticación, Cursos)
 │   │   ├── services/       # Módulo API para consumir el backend
-│   │   └── ...
+│   │   └── assets/         # Recursos públicos de la página
 ├── src/                    # Código fuente del Backend Spring Boot (Java)
 │   ├── main/java/.../flexilearn/
 │   │   ├── dao/            # Data Access Objects (JPA Repositories)
