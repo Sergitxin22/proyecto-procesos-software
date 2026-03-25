@@ -82,7 +82,7 @@ proyecto-procesos-software/
 
 ### Prerrequisitos
 Para ejecutar y colaborar en este proyecto, necesitas instalar el siguiente software en tu entorno local:
-- **Java JDK (17 o superior)** (para compilar y ejecutar el backend de Spring Boot).
+- **Java JDK 25** (para compilar y ejecutar el backend de Spring Boot).
 - **Node.js (18+) y NPM** (para la gestión de dependencias y ejecución del frontend).
 - **Docker y Docker Compose** (para levantar la base de datos y/o los contenedores orquestados).
 - Entorno **Linux/macOS** o **WSL 2** (Windows Subsystem for Linux), altamente recomendado.
@@ -136,7 +136,7 @@ Una vez cambiado, abre una terminal en la raíz del proyecto y ejecuta:
 ```bash
 wsl
 cd docker
-docker compose -f deploy.yaml up -d --build
+docker compose -f deploy.yaml up -d
 ```
 
 Una vez que el building process finalice, todo estará corriendo y sincronizado de forma autónoma:
