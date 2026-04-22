@@ -146,6 +146,45 @@ Una vez que el building process finalice, todo estará corriendo y sincronizado 
 
 ---
 
+## ✅ Ejecutar Todos los Tests
+
+Para lanzar **todos los tests automatizados del proyecto** (backend, JUnit/JUnitPerf), ejecuta desde la raíz:
+
+### Linux / macOS / WSL
+```bash
+./gradlew test
+```
+
+### Windows (PowerShell)
+```powershell
+.\gradlew.bat test
+```
+
+### Windows (CMD)
+```bat
+gradlew.bat test
+```
+
+> Nota: Actualmente el frontend no tiene script de tests en `frontend/package.json`, por lo que este comando ejecuta todos los tests existentes del backend.
+
+### 📍 Dónde ver los resultados
+
+Después de ejecutar los tests, puedes revisar:
+
+- **Resultado HTML de tests (JUnit/Gradle):** `build/reports/tests/test/index.html`
+- **Resultado XML de tests (para CI):** `build/test-results/test/`
+- **Cobertura JaCoCo (HTML):** `build/reports/jacoco/html/index.html`
+- **Cobertura JaCoCo (XML):** `build/reports/jacoco/test/jacocoTestReport.xml`
+
+En Windows puedes abrirlos rápido así (PowerShell):
+
+```powershell
+start .\build\reports\tests\test\index.html
+start .\build\reports\jacoco\html\index.html
+```
+
+---
+
 ### 🧹 Comandos Útiles (Troubleshooting y Reseteo)
 
 Si en algún momento necesitas resetear el entorno (limpiar la base de datos, purgar usuarios o forzar una reconstrucción total del backend/frontend tras cambios drásticos), puedes utilizar los siguientes comandos de Docker estando en la ruta `/docker`:
