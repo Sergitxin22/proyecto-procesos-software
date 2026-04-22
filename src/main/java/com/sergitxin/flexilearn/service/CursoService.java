@@ -73,7 +73,6 @@ public class CursoService {
         return cursoDAO.findAll();
     }
     
-    
     public void matricularUsuario(String token, Long cursoId) {
         Usuario user = usuarioDAO.findByToken(token).get();
         Curso curso = cursoDAO.findById(cursoId).get();
