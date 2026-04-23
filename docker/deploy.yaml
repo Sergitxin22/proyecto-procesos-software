@@ -24,6 +24,17 @@ services:
       dockerfile: docker/frontend/Dockerfile
     ports:
       - "5173:80"
+  
+  piston:
+    image: ghcr.io/engineer-man/piston
+    container_name: piston_api
+    privileged: true
+    ports:
+      - 2000:2000
+    volumes:
+      - ./data/piston/packages:/piston/packages
+    tmpfs:
+      - /tmp:exec
 
 volumes:
   postgres_flexilearn:

@@ -128,7 +128,7 @@ Puedes lanzar consultas crudas hacia la API accediendo al entorno integrado de S
 ### Opción B: Entorno de Producción (Deploy Orquestado / Full Docker)
 Ideal para probar su instalación en un servidor de producción. Este método **obvia las instalaciones de Node y Java**, envolviendo por completo backend y frontend y base de datos con `deploy.yaml`.
 
-⚠️ **Importante antes de desplegar:** Tienes que modificar una línea en el archivo de configuración del backend `pplication.properties`. 
+⚠️ **Importante antes de desplegar:** Tienes que modificar una línea en el archivo de configuración del backend `application.properties`. 
 En la propiedad `spring.datasource.url`, donde pone `"localhost"` debes cambiarlo a `"db"` (el nombre del servicio de la base de datos en Docker).
 `spring.datasource.url=jdbc:postgresql://db:5432/postgres`
 
@@ -143,6 +143,13 @@ Una vez que el building process finalice, todo estará corriendo y sincronizado 
 - **Frontend web público:** [http://localhost:5173](http://localhost:5173) (redirecciona internamente sus llamadas al backend).
 - **Backend API local:** `http://localhost:8080`.
 - **Base de Datos Postgres:** Expuesta y persistida internamente por los volúmenes del motor Docker.
+
+## Piston
+Este proyecto implementa Piston, un entorno de ejecución aislado y seguro, para poder ejecutar el código introducido por los usuarios en la página. El docker-compose se encarga de la build del entorno, pero una vez instalado es necesario descargar los runtimes de los lenguajes de programación que utiliza nuestra plataforma. Para ello, la primera vez que buildees la imagen de Piston, es necesario ejecutar `piston_init.sh`, que se encarga de descargar los entornos en Piston:
+
+```bash
+$ ./piston_init.sh
+```
 
 ---
 

@@ -10,5 +10,16 @@ services:
       - "5432:5432"
     volumes:
       - postgres_flexilearn:/var/lib/postgresql
+
+  piston:
+    image: ghcr.io/engineer-man/piston
+    container_name: piston_api
+    privileged: true
+    ports:
+      - 2000:2000
+    volumes:
+      - ./data/piston/packages:/piston/packages
+    tmpfs:
+      - /tmp:exec
 volumes:
   postgres_flexilearn:
