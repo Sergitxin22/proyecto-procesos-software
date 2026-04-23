@@ -69,6 +69,10 @@ public class CursoService {
         return cursoDAO.findById(id).get();
     }
 
+    public Ejercicio getExercise(Long id) {
+        return ejercicioDAO.findById(id).get();
+    }
+
     public List<Curso> getAllCursos() {
         return cursoDAO.findAll();
     }

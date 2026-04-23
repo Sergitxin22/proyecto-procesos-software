@@ -19,6 +19,7 @@ import com.sergitxin.flexilearn.dto.MessageResponseDto;
 import com.sergitxin.flexilearn.dto.ModuloRequestDTO;
 import com.sergitxin.flexilearn.entity.Curso;
 import com.sergitxin.flexilearn.entity.Dificultad;
+import com.sergitxin.flexilearn.entity.Ejercicio;
 import com.sergitxin.flexilearn.service.CursoService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,6 +68,12 @@ public class CursoController {
     public ResponseEntity<Curso> getCourse(
 	@PathVariable("id") Long id) {
     	return ResponseEntity.ok(cursoService.getCurso(id));
+    }
+
+    @GetMapping("exercises/{id}")
+    public ResponseEntity<Ejercicio> getExercise(
+	@PathVariable("id") Long id) {
+    	return ResponseEntity.ok(cursoService.getExercise(id));
     }
 
     @Operation(summary = "Obtener cursos", description = "Obtiene todos los cursos")

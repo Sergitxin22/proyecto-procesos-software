@@ -12,6 +12,7 @@ import Course from './pages/Courses/Course'
 import CreatedCourses from './pages/Courses/CreatedCourses'
 import CreateExercise from './pages/Courses/CreateExercise'
 import CreateModule from './pages/Courses/CreateModule'
+import Exercise from './pages/Courses/Exercise'
 import './index.css'
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
       <Route path="/created_courses/:courseId/create_module" element={<CreateModule />} />
       <Route path="/created_courses/:courseId/modules/:moduleId/create_exercise" element={<CreateExercise />} />
       <Route path="/admin" element={<Admin />} />
+      <Route path="/exercises/:id" element={<Exercise />} />
       <Route path="/admin/users" element={<UserList />} />
       <Route path="/courses" element={<Courses />} />
       <Route path="/courses/:courseId" element={<Course />} />

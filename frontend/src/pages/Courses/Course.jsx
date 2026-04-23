@@ -104,7 +104,7 @@ export default function CourseDetail() {
                                                     </div>
                                                     <div className="exercise-card-actions">
                                                         <span className="exercise-points">⭐ {ex.puntos} pts</span>
-                                                        <button className="btn-primary">
+                                                        <button className="btn-primary" onClick={() => navigate(`/exercises/${ex.id}`)}>
                                                             Hacer ejercicio →
                                                         </button>
                                                     </div>

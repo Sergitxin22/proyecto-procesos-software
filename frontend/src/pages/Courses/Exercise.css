@@ -1,0 +1,164 @@
+.exercise-main {
+    display: flex;
+    height: calc(100vh - 64px);
+    overflow: hidden;
+}
+
+/* Left panel */
+.exercise-panel {
+    width: 380px;
+    min-width: 320px;
+    background: #fff;
+    border-right: 1.5px solid #eee;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.exercise-meta {
+    padding: 1.5rem;
+    border-bottom: 1.5px solid #eee;
+}
+
+.exercise-meta-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.exercise-language-badge {
+    background: #e8eaf6;
+    color: #3f51b5;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.exercise-points-badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ca8a04;
+}
+
+.exercise-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #2c3e50;
+    margin: 0;
+    line-height: 1.3;
+}
+
+/* Tabs */
+.exercise-tabs {
+    display: flex;
+    border-bottom: 1.5px solid #eee;
+}
+
+.exercise-tab {
+    flex: 1;
+    padding: 0.75rem;
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #888;
+    cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    transition: all 0.2s;
+}
+
+.exercise-tab.active {
+    color: #3f51b5;
+    border-bottom-color: #3f51b5;
+}
+
+.exercise-tab-content {
+    padding: 1.5rem;
+    flex: 1;
+}
+
+.exercise-text {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.7;
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+.exercise-result {
+    margin: 1rem 1.5rem;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.exercise-result.success {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.exercise-result.error {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Right panel — editor */
+.exercise-editor-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #1e1e1e;
+    overflow: hidden;
+}
+
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 1rem;
+    background: #2d2d2d;
+    border-bottom: 1px solid #3d3d3d;
+    flex-shrink: 0;
+}
+
+.editor-filename {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: #aaa;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.editor-wrapper {
+    flex: 1;
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .exercise-main {
+        flex-direction: column;
+        height: auto;
+        overflow: auto;
+    }
+
+    .exercise-panel {
+        width: 100%;
+        min-width: unset;
+        border-right: none;
+        border-bottom: 1.5px solid #eee;
+        max-height: 40vh;
+    }
+
+    .exercise-editor-panel {
+        height: 60vh;
+    }
+}
