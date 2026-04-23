@@ -9,7 +9,30 @@ public class EjercicioRequestDTO {
     private String lenguaje;
     private Long idModulo;
 
-    public String getNombre() {
+    public EjercicioRequestDTO(String nombre, String teoria, String enunciado, String codigoInicial, int puntos,
+			String lenguaje, Long idModulo) {
+		super();
+		this.nombre = nombre;
+		this.teoria = teoria;
+		this.enunciado = enunciado;
+		this.codigoInicial = codigoInicial;
+		this.puntos = puntos;
+		this.lenguaje = lenguaje;
+		this.idModulo = idModulo;
+	}
+    
+    public EjercicioRequestDTO() {
+		super();
+		this.nombre = "";
+		this.teoria = "";
+		this.enunciado = "";
+		this.codigoInicial = "";
+		this.puntos = 0;
+		this.lenguaje = "";
+		this.idModulo = 0L;
+	}
+
+	public String getNombre() {
         return nombre;
     }
 

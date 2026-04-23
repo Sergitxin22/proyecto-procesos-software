@@ -6,7 +6,23 @@ public class CursoRequestDTO {
     private String descripcion;
     private String dificultad;
 
-    public String getNombre() {
+    public CursoRequestDTO(String nombre, String categoria, String descripcion, String dificultad) {
+		super();
+		this.nombre = nombre;
+		this.categoria = categoria;
+		this.descripcion = descripcion;
+		this.dificultad = dificultad;
+	}
+    
+    public CursoRequestDTO() {
+		super();
+		this.nombre = "";
+		this.categoria = "";
+		this.descripcion = "";
+		this.dificultad = "";
+	}
+
+	public String getNombre() {
         return nombre;
     }
 

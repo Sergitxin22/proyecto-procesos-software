@@ -4,7 +4,17 @@ public class DeleteRequestDTO {
     
     private String nombreUsuario;
 
-    public String getNombreUsuario(){
+    public DeleteRequestDTO(String nombreUsuario) {
+		super();
+		this.nombreUsuario = nombreUsuario;
+	}
+    
+    public DeleteRequestDTO() {
+		super();
+		this.nombreUsuario = "";
+	}
+    
+	public String getNombreUsuario(){
         return nombreUsuario;
     }
 
