@@ -1,41 +1,47 @@
 package com.sergitxin.flexilearn;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Map;
+import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@Transactional
 class FlexilearnIntegrationTests {
-	@Autowired
 	private MockMvc mockMvc;
 
+	private final ObjectMapper objectMapper = new ObjectMapper();
+
 	@Autowired
-	private ObjectMapper objectMapper;
-	
-	@Test
-	void test() {
-		fail("Not yet implemented");
+	private WebApplicationContext webApplicationContext;
+
+	@BeforeEach
+	void setUp() {
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 	
 	@Test
 	void testAuthRegistrar() throws Exception {
+		String email = "paco-" + UUID.randomUUID() + "@paco.com";
+
 		mockMvc.perform(post("/api/auth/registro").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(Map.of(
 					"nombre", "Paco",
-					"email", "paco@paco.com",
+					"email", email,
 					"password", "123"))))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.mensaje").value("Usuario registrado exitosamente"));
@@ -43,7 +49,7 @@ class FlexilearnIntegrationTests {
 		mockMvc.perform(post("/api/auth/registro").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(Map.of(
 					"nombre", "Aitor",
-					"email", "aitor@aitor.com",
+					"email", email,
 					"password", "hola"))))
 				.andExpect(status().isBadRequest());
 	}
