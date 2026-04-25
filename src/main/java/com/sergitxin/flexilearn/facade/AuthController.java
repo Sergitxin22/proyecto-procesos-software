@@ -3,6 +3,7 @@ package com.sergitxin.flexilearn.facade;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -76,6 +77,27 @@ public class AuthController {
             String token = authHeader.substring(7);
             authService.cerrarSesion(token);
             return ResponseEntity.ok(new MessageResponseDto("Sesión finalizada correctamente"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto(e.getMessage()));
+        }
+    }
+
+        @Operation(summary = "Eliminar cuenta", description = "Elimina la cuenta del usuario ")
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> eliminarCuenta(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
+            }
+            
+            String token = authHeader.substring(7);
+            try {
+                authService.eliminarCuenta(token);
+                return ResponseEntity.status(HttpStatus.OK).build();
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto(e.getMessage()));
         }

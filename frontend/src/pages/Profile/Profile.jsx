@@ -65,6 +65,11 @@ export default function Profile() {
 
     };
 
+    const deleteAccount = () => {
+        const response = authService.delete()
+        navigate("/");
+    };
+
     if (loading) {
         return (
             <div className="profile-wrapper">
@@ -134,6 +139,10 @@ export default function Profile() {
                                 Panel de administración
                             </button>
                         )}
+
+                        <button className="btn-primary btn-full delete-button" onClick={deleteAccount}>
+                            Eliminar cuenta
+                        </button>
                     </div>
 
 

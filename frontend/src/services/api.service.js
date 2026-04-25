@@ -52,6 +52,16 @@ export const authService = {
         return handleResponse(res);
     },
 
+    delete: async () => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        const res = await fetch(`${API_BASE_URL}/auth/delete`, {
+            method: 'DELETE',
+            headers: getHeaders(true)
+        });
+        return handleResponse(res);
+    },
+
     getUserProfile: async () => {
         const res = await fetch(`${API_BASE_URL}/auth/user`, {
             method: 'GET',

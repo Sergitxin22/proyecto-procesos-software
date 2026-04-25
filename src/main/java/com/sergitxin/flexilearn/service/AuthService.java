@@ -132,4 +132,14 @@ public class AuthService {
             throw new RuntimeException("Sesión no encontrada o ya finalizada");
         }
     }
+
+    public void eliminarCuenta(String token) {
+        Optional<Usuario> usuarioOpt = usuarioDao.findByToken(token);
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+            usuarioDao.delete(usuario);
+        } else {
+            throw new RuntimeException("Sesión no encontrada o ya finalizada");
+        }
+    }
 }
