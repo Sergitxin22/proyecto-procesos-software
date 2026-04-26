@@ -91,4 +91,17 @@ public class CursoService {
         Usuario user = usuarioDAO.findByToken(token).get();
         return user.getCursosMatriculados();
     }
+
+    public boolean eliminarCursoDelProfesor(String token, Long cursoId) {
+        Usuario user = usuarioDAO.findByToken(token).get();
+        Curso curso = cursoDAO.findById(cursoId).get();
+            
+            // Verificar que el profesor es el dueño del curso
+        if (curso.getUsuario().getId().equals(user.getId())) {
+            cursoDAO.deleteById(cursoId);
+            return true;
+        }
+
+        return false;
+    }
 }
