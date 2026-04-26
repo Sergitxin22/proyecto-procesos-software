@@ -36,4 +36,19 @@ public class AdminService {
     public List<Usuario> getAllUsers() {
         return usuarioDao.findAll();
     }
+
+    public boolean eliminarCurso(String token, Long cursoId) {
+        
+        Usuario usuarioAdmin = usuarioDao.findByToken(token).get();
+            
+        if (usuarioAdmin.getEsAdmin()) {
+
+            if (cursoDao.existsById(cursoId)) {
+            cursoDao.deleteById(cursoId);
+            return true;
+            }
+
+        }
+        return false;
+    }
 }

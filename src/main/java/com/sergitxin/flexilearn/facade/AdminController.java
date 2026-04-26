@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sergitxin.flexilearn.dto.DeleteRequestDTO;
@@ -71,6 +71,23 @@ public class AdminController {
             usuariosDTO.add(usuarioDTO);
         }
         return ResponseEntity.ok(usuariosDTO);
+    }
+
+    @Operation(summary = "Eliminar curso", description = "Eliminar un curso para que estudiantes y profesores dejen de tener acceso")
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping("/deleteCurso")
+    public ResponseEntity<?> deleteCurso(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestParam Long cursoId){
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
+        }
+            
+        String token = authHeader.substring(7);
+        
+        boolean eliminado = adminService.eliminarCurso(token, cursoId);
+        if (eliminado) {
+        return ResponseEntity.ok(1);
+        }
+        return ResponseEntity.ok(0); 
     }
 }
 
