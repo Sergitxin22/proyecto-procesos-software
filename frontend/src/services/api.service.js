@@ -149,6 +149,14 @@ export const courseService = {
             body: JSON.stringify(exerciseData)
         });
         return handleResponse(res);
+    },
+    
+    deleteCurso: async (id) => {
+        const res = await fetch(`${API_BASE_URL}/courses/deleteCurso?cursoId=${id}`, {
+            method: 'DELETE',
+            headers: getHeaders(true)
+        });
+        return handleResponse(res);
     }
 };
 

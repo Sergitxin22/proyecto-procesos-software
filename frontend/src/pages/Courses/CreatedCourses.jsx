@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '../../components/layout/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './CreatedCourses.css';
-import { userService } from '../../services/api.service';
+import { userService, courseService } from '../../services/api.service';
 
 const DIFFICULTY_LABELS = {
     FACIL: { label: 'Fácil', className: 'badge-easy' },
@@ -15,13 +15,12 @@ export default function CourseList() {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+     
     const token = localStorage.getItem('token');
 
     useEffect(() => {
         if (!token) {
             navigate('/auth');
-
             return;
         }
 
@@ -48,7 +47,17 @@ export default function CourseList() {
         navigate(`/created_courses/${id}`);
 
     };
-
+    
+    const handleDelete = async (e, id) => {
+        e.stopPropagation();
+        try {
+            await courseService.deleteCurso(id);
+            setCourses(prev => prev.filter(c => c.id !== id));
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+    
     return (
         <div className="profile-layout">
             <Navbar>
@@ -88,19 +97,23 @@ export default function CourseList() {
                                             <span className="course-modules">
                                                 📦 {course.modulos.length} módulo{course.modulos.length !== 1 ? 's' : ''}
                                             </span>
+                                        <div className="course-card-actions">
+                                            <button
+                                                className="btn-danger"
+                                                onClick={(e) => handleDelete(e, course.id)}
+                                            >
+                                                Eliminar
+                                            </button>
                                             <button className="btn-primary">Ver curso →</button>
                                         </div>
                                     </div>
-                                );
-                            })}
-                        </div>
-                    )}
-                </div>
-            </main>
-        </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+        </main>
+    </div>
     );
 }
-
-
-
-
