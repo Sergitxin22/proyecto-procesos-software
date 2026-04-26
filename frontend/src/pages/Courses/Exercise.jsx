@@ -3,6 +3,7 @@ import Navbar from '../../components/layout/Navbar';
 import { useNavigate } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
 import './Exercise.css';
+import { courseService } from '../../services/api.service';
 
 export default function Exercise() {
     const navigate = useNavigate();
@@ -50,12 +51,8 @@ export default function Exercise() {
         setResult(null);
         try {
             // Replace with your actual submit endpoint
-            const res = await fetch(`http://localhost:8080/api/exercises/${exerciseId}/submit`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token, codigo: code }),
-            });
-            if (res.ok) {
+            const res = await courseService.submitSolution({idEjercicio: exercise.id, codigo: code})
+            if (res) {
                 setResult('success');
             } else {
                 setResult('error');

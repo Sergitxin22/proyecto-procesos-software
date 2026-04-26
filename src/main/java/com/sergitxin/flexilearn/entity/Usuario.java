@@ -31,6 +31,7 @@ public class Usuario {
     private String token; // Para guardar la sesión en BBDD
     private boolean esAdmin;
 
+
     @OneToMany(mappedBy = "usuario")
     @JsonIgnore // NOTA: Añadir esto probablemente nos la lie parda más tarde. Buena suerte!
     private List<Curso> cursosCreados;
@@ -43,7 +44,15 @@ public class Usuario {
     )
     @JsonIgnore
     private List<Curso> cursosMatriculados = new ArrayList<>();
-    
+
+    @ManyToMany
+    @JoinTable(
+        name = "ejercicios_completados",
+        joinColumns = @JoinColumn(name = "usuario_id"),
+        inverseJoinColumns = @JoinColumn(name = "ejercicio_id")
+    )
+    private List<Ejercicio> ejerciciosCompletados = new ArrayList<>();
+
     public Long getId() {
         return id;
     }
@@ -106,5 +115,13 @@ public class Usuario {
     
     public void setCursosMatriculados(List<Curso> cursosMatriculados) { 
     	this.cursosMatriculados = cursosMatriculados; 
+    }
+
+    public List<Ejercicio> getEjerciciosCompletados() {
+        return ejerciciosCompletados;
+    }
+
+    public void setEjerciciosCompletados(List<Ejercicio> ejerciciosCompletados) {
+        this.ejerciciosCompletados = ejerciciosCompletados;
     }
 }

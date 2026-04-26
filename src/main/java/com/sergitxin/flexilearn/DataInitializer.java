@@ -1,5 +1,6 @@
 package com.sergitxin.flexilearn;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,11 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sergitxin.flexilearn.dao.CursoDAO;
 import com.sergitxin.flexilearn.dao.EjercicioDAO;
 import com.sergitxin.flexilearn.dao.ModuloDAO;
+import com.sergitxin.flexilearn.dao.TestDAO;
 import com.sergitxin.flexilearn.dao.UsuarioDao;
 import com.sergitxin.flexilearn.entity.Curso;
 import com.sergitxin.flexilearn.entity.Dificultad;
 import com.sergitxin.flexilearn.entity.Ejercicio;
 import com.sergitxin.flexilearn.entity.Modulo;
+import com.sergitxin.flexilearn.entity.Test;
 import com.sergitxin.flexilearn.entity.Usuario;
 
 @Configuration
@@ -26,13 +29,15 @@ public class DataInitializer {
     private final CursoDAO cursoDao;
     private final ModuloDAO moduloDao;
     private final EjercicioDAO ejercicioDao;
+    private final TestDAO testDao;
     private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
-    public DataInitializer(UsuarioDao usuarioDao, CursoDAO cursoDao, ModuloDAO moduloDao, EjercicioDAO ejercicioDao) {
+    public DataInitializer(UsuarioDao usuarioDao, CursoDAO cursoDao, ModuloDAO moduloDao, EjercicioDAO ejercicioDao, TestDAO testDao) {
         this.usuarioDao = usuarioDao;
         this.cursoDao = cursoDao;
         this.moduloDao = moduloDao;
         this.ejercicioDao = ejercicioDao;
+        this.testDao = testDao;
     }
 	
     @Bean
@@ -110,6 +115,14 @@ public class DataInitializer {
             e1.setPuntos(10);
             e1.setLenguaje("Java");
             e1.setModulo(m1);
+
+            Test t1 = new Test();
+            t1.setCodigo("");
+            t1.setSalidaEsperada("Hola Mundo\n");
+            t1.setEjercicio(e1);
+            List<Test> tests = new ArrayList<>();
+            tests.add(t1);
+            e1.setTests(tests);
 
             Ejercicio e2 = new Ejercicio();
             e2.setNombre("Calculadora Simple");

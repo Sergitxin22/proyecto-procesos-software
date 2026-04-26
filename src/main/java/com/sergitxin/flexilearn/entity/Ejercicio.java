@@ -1,13 +1,21 @@
 package com.sergitxin.flexilearn.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -27,6 +35,21 @@ public class Ejercicio {
     @JoinColumn(name = "modulo_id")
     @JsonIgnore // NOTA: Añadir esto probablemente nos la lie parda más tarde. Buena suerte!
     private Modulo modulo;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "ejercicio", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Test> tests;
+
+    @ManyToMany(mappedBy = "ejerciciosCompletados")
+    private List<Usuario> usuariosResueltos = new ArrayList<>();
+
+    public List<Test> getTests() {
+        return tests;
+    }
+
+    public void setTests(List<Test> tests) {
+        this.tests = tests;
+    }
 
     public Long getId() {
         return id;

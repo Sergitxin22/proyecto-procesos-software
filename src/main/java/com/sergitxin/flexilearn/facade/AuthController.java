@@ -82,7 +82,7 @@ public class AuthController {
         }
     }
 
-        @Operation(summary = "Eliminar cuenta", description = "Elimina la cuenta del usuario ")
+    @Operation(summary = "Eliminar cuenta", description = "Elimina la cuenta del usuario ")
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/delete")
     public ResponseEntity<?> eliminarCuenta(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader) {

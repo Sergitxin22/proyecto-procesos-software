@@ -15,6 +15,7 @@ const getHeaders = (requireAuth = true) => {
 const handleResponse = async (res) => {
     const isJson = res.headers.get('content-type')?.includes('application/json');
     const data = isJson ? await res.json() : await res.text();
+    console.log(data)
 
     if (!res.ok) {
         const errorMsg = (data && data.mensaje) || (typeof data === 'string' ? data : "Error en la petición");
@@ -157,8 +158,17 @@ export const courseService = {
             headers: getHeaders(true)
         });
         return handleResponse(res);
+    },
+
+    submitSolution : async (solutionData) => {
+        const res = await fetch(`${API_BASE_URL}/exercises/verify`, {
+            method: 'POST',
+            headers: getHeaders(true),
+            body: JSON.stringify(solutionData)
+        });
+        return res.json()
     }
-};
+}
 
 export const adminService = {
     getUsers: async () => {
