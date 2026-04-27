@@ -78,15 +78,8 @@ public class DataInitializer {
             c1.setDescripcion("Aprende los conceptos básicos de Java.");
             c1.setDificultad(Dificultad.FACIL);
             c1.setUsuario(u3); // Aroa es la creadora
-
-            Curso c2 = new Curso();
-            c2.setNombre("Spring Boot Avanzado");
-            c2.setCategoria("Programación Backend");
-            c2.setDescripcion("Domina el desarrollo con Spring Boot.");
-            c2.setDificultad(Dificultad.DIFICIL);
-            c2.setUsuario(u1);
-
-            cursoDao.saveAll(List.of(c1, c2));
+            
+            cursoDao.save(c1);
 
             // Módulos
             Modulo m1 = new Modulo();
@@ -99,12 +92,7 @@ public class DataInitializer {
             m2.setDescripcion("Clases, objetos, herencia y polimorfismo.");
             m2.setCurso(c1);
 
-            Modulo m3 = new Modulo();
-            m3.setNombre("Rest APIs con Spring Boot");
-            m3.setDescripcion("Creación de APIs RESTful usando Controladores y Servicios.");
-            m3.setCurso(c2);
-
-            moduloDao.saveAll(List.of(m1, m2, m3));
+            moduloDao.saveAll(List.of(m1, m2));
 
             // Ejercicios
             Ejercicio e1 = new Ejercicio();
@@ -127,22 +115,21 @@ public class DataInitializer {
             Ejercicio e2 = new Ejercicio();
             e2.setNombre("Calculadora Simple");
             e2.setTeoria("Los operadores aritméticos básicos en Java son...");
-            e2.setEnunciado("Crea un método que sume dos números enteros.");
-            e2.setCodigoInicial("class Main {\n    public int sumar(int a, int b) {\n        return 0;\n    }\n}");
+            e2.setEnunciado("Crea un método que imprima la suma de 9 + 10.");
+            e2.setCodigoInicial("class Main {\n    public static void main(String[] args) {\n        \n    }\n}");
             e2.setPuntos(20);
             e2.setLenguaje("Java");
             e2.setModulo(m1);
 
-            Ejercicio e3 = new Ejercicio();
-            e3.setNombre("Controlador Hola");
-            e3.setTeoria("En Spring, la anotación @RestController...");
-            e3.setEnunciado("Crea un controlador REST básico que devuelva 'Hola' en la ruta '/'");
-            e3.setCodigoInicial("@RestController\npublic class HolaController {\n    \n}");
-            e3.setPuntos(50);
-            e3.setLenguaje("Java");
-            e3.setModulo(m3);
+            Test t2 = new Test();
+            t2.setCodigo("");
+            t2.setSalidaEsperada("19\n");
+            t2.setEjercicio(e2);
+            List<Test> tests2 = new ArrayList<>();
+            tests2.add(t2);
+            e2.setTests(tests2);
 
-            ejercicioDao.saveAll(List.of(e1, e2, e3));
+            ejercicioDao.saveAll(List.of(e1, e2));
 
             logger.info("¡Cursos, Módulos y Ejercicios iniciales guardados correctamente!");
         };
