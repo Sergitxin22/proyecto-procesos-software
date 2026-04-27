@@ -18,8 +18,9 @@ services:
     ports:
       - 2000:2000
     volumes:
-      - ./data/piston/packages:/piston/packages
+      - piston_packages:/piston/packages
     tmpfs:
       - /tmp:exec
 volumes:
   postgres_flexilearn:
+  piston_packages:
