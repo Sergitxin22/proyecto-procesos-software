@@ -25,10 +25,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.sergitxin.flexilearn.dao.CursoDAO;
 import com.sergitxin.flexilearn.dao.EjercicioDAO;
@@ -52,39 +48,39 @@ import com.sergitxin.flexilearn.service.UserService;
 @ExtendWith(MockitoExtension.class)
 class MockitoSanityTest {
 
-    @Mock
-    List<String> list;
+	@Mock
+	List<String> list;
 
-    @Test
-    void testDependenciaMockito() {
-        when(list.get(0)).thenReturn("test");
+	@Test
+	void testDependenciaMockito() {
+		when(list.get(0)).thenReturn("test");
 
-        assertEquals("test", list.get(0));
-        verify(list).get(0);
-    }
+		assertEquals("test", list.get(0));
+		verify(list).get(0);
+	}
 }
 
 @ExtendWith(MockitoExtension.class)
 class CursoServiceTest {
 
-    @Mock
-    private UsuarioDao usuarioDAO;
+	@Mock
+	private UsuarioDao usuarioDAO;
 
-    @Mock
-    private CursoDAO cursoDAO;
+	@Mock
+	private CursoDAO cursoDAO;
 
-    @Mock
-    private ModuloDAO moduloDAO;
+	@Mock
+	private ModuloDAO moduloDAO;
 
-    @Mock
-    private EjercicioDAO ejercicioDAO;
+	@Mock
+	private EjercicioDAO ejercicioDAO;
 
-    @InjectMocks
-    private CursoService cursoService;
+	@InjectMocks
+	private CursoService cursoService;
 
 	@Test
 	void crearCursoTest() {
-        // Creamos los objetos del modelo
+		// Creamos los objetos del modelo
 		String token = "abc";
 		Usuario user = new Usuario();
 		user.setId(1L);
@@ -92,558 +88,551 @@ class CursoServiceTest {
 		Curso curso = new Curso();
 		curso.setId(10L);
 
-        // Con esto simulamos la interacción con la BD para abstraerla
+		// Con esto simulamos la interacción con la BD para abstraerla
 		when(usuarioDAO.findByToken(token)).thenReturn(Optional.of(user));
 		when(cursoDAO.save(any(Curso.class))).thenReturn(curso);
 
-        // Llamamos al metodo que queremos probar
+		// Llamamos al metodo que queremos probar
 		Long result = cursoService.crearCurso(token, "Java", "Backend", "desc", Dificultad.MEDIO);
 
-        // Hacemos el test
+		// Hacemos el test
 		assertEquals(10L, result);
 
-        // Comprobamos si realmente se han llamado a los métodos de la BD
+		// Comprobamos si realmente se han llamado a los métodos de la BD
 		verify(usuarioDAO).findByToken(token);
 		verify(cursoDAO).save(any(Curso.class));
 	}
 
-    @Test
-    void crearModuloTest() {
-        Long cursoId = 10L;
+	@Test
+	void crearModuloTest() {
+		Long cursoId = 10L;
 
-        Curso curso = new Curso();
-        curso.setId(10L);
-        curso.setModulos(new ArrayList<>());
+		Curso curso = new Curso();
+		curso.setId(10L);
+		curso.setModulos(new ArrayList<>());
 
-        Modulo modulo = new Modulo();
-        modulo.setId(5L);
+		Modulo modulo = new Modulo();
+		modulo.setId(5L);
 
-        when(cursoDAO.findById(cursoId)).thenReturn(Optional.of(curso));
-        when(moduloDAO.save(any(Modulo.class))).thenReturn(modulo);
+		when(cursoDAO.findById(cursoId)).thenReturn(Optional.of(curso));
+		when(moduloDAO.save(any(Modulo.class))).thenReturn(modulo);
 
-        Long result = cursoService.crearModulo("Modulo", "Descripción", cursoId);
+		Long result = cursoService.crearModulo("Modulo", "Descripción", cursoId);
 
-        assertEquals(5L, result);
+		assertEquals(5L, result);
 
-        verify(cursoDAO).findById(cursoId);
-        verify(moduloDAO).save(any(Modulo.class));
-    }
+		verify(cursoDAO).findById(cursoId);
+		verify(moduloDAO).save(any(Modulo.class));
+	}
 
-    @Test
-    void crearEjercicioTest() {
-        Curso curso = new Curso();
-        curso.setId(10L);
-        curso.setModulos(new ArrayList<>());
+	@Test
+	void crearEjercicioTest() {
+		Curso curso = new Curso();
+		curso.setId(10L);
+		curso.setModulos(new ArrayList<>());
 
-        Modulo modulo = new Modulo();
-        modulo.setId(5L);
-        modulo.setEjercicios(new ArrayList<>());
+		Modulo modulo = new Modulo();
+		modulo.setId(5L);
+		modulo.setEjercicios(new ArrayList<>());
 
-        Ejercicio ejercicio = new Ejercicio();
-        ejercicio.setId(3L);
+		Ejercicio ejercicio = new Ejercicio();
+		ejercicio.setId(3L);
 
-        when(moduloDAO.findById(modulo.getId())).thenReturn(Optional.of(modulo));
-        when(moduloDAO.save(any(Modulo.class))).thenReturn(modulo);
-        when(ejercicioDAO.save(any(Ejercicio.class))).thenReturn(ejercicio);
+		when(moduloDAO.findById(modulo.getId())).thenReturn(Optional.of(modulo));
+		when(moduloDAO.save(any(Modulo.class))).thenReturn(modulo);
+		when(ejercicioDAO.save(any(Ejercicio.class))).thenReturn(ejercicio);
 
-        Long result = cursoService.crearEjercicio("Ejercicio", "Teoría", "Código", 3, "Enunciado", "Lenguaje", modulo.getId());
+		Long result = cursoService.crearEjercicio("Ejercicio", "Teoría", "Código", 3, "Enunciado", "Lenguaje",
+				modulo.getId());
 
-        assertEquals(3L, result);
+		assertEquals(3L, result);
 
-        verify(moduloDAO).findById(modulo.getId());
-        verify(ejercicioDAO).save(any(Ejercicio.class));
-    }
+		verify(moduloDAO).findById(modulo.getId());
+		verify(ejercicioDAO).save(any(Ejercicio.class));
+	}
 
-    @Test
-    void getCursoTest() {
-        Curso curso = new Curso();
-        curso.setId(10L);
+	@Test
+	void getCursoTest() {
+		Curso curso = new Curso();
+		curso.setId(10L);
 
-        when(cursoDAO.findById(10L)).thenReturn(Optional.of(curso));
+		when(cursoDAO.findById(10L)).thenReturn(Optional.of(curso));
 
-        Curso result = cursoService.getCurso(10L);
+		Curso result = cursoService.getCurso(10L);
 
-        assertEquals(10L, result.getId());
-        verify(cursoDAO).findById(10L);
+		assertEquals(10L, result.getId());
+		verify(cursoDAO).findById(10L);
 
-        when(cursoDAO.findById(10L)).thenReturn(Optional.empty());
+		when(cursoDAO.findById(10L)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> {
-            cursoService.getCurso(10L);
-        });
-    }
+		assertThrows(NoSuchElementException.class, () -> {
+			cursoService.getCurso(10L);
+		});
+	}
 
-    @Test
-    void getCursosTest() {
-        List<Curso> cursos = List.of(new Curso(), new Curso());
+	@Test
+	void getCursosTest() {
+		List<Curso> cursos = List.of(new Curso(), new Curso());
 
-        when(cursoDAO.findAll()).thenReturn(cursos);
+		when(cursoDAO.findAll()).thenReturn(cursos);
 
-        List<Curso> result = cursoService.getAllCursos();
+		List<Curso> result = cursoService.getAllCursos();
 
-        assertEquals(2, result.size());
-        verify(cursoDAO).findAll();
-    }
+		assertEquals(2, result.size());
+		verify(cursoDAO).findAll();
+	}
 
-    @Test
-    void getCursosMatriculadosTest() {
-        String token = "abc";
+	@Test
+	void getCursosMatriculadosTest() {
+		String token = "abc";
 
-        List<Curso> cursos = new ArrayList<>(List.of(new Curso(), new Curso()));
+		List<Curso> cursos = new ArrayList<>(List.of(new Curso(), new Curso()));
 
-        Usuario user = new Usuario();
-        user.setCursosMatriculados(cursos);
+		Usuario user = new Usuario();
+		user.setCursosMatriculados(cursos);
 
-        when(usuarioDAO.findByToken(token)).thenReturn(Optional.of(user));
+		when(usuarioDAO.findByToken(token)).thenReturn(Optional.of(user));
 
-        List<Curso> result = cursoService.getCursosMatriculados(token);
+		List<Curso> result = cursoService.getCursosMatriculados(token);
 
-        assertEquals(2, result.size());
-        verify(usuarioDAO).findByToken(token);
-    }
+		assertEquals(2, result.size());
+		verify(usuarioDAO).findByToken(token);
+	}
 
-    @Test
-    void matricularUsuarioAddsCursoTest() {
-        String token = "abc";
-        Long cursoId = 10L;
+	@Test
+	void matricularUsuarioAddsCursoTest() {
+		String token = "abc";
+		Long cursoId = 10L;
 
-        Curso curso = new Curso();
-        curso.setId(cursoId);
+		Curso curso = new Curso();
+		curso.setId(cursoId);
 
-        Usuario user = new Usuario();
-        user.setCursosMatriculados(new ArrayList<>());
+		Usuario user = new Usuario();
+		user.setCursosMatriculados(new ArrayList<>());
 
-        when(usuarioDAO.findByToken(token)).thenReturn(Optional.of(user));
-        when(cursoDAO.findById(cursoId)).thenReturn(Optional.of(curso));
+		when(usuarioDAO.findByToken(token)).thenReturn(Optional.of(user));
+		when(cursoDAO.findById(cursoId)).thenReturn(Optional.of(curso));
 
-        cursoService.matricularUsuario(token, cursoId);
+		cursoService.matricularUsuario(token, cursoId);
 
-        assertTrue(user.getCursosMatriculados().contains(curso));
+		assertTrue(user.getCursosMatriculados().contains(curso));
 
-        verify(usuarioDAO).save(user);
-        verify(usuarioDAO).findByToken(token);
-        verify(cursoDAO).findById(cursoId);
-    }
+		verify(usuarioDAO).save(user);
+		verify(usuarioDAO).findByToken(token);
+		verify(cursoDAO).findById(cursoId);
+	}
 
-    @Test
-    void matricularUsuarioAlreadyEnrolledDoesNotSaveTest() {
-        String token = "abc";
-        Long cursoId = 10L;
+	@Test
+	void matricularUsuarioAlreadyEnrolledDoesNotSaveTest() {
+		String token = "abc";
+		Long cursoId = 10L;
 
-        Curso curso = new Curso();
-        curso.setId(cursoId);
+		Curso curso = new Curso();
+		curso.setId(cursoId);
 
-        List<Curso> cursos = new ArrayList<>();
-        cursos.add(curso);
+		List<Curso> cursos = new ArrayList<>();
+		cursos.add(curso);
 
-        Usuario user = new Usuario();
-        user.setCursosMatriculados(cursos);
+		Usuario user = new Usuario();
+		user.setCursosMatriculados(cursos);
 
-        when(usuarioDAO.findByToken(token)).thenReturn(Optional.of(user));
-        when(cursoDAO.findById(cursoId)).thenReturn(Optional.of(curso));
+		when(usuarioDAO.findByToken(token)).thenReturn(Optional.of(user));
+		when(cursoDAO.findById(cursoId)).thenReturn(Optional.of(curso));
 
-        cursoService.matricularUsuario(token, cursoId);
+		cursoService.matricularUsuario(token, cursoId);
 
-        assertEquals(1, user.getCursosMatriculados().size());
+		assertEquals(1, user.getCursosMatriculados().size());
 
-        verify(usuarioDAO, never()).save(any());
-    }
+		verify(usuarioDAO, never()).save(any());
+	}
 }
 
 @ExtendWith(MockitoExtension.class)
 class UsuarioServiceTest {
 
-    @Mock
-    private UsuarioDao usuarioDao;
+	@Mock
+	private UsuarioDao usuarioDao;
 
-    @InjectMocks
-    private UserService userService;
+	@InjectMocks
+	private UserService userService;
 
-    @Test
-    void obtenerCursosDeUsuarioTest() {
-        String token = "abc";
+	@Test
+	void obtenerCursosDeUsuarioTest() {
+		String token = "abc";
 
-        List<Curso> cursos = new ArrayList<>();
-        cursos.add(new Curso());
-        cursos.add(new Curso());
+		List<Curso> cursos = new ArrayList<>();
+		cursos.add(new Curso());
+		cursos.add(new Curso());
 
-        Usuario usuario = new Usuario();
-        usuario.setCursosCreados(cursos);
+		Usuario usuario = new Usuario();
+		usuario.setCursosCreados(cursos);
 
-        when(usuarioDao.findByToken(token)).thenReturn(Optional.of(usuario));
+		when(usuarioDao.findByToken(token)).thenReturn(Optional.of(usuario));
 
-        List<Curso> result = userService.obtenerCursosdeUsuario(token);
-        assertEquals(2, result.size());
-        assertEquals(cursos, result);
+		List<Curso> result = userService.obtenerCursosdeUsuario(token);
+		assertEquals(2, result.size());
+		assertEquals(cursos, result);
 
-        verify(usuarioDao).findByToken(token);
-    }
+		verify(usuarioDao).findByToken(token);
+	}
 }
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
-    @Mock
-    private UsuarioDao usuarioDao;
+	@Mock
+	private UsuarioDao usuarioDao;
 
-    @Mock
-    private AuthExternalFactory authExternalFactory;
+	@Mock
+	private AuthExternalFactory authExternalFactory;
 
-    @Mock
-    private AuthExternalPort authExternalPort;
+	@Mock
+	private AuthExternalPort authExternalPort;
 
-    @InjectMocks
-    private AuthService authService;
+	@InjectMocks
+	private AuthService authService;
 
-    @Test
-    void generateSaltTest() {
-        byte[] salt1 = AuthService.generateSalt();
-        byte[] salt2 = AuthService.generateSalt();
+	@Test
+	void generateSaltTest() {
+		byte[] salt1 = AuthService.generateSalt();
+		byte[] salt2 = AuthService.generateSalt();
 
-        assertEquals(16, salt1.length);
-        assertEquals(16, salt2.length);
-        assertFalse(Arrays.equals(salt1, salt2));
-    }
+		assertEquals(16, salt1.length);
+		assertEquals(16, salt2.length);
+		assertFalse(Arrays.equals(salt1, salt2));
+	}
 
-    @Test
-    void hashPasswordTest() throws Exception {
-        String password = "Contraseña";
-        byte[] salt = AuthService.generateSalt();
+	@Test
+	void hashPasswordTest() throws Exception {
+		String password = "Contraseña";
+		byte[] salt = AuthService.generateSalt();
 
-        String hash1 = AuthService.hashPassword(password, salt);
-        String hash2 = AuthService.hashPassword(password, salt);
+		String hash1 = AuthService.hashPassword(password, salt);
+		String hash2 = AuthService.hashPassword(password, salt);
 
-        assertNotNull(hash1);
-        assertEquals(hash1, hash2);
-    }
+		assertNotNull(hash1);
+		assertEquals(hash1, hash2);
+	}
 
-    @Test
-    void obtenerUsuarioByTokenNotFoundTest() {
-        when(usuarioDao.findByToken("abc")).thenReturn(Optional.empty());
+	@Test
+	void obtenerUsuarioByTokenNotFoundTest() {
+		when(usuarioDao.findByToken("abc")).thenReturn(Optional.empty());
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> {
-            authService.obtenerUsuarioByToken("abc");
-        });
+		RuntimeException ex = assertThrows(RuntimeException.class, () -> {
+			authService.obtenerUsuarioByToken("abc");
+		});
 
-        assertEquals("Usuario no encontrado para el token proporcionado", ex.getMessage());
-    }
+		assertEquals("Usuario no encontrado para el token proporcionado", ex.getMessage());
+	}
 
-    @Test
-    void registrarUsuarioEmailExistsTest() {
-        when(usuarioDao.existsByEmail("Email")).thenReturn(true);
+	@Test
+	void registrarUsuarioEmailExistsTest() {
+		when(usuarioDao.existsByEmail("Email")).thenReturn(true);
 
-        assertThrows(RuntimeException.class, () -> {
-            authService.registrarUsuario("Usuario", "Email", "Contraseña");
-        });
+		assertThrows(RuntimeException.class, () -> {
+			authService.registrarUsuario("Usuario", "Email", "Contraseña");
+		});
 
-        verify(usuarioDao, never()).save(any());
-    }
+		verify(usuarioDao, never()).save(any());
+	}
 
-    @Test
-    void registrarUsuarioTest() {
-        when(usuarioDao.existsByEmail("Email")).thenReturn(false);
-        authService.registrarUsuario("Usuario", "Email", "Contraseña");
-        verify(usuarioDao).save(any(Usuario.class));
-    }
+	@Test
+	void registrarUsuarioTest() {
+		when(usuarioDao.existsByEmail("Email")).thenReturn(false);
+		authService.registrarUsuario("Usuario", "Email", "Contraseña");
+		verify(usuarioDao).save(any(Usuario.class));
+	}
 
-    @Test
-    void obtenerTodosLosUsuariosTest() {
-        List<Usuario> usuarios = List.of(new Usuario(), new Usuario());
-        when(usuarioDao.findAll()).thenReturn(usuarios);
-        List<Usuario> result = authService.obtenerTodosLosUsuarios();
+	@Test
+	void obtenerTodosLosUsuariosTest() {
+		List<Usuario> usuarios = List.of(new Usuario(), new Usuario());
+		when(usuarioDao.findAll()).thenReturn(usuarios);
+		List<Usuario> result = authService.obtenerTodosLosUsuarios();
 
-        assertEquals(2, result.size());
-        verify(usuarioDao).findAll();
-    }
+		assertEquals(2, result.size());
+		verify(usuarioDao).findAll();
+	}
 
-    @Test
-    void obtenerUsuarioByTokenTest() {
-        Usuario user = new Usuario();
+	@Test
+	void obtenerUsuarioByTokenTest() {
+		Usuario user = new Usuario();
 
-        when(usuarioDao.findByToken("abc")).thenReturn(Optional.of(user));
+		when(usuarioDao.findByToken("abc")).thenReturn(Optional.of(user));
 
-        Usuario result = authService.obtenerUsuarioByToken("abc");
+		Usuario result = authService.obtenerUsuarioByToken("abc");
 
-        assertEquals(user, result);
-    }
+		assertEquals(user, result);
+	}
 
-    @Test
-    void iniciarSesionContraseñaIncorrectaTest() {
-        String email = "Email";
+	@Test
+	void iniciarSesionContraseñaIncorrectaTest() {
+		String email = "Email";
 
-        Usuario user = new Usuario();
-        user.setPassword("hashmalo");
+		Usuario user = new Usuario();
+		user.setPassword("hashmalo");
 
-        when(usuarioDao.findByEmail(email)).thenReturn(Optional.of(user));
+		when(usuarioDao.findByEmail(email)).thenReturn(Optional.of(user));
 
-        when(authExternalFactory.createAuthAdapter(AuthProvider.GOOGLE))
-                .thenReturn(authExternalPort);
-        when(authExternalPort.validarTokenExterno(anyString()))
-                .thenReturn(true);
+		when(authExternalFactory.createAuthAdapter(AuthProvider.GOOGLE)).thenReturn(authExternalPort);
+		when(authExternalPort.validarTokenExterno(anyString())).thenReturn(true);
 
-        assertThrows(RuntimeException.class, () -> {
-            authService.iniciarSesion(email, "wrong");
-        });
-    }
+		assertThrows(RuntimeException.class, () -> {
+			authService.iniciarSesion(email, "wrong");
+		});
+	}
 
-    @Test
-    void iniciarSesionTest() throws Exception {
-        String email = "Email";
-        String password = "Contraseña";
+	@Test
+	void iniciarSesionTest() throws Exception {
+		String email = "Email";
+		String password = "Contraseña";
 
-        byte[] salt = AuthService.generateSalt();
-        String hash = AuthService.hashPassword(password, salt);
-        String storedPassword = Base64.getEncoder().encodeToString(salt) + ":" + hash;
+		byte[] salt = AuthService.generateSalt();
+		String hash = AuthService.hashPassword(password, salt);
+		String storedPassword = Base64.getEncoder().encodeToString(salt) + ":" + hash;
 
-        Usuario user = new Usuario();
-        user.setPassword(storedPassword);
+		Usuario user = new Usuario();
+		user.setPassword(storedPassword);
 
-        when(usuarioDao.findByEmail(email)).thenReturn(Optional.of(user));
+		when(usuarioDao.findByEmail(email)).thenReturn(Optional.of(user));
 
-        when(authExternalFactory.createAuthAdapter(AuthProvider.GOOGLE))
-                .thenReturn(authExternalPort);
-        when(authExternalPort.validarTokenExterno(anyString()))
-                .thenReturn(true);
+		when(authExternalFactory.createAuthAdapter(AuthProvider.GOOGLE)).thenReturn(authExternalPort);
+		when(authExternalPort.validarTokenExterno(anyString())).thenReturn(true);
 
-        String token = authService.iniciarSesion(email, password);
+		String token = authService.iniciarSesion(email, password);
 
-        assertNotNull(token);
-        assertNotNull(user.getToken());
+		assertNotNull(token);
+		assertNotNull(user.getToken());
 
-        verify(usuarioDao).save(user);
-    }
+		verify(usuarioDao).save(user);
+	}
 
-    @Test
-    void cerrarSesionNotFoundTest() {
-        when(usuarioDao.findByToken("abc")).thenReturn(Optional.empty());
+	@Test
+	void cerrarSesionNotFoundTest() {
+		when(usuarioDao.findByToken("abc")).thenReturn(Optional.empty());
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> {
-            authService.cerrarSesion("abc");
-        });
+		RuntimeException ex = assertThrows(RuntimeException.class, () -> {
+			authService.cerrarSesion("abc");
+		});
 
-        assertEquals("Sesión no encontrada o ya finalizada", ex.getMessage());
+		assertEquals("Sesión no encontrada o ya finalizada", ex.getMessage());
 
-        verify(usuarioDao, never()).save(any());
-    }
+		verify(usuarioDao, never()).save(any());
+	}
 
-    @Test
-    void cerrarSesionTest() {
-        Usuario user = new Usuario();
-        user.setToken("abc");
+	@Test
+	void cerrarSesionTest() {
+		Usuario user = new Usuario();
+		user.setToken("abc");
 
-        when(usuarioDao.findByToken("abc")).thenReturn(Optional.of(user));
+		when(usuarioDao.findByToken("abc")).thenReturn(Optional.of(user));
 
-        authService.cerrarSesion("abc");
+		authService.cerrarSesion("abc");
 
-        assertNull(user.getToken());
-        verify(usuarioDao).save(user);
-    }
+		assertNull(user.getToken());
+		verify(usuarioDao).save(user);
+	}
 }
 
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
 
-    @Mock
-    private UsuarioDao usuarioDao;
+	@Mock
+	private UsuarioDao usuarioDao;
 
-    @Mock
-    private CursoDAO cursoDao;
+	@Mock
+	private CursoDAO cursoDao;
 
-    @InjectMocks
-    private AdminService adminService;
+	@InjectMocks
+	private AdminService adminService;
 
-    @Test
-    void eliminarUsuarioTest() {
-        String token = "admin";
-        String nombre = "Usuario";
+	@Test
+	void eliminarUsuarioTest() {
+		String token = "admin";
+		String nombre = "Usuario";
 
-        Usuario admin = new Usuario();
-        admin.setEsAdmin(true);
+		Usuario admin = new Usuario();
+		admin.setEsAdmin(true);
 
-        Usuario user = new Usuario();
-        List<Curso> cursos = new ArrayList<>();
-        user.setCursosCreados(cursos);
+		Usuario user = new Usuario();
+		List<Curso> cursos = new ArrayList<>();
+		user.setCursosCreados(cursos);
 
-        when(usuarioDao.findByToken(token)).thenReturn(Optional.of(admin));
-        when(usuarioDao.findByNombre(nombre)).thenReturn(Optional.of(user));
+		when(usuarioDao.findByToken(token)).thenReturn(Optional.of(admin));
+		when(usuarioDao.findByNombre(nombre)).thenReturn(Optional.of(user));
 
-        boolean result = adminService.eliminarUsuario(token, nombre);
+		boolean result = adminService.eliminarUsuario(token, nombre);
 
-        assertTrue(result);
+		assertTrue(result);
 
-        verify(cursoDao).deleteAll(cursos);
-        verify(usuarioDao).delete(user);
+		verify(cursoDao).deleteAll(cursos);
+		verify(usuarioDao).delete(user);
 
-        token = "user";
+		token = "user";
 
-        Usuario normalUser = new Usuario();
-        normalUser.setEsAdmin(false);
+		Usuario normalUser = new Usuario();
+		normalUser.setEsAdmin(false);
 
-        when(usuarioDao.findByToken(token)).thenReturn(Optional.of(normalUser));
+		when(usuarioDao.findByToken(token)).thenReturn(Optional.of(normalUser));
 
-        result = adminService.eliminarUsuario(token, "juan");
+		result = adminService.eliminarUsuario(token, "juan");
 
-        assertFalse(result);
-    }
+		assertFalse(result);
+	}
 
-    @Test
-    void eliminarUsuarioAdminNotFoundTest() {
-        when(usuarioDao.findByToken("token")).thenReturn(Optional.empty());
+	@Test
+	void eliminarUsuarioAdminNotFoundTest() {
+		when(usuarioDao.findByToken("token")).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> {
-            adminService.eliminarUsuario("token", "juan");
-        });
-    }
+		assertThrows(NoSuchElementException.class, () -> {
+			adminService.eliminarUsuario("token", "juan");
+		});
+	}
 
-    @Test
-    void getAllUsersTest() {
-        List<Usuario> users = List.of(
-            new Usuario(),
-            new Usuario()
-        );
+	@Test
+	void getAllUsersTest() {
+		List<Usuario> users = List.of(new Usuario(), new Usuario());
 
-        when(usuarioDao.findAll()).thenReturn(users);
+		when(usuarioDao.findAll()).thenReturn(users);
 
-        List<Usuario> result = adminService.getAllUsers();
+		List<Usuario> result = adminService.getAllUsers();
 
-        assertEquals(2, result.size());
-        assertEquals(users, result);
+		assertEquals(2, result.size());
+		assertEquals(users, result);
 
-        verify(usuarioDao).findAll();
-    }
+		verify(usuarioDao).findAll();
+	}
 }
 
 @ExtendWith(MockitoExtension.class)
 class AuthExternalFactoryTest {
-    private final AuthExternalFactory factory = new AuthExternalFactory();
+	private final AuthExternalFactory factory = new AuthExternalFactory();
 
-    @Test
-    void createAuthAdapterGoogleTest() {
-        AuthExternalPort result = factory.createAuthAdapter(AuthProvider.GOOGLE);
+	@Test
+	void createAuthAdapterGoogleTest() {
+		AuthExternalPort result = factory.createAuthAdapter(AuthProvider.GOOGLE);
 
-        assertNotNull(result);
-        assertTrue(result instanceof GoogleAuthExternalAdapter);
-    }
+		assertNotNull(result);
+		assertTrue(result instanceof GoogleAuthExternalAdapter);
+	}
 
-    @Test
-    void createAuthAdapterGithubTest() {
-        AuthExternalPort result = factory.createAuthAdapter(AuthProvider.GITHUB);
+	@Test
+	void createAuthAdapterGithubTest() {
+		AuthExternalPort result = factory.createAuthAdapter(AuthProvider.GITHUB);
 
-        assertNotNull(result);
-        assertTrue(result instanceof GithubAuthExternalAdapter);
-    }
+		assertNotNull(result);
+		assertTrue(result instanceof GithubAuthExternalAdapter);
+	}
 
-    @Test
-    void createAuthAdapterNullProviderTest() {
-        IllegalArgumentException ex = assertThrows(
-            IllegalArgumentException.class,
-            () -> factory.createAuthAdapter(null)
-        );
+	@Test
+	void createAuthAdapterNullProviderTest() {
+		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> factory.createAuthAdapter(null));
 
-        assertEquals("Proveedor de autenticación no válido", ex.getMessage());
-    }
+		assertEquals("Proveedor de autenticación no válido", ex.getMessage());
+	}
 }
 
 @ExtendWith(MockitoExtension.class)
 class GithubAuthExternalAdapterTest {
 
-    private final GithubAuthExternalAdapter adapter = new GithubAuthExternalAdapter();
-    @Test
-    void validarTokenExternoValidGhpTest() {
-        String token = "ghp_123456";
+	private final GithubAuthExternalAdapter adapter = new GithubAuthExternalAdapter();
 
-        boolean result = adapter.validarTokenExterno(token);
+	@Test
+	void validarTokenExternoValidGhpTest() {
+		String token = "ghp_123456";
 
-        assertTrue(result);
-    }
+		boolean result = adapter.validarTokenExterno(token);
 
-    @Test
-    void validarTokenExternoValidGhoTest() {
-        String token = "gho_abcdef";
+		assertTrue(result);
+	}
 
-        boolean result = adapter.validarTokenExterno(token);
+	@Test
+	void validarTokenExternoValidGhoTest() {
+		String token = "gho_abcdef";
 
-        assertTrue(result);
-    }
+		boolean result = adapter.validarTokenExterno(token);
 
-    @Test
-    void validarTokenExternoInvalidTokenTest() {
-        String token = "invalid_token";
+		assertTrue(result);
+	}
 
-        boolean result = adapter.validarTokenExterno(token);
+	@Test
+	void validarTokenExternoInvalidTokenTest() {
+		String token = "invalid_token";
 
-        assertFalse(result);
-    }
+		boolean result = adapter.validarTokenExterno(token);
 
-    @Test
-    void validarTokenExternoNullTokenTest() {
-        boolean result = adapter.validarTokenExterno(null);
+		assertFalse(result);
+	}
 
-        assertFalse(result);
-    }
+	@Test
+	void validarTokenExternoNullTokenTest() {
+		boolean result = adapter.validarTokenExterno(null);
+
+		assertFalse(result);
+	}
 }
 
 @ExtendWith(MockitoExtension.class)
 class GoogleAuthExternalAdapterTest {
 
-    private final GoogleAuthExternalAdapter adapter = new GoogleAuthExternalAdapter();
+	private final GoogleAuthExternalAdapter adapter = new GoogleAuthExternalAdapter();
 
-    @Test
-    void validarTokenExternoValidGoogleTokenTest() {
-        String token = "google-token-12345";
+	@Test
+	void validarTokenExternoValidGoogleTokenTest() {
+		String token = "google-token-12345";
 
-        boolean result = adapter.validarTokenExterno(token);
+		boolean result = adapter.validarTokenExterno(token);
 
-        assertTrue(result);
-    }
+		assertTrue(result);
+	}
 
-    @Test
-    void validarTokenExternoInvalidTokenTest() {
-        String token = "ghp_invalid";
+	@Test
+	void validarTokenExternoInvalidTokenTest() {
+		String token = "ghp_invalid";
 
-        boolean result = adapter.validarTokenExterno(token);
+		boolean result = adapter.validarTokenExterno(token);
 
-        assertFalse(result);
-    }
+		assertFalse(result);
+	}
 
-    @Test
-    void validarTokenExternoNullTokenTest() {
-        boolean result = adapter.validarTokenExterno(null);
+	@Test
+	void validarTokenExternoNullTokenTest() {
+		boolean result = adapter.validarTokenExterno(null);
 
-        assertFalse(result);
-    }
+		assertFalse(result);
+	}
 }
 
 class CursoTest {
 
-    @Test
-    void cursoGettersAndSettersTest() {
-        Curso curso = new Curso();
+	@Test
+	void cursoGettersAndSettersTest() {
+		Curso curso = new Curso();
 
-        curso.setId(1L);
-        curso.setNombre("Java");
-        curso.setCategoria("Backend");
-        curso.setDescripcion("Desc");
-        curso.setDificultad(Dificultad.MEDIO);
+		curso.setId(1L);
+		curso.setNombre("Java");
+		curso.setCategoria("Backend");
+		curso.setDescripcion("Desc");
+		curso.setDificultad(Dificultad.MEDIO);
 
-        assertEquals(1L, curso.getId());
-        assertEquals("Java", curso.getNombre());
-        assertEquals("Backend", curso.getCategoria());
-        assertEquals("Desc", curso.getDescripcion());
-        assertEquals(Dificultad.MEDIO, curso.getDificultad());
-    }
+		assertEquals(1L, curso.getId());
+		assertEquals("Java", curso.getNombre());
+		assertEquals("Backend", curso.getCategoria());
+		assertEquals("Desc", curso.getDescripcion());
+		assertEquals(Dificultad.MEDIO, curso.getDificultad());
+	}
 
-    @Test
-    void cursoCollectionsTest() {
-        Curso curso = new Curso();
+	@Test
+	void cursoCollectionsTest() {
+		Curso curso = new Curso();
 
-        Usuario usuario = new Usuario();
-        usuario.setId(1L);
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
 
-        curso.setUsuariosMatriculados(new ArrayList<>());
-        curso.getUsuariosMatriculados().add(usuario);
+		curso.setUsuariosMatriculados(new ArrayList<>());
+		curso.getUsuariosMatriculados().add(usuario);
 
-        assertEquals(1, curso.getUsuariosMatriculados().size());
-        assertEquals(usuario, curso.getUsuariosMatriculados().get(0));
-    }
+		assertEquals(1, curso.getUsuariosMatriculados().size());
+		assertEquals(usuario, curso.getUsuariosMatriculados().get(0));
+	}
 }
