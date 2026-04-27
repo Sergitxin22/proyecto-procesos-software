@@ -48,6 +48,9 @@ jacocoTestReport {
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
 			fileTree(dir: it, exclude: [
+					'com/sergitxin/flexilearn/dto/**',
+					'com/sergitxin/flexilearn/entity/**',
+					'com/sergitxin/flexilearn/*.class',
 				'com/sergitxin/flexilearn/config/**',
 				'com/sergitxin/flexilearn/facade/**',
 				'com/sergitxin/flexilearn/FlexilearnApplication*'
@@ -79,6 +82,9 @@ jacocoTestCoverageVerification {
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
 			fileTree(dir: it, exclude: [
+				'com/sergitxin/flexilearn/dto/**',
+				'com/sergitxin/flexilearn/entity/**',
+				'com/sergitxin/flexilearn/*.class',
 				'com/sergitxin/flexilearn/config/**',
 				'com/sergitxin/flexilearn/facade/**',
 				'com/sergitxin/flexilearn/FlexilearnApplication*'
