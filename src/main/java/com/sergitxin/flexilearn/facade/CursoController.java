@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,7 @@ import com.sergitxin.flexilearn.dto.CursoRequestDTO;
 import com.sergitxin.flexilearn.dto.EjercicioRequestDTO;
 import com.sergitxin.flexilearn.dto.MessageResponseDto;
 import com.sergitxin.flexilearn.dto.ModuloRequestDTO;
+import com.sergitxin.flexilearn.dto.CursoUpdateDTO;
 import com.sergitxin.flexilearn.entity.Curso;
 import com.sergitxin.flexilearn.entity.Dificultad;
 import com.sergitxin.flexilearn.entity.Ejercicio;
@@ -123,5 +125,29 @@ public class CursoController {
         return ResponseEntity.ok(1);
         }
         return ResponseEntity.ok(0); 
+    }
+    
+    @Operation(summary = "Actualiza un curso completo", description = "Actualiza los datos del curso, sus módulos y ejercicios")
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCurso(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @PathVariable("id") Long cursoId,
+            @RequestBody CursoUpdateDTO cursoUpdateDTO) {
+        
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
+        }
+        
+        String token = authHeader.substring(7);
+        
+        try {
+            Curso cursoActualizado = cursoService.actualizarCurso(token, cursoId, cursoUpdateDTO);
+            return ResponseEntity.ok(cursoActualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new MessageResponseDto(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponseDto("Error al actualizar el curso: " + e.getMessage()));
+        }
     }
 }

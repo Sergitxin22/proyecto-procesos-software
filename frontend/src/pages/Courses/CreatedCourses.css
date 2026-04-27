@@ -128,3 +128,26 @@
     padding: 0.35rem 0.7rem;
     font-size: 0.8rem;
 }
+
+.btn-edit {
+    background: #e0f2fe;
+    color: #0284c7;
+    border: none;
+    border-radius: 8px;
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.btn-edit:hover {
+    background: #bae6fd;
+}
+
+.course-card-actions .btn-edit,
+.course-card-actions .btn-danger,
+.course-card-actions .btn-primary {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+}

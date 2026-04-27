@@ -57,6 +57,11 @@ export default function CourseList() {
             setError(err.message);
         }
     };
+	
+	const editCourse = (courseId, e) => {
+	    e.stopPropagation();
+	    navigate(`/courses/edit/${courseId}`);
+	};
     
     return (
         <div className="profile-layout">
@@ -98,6 +103,12 @@ export default function CourseList() {
                                                 📦 {course.modulos.length} módulo{course.modulos.length !== 1 ? 's' : ''}
                                             </span>
                                         <div className="course-card-actions">
+											<button
+												className="btn-edit"
+												onClick={e => editCourse(course.id, e)}
+											>
+											    Editar curso
+                                            </button>
                                             <button
                                                 className="btn-danger"
                                                 onClick={(e) => handleDelete(e, course.id)}
