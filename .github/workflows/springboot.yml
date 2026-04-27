@@ -15,8 +15,8 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_DB: testdb
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: flexilearn
         ports:
           - 5432:5432
         options: >-
