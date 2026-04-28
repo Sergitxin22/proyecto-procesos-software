@@ -28,7 +28,7 @@ public class Curso {
     private Dificultad dificultad;
 
     @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Modulo> modulos;
+    private List<Modulo> modulos = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")

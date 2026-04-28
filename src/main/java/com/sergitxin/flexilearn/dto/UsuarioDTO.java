@@ -5,7 +5,24 @@ public class UsuarioDTO {
     private String nombre;
     private String email;
     private boolean esAdmin;
-    public Long getId() {
+   
+    public UsuarioDTO(Long id, String nombre, String email, boolean esAdmin) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.email = email;
+		this.esAdmin = esAdmin;
+	}
+    
+    public UsuarioDTO() {
+		super();
+		this.id = 0L;
+		this.nombre = "";
+		this.email = "";
+		this.esAdmin = false;
+	}
+    
+	public Long getId() {
         return id;
     }
     public void setId(Long id) {

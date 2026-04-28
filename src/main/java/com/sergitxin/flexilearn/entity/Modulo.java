@@ -1,5 +1,6 @@
 package com.sergitxin.flexilearn.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -29,7 +30,7 @@ public class Modulo {
     private Curso curso;
 
     @OneToMany(mappedBy = "modulo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Ejercicio> ejercicios;
+    private List<Ejercicio> ejercicios = new ArrayList<>();
 
     public Long getId() {
         return id;

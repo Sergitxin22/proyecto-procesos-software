@@ -8,13 +8,13 @@ public class AuthExternalFactory {
     public AuthExternalFactory() {}
         
     public AuthExternalPort createAuthAdapter(AuthProvider provider) {
-        switch (provider) {
-            case GOOGLE:
-                return new GoogleAuthExternalAdapter();
-            case GITHUB:
-                return new GithubAuthExternalAdapter();
-            default:
-                throw new IllegalArgumentException("Proveedor de autenticación no válido: " + provider);
+        if (provider == null) {
+            throw new IllegalArgumentException("Proveedor de autenticación no válido");
         }
+
+        return switch (provider) {
+            case GOOGLE -> new GoogleAuthExternalAdapter();
+            case GITHUB -> new GithubAuthExternalAdapter();
+        };
     }
 }

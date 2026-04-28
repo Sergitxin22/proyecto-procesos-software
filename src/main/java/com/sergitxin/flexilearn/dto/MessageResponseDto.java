@@ -6,7 +6,11 @@ public class MessageResponseDto {
     public MessageResponseDto(String mensaje) {
         this.mensaje = mensaje;
     }
-
+    
+    public MessageResponseDto() {
+        this.mensaje = "";
+    }
+    
     public String getMensaje() {
         return mensaje;
     }

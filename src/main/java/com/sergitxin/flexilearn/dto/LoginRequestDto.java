@@ -4,7 +4,19 @@ public class LoginRequestDto {
     private String email;
     private String password;
 
-    public String getEmail() {
+    public LoginRequestDto(String email, String password) {
+		super();
+		this.email = email;
+		this.password = password;
+	}
+    
+    public LoginRequestDto() {
+		super();
+		this.email = "";
+		this.password = "";
+	}
+    
+	public String getEmail() {
         return email;
     }
 

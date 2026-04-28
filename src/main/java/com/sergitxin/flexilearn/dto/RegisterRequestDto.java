@@ -4,8 +4,23 @@ public class RegisterRequestDto {
     private String nombre;
     private String email;
     private String password;
+    
+    public RegisterRequestDto(String nombre, String email, String password) {
+		super();
+		this.nombre = nombre;
+		this.email = email;
+		this.password = password;
+	}
 
-    public String getNombre() {
+
+    public RegisterRequestDto() {
+		super();
+		this.nombre = "";
+		this.email = "";
+		this.password = "";
+	}
+    
+	public String getNombre() {
         return nombre;
     }
 
