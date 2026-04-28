@@ -1,0 +1,100 @@
+.course-admin-card {
+    padding: 2rem;
+    max-width: 1100px;
+    width: 100%;
+    box-sizing: border-box;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+.course-admin-header {
+    margin-bottom: 1.25rem;
+}
+
+.course-admin-search-wrapper {
+    margin-bottom: 1.25rem;
+}
+
+.course-admin-search {
+    width: 100%;
+    padding: 0.65rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 0.95rem;
+}
+
+.course-admin-empty {
+    text-align: center;
+    color: #888;
+    margin: 1.5rem 0;
+}
+
+.course-admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.93rem;
+}
+
+.course-admin-table th {
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    font-weight: 600;
+    color: #555;
+    border-bottom: 2px solid #eee;
+}
+
+.course-admin-table td {
+    padding: 0.7rem 0.75rem;
+    vertical-align: top;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.course-admin-title {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.course-admin-description {
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.course-admin-meta {
+    color: #7a7a7a;
+    font-size: 0.82rem;
+}
+
+.course-admin-delete {
+    padding: 0.4rem 0.85rem;
+    border-radius: 6px;
+    border: none;
+    background: #e53e3e;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.course-admin-delete:disabled {
+    background: #f5a5a5;
+    cursor: not-allowed;
+}
+
+.course-admin-actions {
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .course-admin-card {
+        padding: 1rem;
+    }
+
+    .course-admin-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}

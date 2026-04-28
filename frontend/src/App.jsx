@@ -4,6 +4,7 @@ import Landing from './pages/Landing/Landing'
 import Auth from './pages/Auth/Auth'
 import Admin from './pages/Admin/Admin'
 import UserList from './pages/Admin/UserList'
+import CourseList from './pages/Admin/CourseList'
 import Profile from './pages/Profile/Profile'
 import Courses from './pages/Courses/Courses'
 import CreateCourse from './pages/Courses/CreateCourse'
@@ -30,6 +31,7 @@ export default function App() {
       <Route path="/admin" element={<Admin />} />
       <Route path="/exercises/:id" element={<Exercise />} />
       <Route path="/admin/users" element={<UserList />} />
+      <Route path="/admin/courses" element={<CourseList />} />
       <Route path="/courses" element={<Courses />} />
       <Route path="/courses/:courseId" element={<Course />} />
     </Routes>

@@ -50,6 +50,11 @@ export default function Admin() {
 
     };
 
+    const navigateToCourseList = () => {
+        navigate('/admin/courses');
+
+    };
+
     if (loading) {
         return (
             <div className="profile-wrapper">
@@ -94,6 +99,9 @@ export default function Admin() {
                     <div className="profile-actions">
                         <button className="btn-primary btn-full" onClick={navigateToUserList}>
                             Lista de usuarios
+                        </button>
+                        <button className="btn-primary btn-full" onClick={navigateToCourseList}>
+                            Gestionar cursos
                         </button>
                     </div>
                 </div>
