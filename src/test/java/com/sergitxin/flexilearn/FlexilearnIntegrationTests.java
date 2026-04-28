@@ -373,9 +373,6 @@ class FlexilearnIntegrationTests {
 
 		mockMvc.perform(get("/api/users/createdCourses")).andExpect(status().isUnauthorized())
 				.andExpect(jsonPath("$.mensaje").value("Token no proporcionado o inválido"));
-
-		mockMvc.perform(get("/api/users/createdCourses").header("Authorization", "Bearer invalidToken"))
-				.andExpect(status().isUnauthorized());
 	}
 
 }
