@@ -13,6 +13,7 @@ import com.github.noconnor.junitperf.JUnitPerfTest;
 import com.sergitxin.flexilearn.dao.CursoDAO;
 import com.sergitxin.flexilearn.dao.EjercicioDAO;
 import com.sergitxin.flexilearn.dao.ModuloDAO;
+import com.sergitxin.flexilearn.dao.TestDAO;
 import com.sergitxin.flexilearn.dao.UsuarioDao;
 import com.sergitxin.flexilearn.entity.Curso;
 import com.sergitxin.flexilearn.entity.Dificultad;
@@ -290,7 +291,8 @@ class JUnitPerfSanityTest {
         CursoDAO cursoDAO = cursoDao(db);
         ModuloDAO moduloDAO = moduloDao(db);
         EjercicioDAO ejercicioDAO = ejercicioDao(db);
-        CursoService service = new CursoService(usuarioDao, cursoDAO, moduloDAO, ejercicioDAO);
+        TestDAO testDAO = testDao(db);
+        CursoService service = new CursoService(usuarioDao, cursoDAO, moduloDAO, ejercicioDAO, testDAO);
 
         Usuario user = new Usuario();
         user.setNombre("prof");
@@ -310,7 +312,8 @@ class JUnitPerfSanityTest {
         CursoDAO cursoDAO = cursoDao(db);
         ModuloDAO moduloDAO = moduloDao(db);
         EjercicioDAO ejercicioDAO = ejercicioDao(db);
-        CursoService service = new CursoService(usuarioDao, cursoDAO, moduloDAO, ejercicioDAO);
+        TestDAO testDAO = testDao(db);
+        CursoService service = new CursoService(usuarioDao, cursoDAO, moduloDAO, ejercicioDAO, testDAO);
 
         Curso curso = new Curso();
         curso.setNombre("Curso");
@@ -329,7 +332,8 @@ class JUnitPerfSanityTest {
         CursoDAO cursoDAO = cursoDao(db);
         ModuloDAO moduloDAO = moduloDao(db);
         EjercicioDAO ejercicioDAO = ejercicioDao(db);
-        CursoService service = new CursoService(usuarioDao, cursoDAO, moduloDAO, ejercicioDAO);
+        TestDAO testDAO = testDao(db);
+        CursoService service = new CursoService(usuarioDao, cursoDAO, moduloDAO, ejercicioDAO, testDAO);
 
         Modulo modulo = new Modulo();
         modulo.setNombre("Modulo 1");
@@ -348,7 +352,8 @@ class JUnitPerfSanityTest {
         CursoDAO cursoDAO = cursoDao(db);
         ModuloDAO moduloDAO = moduloDao(db);
         EjercicioDAO ejercicioDAO = ejercicioDao(db);
-        CursoService service = new CursoService(usuarioDao, cursoDAO, moduloDAO, ejercicioDAO);
+        TestDAO testDAO = testDao(db);
+        CursoService service = new CursoService(usuarioDao, cursoDAO, moduloDAO, ejercicioDAO, testDAO);
 
         Curso curso = new Curso();
         curso.setNombre("Curso");
@@ -365,7 +370,8 @@ class JUnitPerfSanityTest {
         CursoDAO cursoDAO = cursoDao(db);
         ModuloDAO moduloDAO = moduloDao(db);
         EjercicioDAO ejercicioDAO = ejercicioDao(db);
-        CursoService service = new CursoService(usuarioDao, cursoDAO, moduloDAO, ejercicioDAO);
+        TestDAO testDAO = testDao(db);
+        CursoService service = new CursoService(usuarioDao, cursoDAO, moduloDAO, ejercicioDAO, testDAO);
 
         Curso c1 = new Curso();
         c1.setNombre("C1");
@@ -385,7 +391,8 @@ class JUnitPerfSanityTest {
         CursoDAO cursoDAO = cursoDao(db);
         ModuloDAO moduloDAO = moduloDao(db);
         EjercicioDAO ejercicioDAO = ejercicioDao(db);
-        CursoService service = new CursoService(usuarioDao, cursoDAO, moduloDAO, ejercicioDAO);
+        TestDAO testDAO = testDao(db);
+        CursoService service = new CursoService(usuarioDao, cursoDAO, moduloDAO, ejercicioDAO, testDAO);
 
         Usuario user = new Usuario();
         user.setNombre("u");
@@ -410,7 +417,8 @@ class JUnitPerfSanityTest {
         CursoDAO cursoDAO = cursoDao(db);
         ModuloDAO moduloDAO = moduloDao(db);
         EjercicioDAO ejercicioDAO = ejercicioDao(db);
-        CursoService service = new CursoService(usuarioDao, cursoDAO, moduloDAO, ejercicioDAO);
+        TestDAO testDAO = testDao(db);
+        CursoService service = new CursoService(usuarioDao, cursoDAO, moduloDAO, ejercicioDAO, testDAO);
 
         Usuario user = new Usuario();
         user.setNombre("u");
@@ -454,10 +462,12 @@ class JUnitPerfSanityTest {
         private final Map<Long, Curso> cursosById = new HashMap<>();
         private final Map<Long, Modulo> modulosById = new HashMap<>();
         private final Map<Long, Ejercicio> ejerciciosById = new HashMap<>();
+        private final Map<Long, com.sergitxin.flexilearn.entity.Test> testsById = new HashMap<>();
         private long usuarioSeq = 1L;
         private long cursoSeq = 1L;
         private long moduloSeq = 1L;
         private long ejercicioSeq = 1L;
+        private long testSeq = 1L;
     }
 
     private static UsuarioDao usuarioDao(TestDb db) {
@@ -631,11 +641,49 @@ class JUnitPerfSanityTest {
         );
     }
 
+    private static TestDAO testDao(TestDb db) {
+        return (TestDAO) Proxy.newProxyInstance(
+            com.sergitxin.flexilearn.entity.Test.class.getClassLoader(),
+            new Class<?>[] {TestDAO.class},
+            (proxy, method, args) -> {
+                String name = method.getName();
+                if ("save".equals(name)) {
+                    com.sergitxin.flexilearn.entity.Test t = (com.sergitxin.flexilearn.entity.Test) args[0];
+                    if (t.getId() == null) {
+                        setTestId(t, db.testSeq++);
+                    }
+                    db.testsById.put(t.getId(), t);
+                    return t;
+                }
+                if ("toString".equals(name)) {
+                    return "TestDAOProxy";
+                }
+                if ("hashCode".equals(name)) {
+                    return System.identityHashCode(proxy);
+                }
+                if ("equals".equals(name)) {
+                    return proxy == args[0];
+                }
+                throw new UnsupportedOperationException("Metodo no soportado: " + name);
+            }
+        );
+    }
+
     private static void setEjercicioId(Ejercicio ejercicio, Long id) {
         try {
             Field field = Ejercicio.class.getDeclaredField("id");
             field.setAccessible(true);
             field.set(ejercicio, id);
+        } catch (ReflectiveOperationException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private static void setTestId(com.sergitxin.flexilearn.entity.Test test, Long id) {
+        try {
+            Field field = com.sergitxin.flexilearn.entity.Test.class.getDeclaredField("id");
+            field.setAccessible(true);
+            field.set(test, id);
         } catch (ReflectiveOperationException ex) {
             throw new RuntimeException(ex);
         }
