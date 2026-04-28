@@ -46,8 +46,8 @@ public class CursoService {
         Curso curso = cursoDAO.findById(idCurso).get();
         modulo.setCurso(curso);
         curso.getModulos().add(modulo);
-        cursoDAO.save(curso);
-        return moduloDAO.save(modulo).getId();
+        
+        return cursoDAO.save(curso).getId();
     }
 
     public Long crearEjercicio(String nombre, String teoria, String codigoInicial, int puntos, String enunciado, String lenguaje, Long idModulo) {
@@ -61,8 +61,8 @@ public class CursoService {
         Modulo modulo = moduloDAO.findById(idModulo).get();
         ejercicio.setModulo(modulo);
         modulo.getEjercicios().add(ejercicio);
-        moduloDAO.save(modulo);
-        return ejercicioDAO.save(ejercicio).getId();
+        
+        return moduloDAO.save(modulo).getId();
     }
 
     public Curso getCurso(Long id) {
