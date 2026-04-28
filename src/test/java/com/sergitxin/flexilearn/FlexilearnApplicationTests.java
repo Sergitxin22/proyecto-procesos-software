@@ -24,6 +24,7 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.sergitxin.flexilearn.dao.CursoDAO;
@@ -39,10 +40,12 @@ import com.sergitxin.flexilearn.external.AuthExternalPort;
 import com.sergitxin.flexilearn.external.AuthProvider;
 import com.sergitxin.flexilearn.external.GithubAuthExternalAdapter;
 import com.sergitxin.flexilearn.external.GoogleAuthExternalAdapter;
+import com.sergitxin.flexilearn.external.PistonGateway;
 import com.sergitxin.flexilearn.entity.Ejercicio;
 import com.sergitxin.flexilearn.service.AdminService;
 import com.sergitxin.flexilearn.service.AuthService;
 import com.sergitxin.flexilearn.service.CursoService;
+import com.sergitxin.flexilearn.service.ExerciseService;
 import com.sergitxin.flexilearn.service.UserService;
 
 @ExtendWith(MockitoExtension.class)
@@ -244,6 +247,101 @@ class CursoServiceTest {
 		assertEquals(1, user.getCursosMatriculados().size());
 
 		verify(usuarioDAO, never()).save(any());
+	}
+}
+
+@ExtendWith(MockitoExtension.class)
+class ExerciseServiceTest {
+
+	@Mock
+	private EjercicioDAO ejercicioDAO;
+
+	@Mock
+	private PistonGateway pistonGateway;
+
+	@Mock
+	private UsuarioDao usuarioDao;
+
+	@InjectMocks
+	private ExerciseService exerciseService;
+
+	@Test
+	void verifyExerciseSolvedAndNotCompletedSavesUsuarioTest() {
+		Long idEjercicio = 1L;
+		String codigo = "public class Main {}";
+		String token = "token";
+
+		Ejercicio ejercicio = new Ejercicio();
+		ejercicio.setId(idEjercicio);
+
+		com.sergitxin.flexilearn.entity.Test test1 = new com.sergitxin.flexilearn.entity.Test();
+		test1.setSalidaEsperada("OK");
+		com.sergitxin.flexilearn.entity.Test test2 = new com.sergitxin.flexilearn.entity.Test();
+		test2.setSalidaEsperada("OK");
+		ejercicio.setTests(List.of(test1, test2));
+
+		Usuario usuario = new Usuario();
+		usuario.setEjerciciosCompletados(new ArrayList<>());
+
+		when(ejercicioDAO.getReferenceById(idEjercicio)).thenReturn(ejercicio);
+		when(pistonGateway.execute(codigo)).thenReturn("OK");
+		when(usuarioDao.findByToken(token)).thenReturn(Optional.of(usuario));
+
+		boolean result = exerciseService.verifyExercise(idEjercicio, codigo, token);
+
+		assertTrue(result);
+		assertTrue(usuario.getEjerciciosCompletados().contains(ejercicio));
+		verify(pistonGateway, times(2)).execute(codigo);
+		verify(usuarioDao).save(usuario);
+	}
+
+	@Test
+	void verifyExerciseNotSolvedDoesNotSaveUsuarioTest() {
+		Long idEjercicio = 2L;
+		String codigo = "public class Main {}";
+
+		Ejercicio ejercicio = new Ejercicio();
+		ejercicio.setId(idEjercicio);
+
+		com.sergitxin.flexilearn.entity.Test test1 = new com.sergitxin.flexilearn.entity.Test();
+		test1.setSalidaEsperada("EXPECTED");
+		ejercicio.setTests(List.of(test1));
+
+		when(ejercicioDAO.getReferenceById(idEjercicio)).thenReturn(ejercicio);
+		when(pistonGateway.execute(codigo)).thenReturn("OTHER");
+
+		boolean result = exerciseService.verifyExercise(idEjercicio, codigo, "token");
+
+		assertFalse(result);
+		verify(usuarioDao, never()).findByToken(anyString());
+		verify(usuarioDao, never()).save(any(Usuario.class));
+	}
+
+	@Test
+	void verifyExerciseSolvedButAlreadyCompletedDoesNotSaveUsuarioTest() {
+		Long idEjercicio = 3L;
+		String codigo = "public class Main {}";
+		String token = "token";
+
+		Ejercicio ejercicio = new Ejercicio();
+		ejercicio.setId(idEjercicio);
+
+		com.sergitxin.flexilearn.entity.Test test1 = new com.sergitxin.flexilearn.entity.Test();
+		test1.setSalidaEsperada("OK");
+		ejercicio.setTests(List.of(test1));
+
+		Usuario usuario = new Usuario();
+		usuario.setEjerciciosCompletados(new ArrayList<>(List.of(ejercicio)));
+
+		when(ejercicioDAO.getReferenceById(idEjercicio)).thenReturn(ejercicio);
+		when(pistonGateway.execute(codigo)).thenReturn("OK");
+		when(usuarioDao.findByToken(token)).thenReturn(Optional.of(usuario));
+
+		boolean result = exerciseService.verifyExercise(idEjercicio, codigo, token);
+
+		assertTrue(result);
+		assertEquals(1, usuario.getEjerciciosCompletados().size());
+		verify(usuarioDao, never()).save(any(Usuario.class));
 	}
 }
 
