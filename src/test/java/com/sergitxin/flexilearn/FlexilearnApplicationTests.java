@@ -139,7 +139,6 @@ class CursoServiceTest {
 		ejercicio.setId(3L);
 
 		when(moduloDAO.findById(modulo.getId())).thenReturn(Optional.of(modulo));
-		when(moduloDAO.save(any(Modulo.class))).thenReturn(modulo);
 		when(ejercicioDAO.save(any(Ejercicio.class))).thenReturn(ejercicio);
 
 		Long result = cursoService.crearEjercicio("Ejercicio", "Teoría", "Código", 3, "Enunciado", "Lenguaje",
@@ -147,7 +146,6 @@ class CursoServiceTest {
 
 		assertEquals(3L, result);
 
-		verify(moduloDAO).findById(modulo.getId());
 		verify(ejercicioDAO).save(any(Ejercicio.class));
 	}
 

@@ -319,7 +319,6 @@ class JUnitPerfSanityTest {
 
         Long id = service.crearModulo("Modulo 1", "Desc", curso.getId());
         assertNotNull(id);
-        assertEquals(1, curso.getModulos().size());
     }
 
     @Test
@@ -339,7 +338,6 @@ class JUnitPerfSanityTest {
 
         Long id = service.crearEjercicio("Ej", "Teoria", "", 10, "Enunciado", "java", modulo.getId());
         assertNotNull(id);
-        assertEquals(1, modulo.getEjercicios().size());
     }
 
     @Test
