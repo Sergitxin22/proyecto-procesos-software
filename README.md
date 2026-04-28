@@ -43,7 +43,7 @@ La estructura relacional principal que soporta toda la lógica de los cursos, m�
 2. **Gestión Estructural de Cursos (LMS):**
    - Sistema de jerarquía pura: Cursos → Módulos → Ejercicios.
    - Perfil de estudiante vs. Creador de Curso.
-   - Entorno precargado con cursos de ejemplo (Introducción a Java, Spring Boot Avanzado), organizados con módulos didácticos y ejercicios interactivos puntuados.
+   - Entorno precargado con cursos de ejemplo (Introducción a Java, Spring Boot Avanzado), organizados con módulos didácticos y ejercicios interactivos puntuados que se realizan en la misma aplicación web, soportadas por el motor de ejecución de [Piston](https://github.com/engineer-man/piston).
 3. **Gestión de Usuarios y Roles:**
    - Usuarios base generados automáticamente (`aitor@aitor.com`, `markel@markel.com` como usuarios estándar; `aroa@aroa.com` como **admin**).
    - Panel de control de administradores.
@@ -94,7 +94,7 @@ El proyecto soporta dos modos de ejecución, dependiendo de la etapa en la que t
 ### Opción A: Entorno de Desarrollo (Develop / Hot-Reload)
 Ideal para modificar código en tiempo real (con _hot-reloading_ en React y modo debug para el API). Se deben arrancar sus 3 fragmentos vitales en **ventanas de terminal separadas**:
 
-**Paso 1: Levantar la Base de Datos (PostgreSQL)**
+**Paso 1: Levantar la Base de Datos (PostgreSQL) y PistonAPI**
 Abre una terminal de linux (como WSL) en la raíz del proyecto y enciende el contenedor:
 ```bash
 wsl
@@ -143,13 +143,10 @@ Una vez que el building process finalice, todo estará corriendo y sincronizado 
 - **Frontend web público:** [http://localhost:5173](http://localhost:5173) (redirecciona internamente sus llamadas al backend).
 - **Backend API local:** `http://localhost:8080`.
 - **Base de Datos Postgres:** Expuesta y persistida internamente por los volúmenes del motor Docker.
+- - **Motor de ejecución de Piston:** Con los runtimes de ejecución ya instalados.
 
 ## Piston
-Este proyecto implementa Piston, un entorno de ejecución aislado y seguro, para poder ejecutar el código introducido por los usuarios en la página. El docker-compose se encarga de la build del entorno, pero una vez instalado es necesario descargar los runtimes de los lenguajes de programación que utiliza nuestra plataforma. Para ello, la primera vez que buildees la imagen de Piston, es necesario ejecutar `piston_init.sh`, que se encarga de descargar los entornos en Piston:
-
-```bash
-$ ./piston_init.sh
-```
+Este proyecto implementa Piston, un entorno de ejecución aislado y seguro, para poder ejecutar el código introducido por los usuarios en la página. El docker-compose se encarga de la build.
 
 ---
 
@@ -171,8 +168,6 @@ Para lanzar **todos los tests automatizados del proyecto** (backend, JUnit/JUnit
 ```bat
 gradlew.bat test
 ```
-
-> Nota: Actualmente el frontend no tiene script de tests en `frontend/package.json`, por lo que este comando ejecuta todos los tests existentes del backend.
 
 ### 📍 Dónde ver los resultados
 
