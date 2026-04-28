@@ -1,18 +1,22 @@
 package com.sergitxin.flexilearn.service;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.stereotype.Service;
 
 import com.sergitxin.flexilearn.dao.CursoDAO;
 import com.sergitxin.flexilearn.dao.EjercicioDAO;
 import com.sergitxin.flexilearn.dao.ModuloDAO;
+import com.sergitxin.flexilearn.dao.TestDAO;
 import com.sergitxin.flexilearn.dao.UsuarioDao;
 import com.sergitxin.flexilearn.entity.Curso;
 import com.sergitxin.flexilearn.entity.Dificultad;
 import com.sergitxin.flexilearn.entity.Ejercicio;
 import com.sergitxin.flexilearn.entity.Modulo;
+import com.sergitxin.flexilearn.entity.Test;
 import com.sergitxin.flexilearn.entity.Usuario;
+import com.sergitxin.flexilearn.dto.TestRequestDTO;
 
 @Service
 public class CursoService {
@@ -20,12 +24,14 @@ public class CursoService {
     private final CursoDAO cursoDAO;
     private final ModuloDAO moduloDAO;
     private final EjercicioDAO ejercicioDAO;
+    private final TestDAO testDAO;
 
-    public CursoService(UsuarioDao usuarioDAO, CursoDAO cursoDAO, ModuloDAO moduloDAO, EjercicioDAO ejercicioDAO) {
+    public CursoService(UsuarioDao usuarioDAO, CursoDAO cursoDAO, ModuloDAO moduloDAO, EjercicioDAO ejercicioDAO, TestDAO testDAO) {
         this.usuarioDAO = usuarioDAO;
         this.cursoDAO = cursoDAO;
         this.moduloDAO = moduloDAO;
         this.ejercicioDAO = ejercicioDAO;
+        this.testDAO = testDAO;
     }
 
     public Long crearCurso(String token, String nombre, String categoria, String descripcion, Dificultad dificultad) {
@@ -63,6 +69,38 @@ public class CursoService {
         Ejercicio saved = ejercicioDAO.save(ejercicio);
 
         return saved.getId();
+    }
+
+    public int crearTestsEjercicio(String token, Long idEjercicio, List<TestRequestDTO> testsRequest) {
+        usuarioDAO.findByToken(token).orElseThrow();
+
+        Ejercicio ejercicio = ejercicioDAO.findById(idEjercicio).orElseThrow();
+        List<Test> tests = new ArrayList<>();
+
+        if (testsRequest != null) {
+            for (TestRequestDTO testRequest : testsRequest) {
+                if (testRequest == null) {
+                    continue;
+                }
+
+                String codigo = testRequest.getCodigo() == null ? "" : testRequest.getCodigo().trim();
+                String salidaEsperada = testRequest.getSalidaEsperada() == null ? "" : testRequest.getSalidaEsperada().trim();
+                if (codigo.isEmpty() && salidaEsperada.isEmpty()) {
+                    continue;
+                }
+
+                Test test = new Test();
+                test.setEjercicio(ejercicio);
+                test.setCodigo(codigo);
+                test.setSalidaEsperada(salidaEsperada);
+                tests.add(test);
+            }
+        }
+
+        if (!tests.isEmpty()) {
+            testDAO.saveAll(tests);
+        }
+        return tests.size();
     }
 
     public Curso getCurso(Long id) {

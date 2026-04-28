@@ -19,6 +19,7 @@ import com.sergitxin.flexilearn.dto.CursoRequestDTO;
 import com.sergitxin.flexilearn.dto.EjercicioRequestDTO;
 import com.sergitxin.flexilearn.dto.MessageResponseDto;
 import com.sergitxin.flexilearn.dto.ModuloRequestDTO;
+import com.sergitxin.flexilearn.dto.TestRequestDTO;
 import com.sergitxin.flexilearn.entity.Curso;
 import com.sergitxin.flexilearn.entity.Dificultad;
 import com.sergitxin.flexilearn.entity.Ejercicio;
@@ -64,6 +65,21 @@ public class CursoController {
     @PostMapping("/exercises")
     public ResponseEntity<Long> createEjercicio(@RequestBody EjercicioRequestDTO request) {
         return ResponseEntity.ok(cursoService.crearEjercicio(request.getNombre(), request.getTeoria(), request.getCodigoInicial(), request.getPuntos(), request.getEnunciado(), request.getLenguaje(), request.getIdModulo()));
+    }
+
+    @Operation(summary = "Añade tests a un ejercicio", description = "Guarda tests para un ejercicio existente")
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping("/exercices/{idExercise}/tests")
+    public ResponseEntity<?> createExerciseTests(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @PathVariable("idExercise") Long idExercise,
+            @RequestBody List<TestRequestDTO> tests) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
+        }
+
+        String token = authHeader.substring(7);
+        return ResponseEntity.ok(cursoService.crearTestsEjercicio(token, idExercise, tests));
     }
 
     @GetMapping("/{id}/")

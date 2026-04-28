@@ -12,6 +12,7 @@ export default function CreateExercise() {
     const [enunciado, setEnunciado] = useState('');
     const [codigoInicial, setCodigoInicial] = useState('');
     const [puntos, setPuntos] = useState('');
+    const [tests, setTests] = useState([]);
 
     const token = localStorage.getItem('token');
 
@@ -27,9 +28,23 @@ export default function CreateExercise() {
         }
     }, [navigate, token]);
 
+    const handleAddTest = () => {
+        setTests((prev) => [...prev, { codigo: '', salidaEsperada: '' }]);
+    };
+
+    const handleRemoveTest = (index) => {
+        setTests((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    const handleTestChange = (index, field, value) => {
+        setTests((prev) => prev.map((test, i) => (
+            i === index ? { ...test, [field]: value } : test
+        )));
+    };
+
     const handleCreateExercise = async () => {
         try {
-            await courseService.createExercise({
+            const idExercise = await courseService.createExercise({
                 nombre,
                 lenguaje,
                 teoria,
@@ -38,6 +53,17 @@ export default function CreateExercise() {
                 puntos: parseInt(puntos),
                 idModulo: moduleId,
             });
+
+            const cleanTests = tests
+                .map((test) => ({
+                    codigo: (test.codigo || '').trim(),
+                    salidaEsperada: (test.salidaEsperada || '').trim(),
+                }))
+                .filter((test) => test.codigo.length > 0 || test.salidaEsperada.length > 0);
+
+            if (cleanTests.length > 0) {
+                await courseService.createExerciseTests(idExercise, cleanTests);
+            }
 
             navigate(`/created_courses/${courseId}`);
 
@@ -150,6 +176,58 @@ export default function CreateExercise() {
                                 value={puntos}
                                 onChange={(e) => setPuntos(e.target.value)}
                             />
+                        </div>
+
+                        <div className="tests-section">
+                            <div className="tests-section-header">
+                                <label className="form-label">Tests del ejercicio</label>
+                                <div className="tests-section-actions">
+                                    <button type="button" className="btn-secondary tests-btn" onClick={handleAddTest}>
+                                        + Añadir test
+                                    </button>
+                                </div>
+                            </div>
+
+                            {tests.length === 0 && (
+                                <p className="tests-empty">No hay tests todavía. Puedes añadirlos manualmente.</p>
+                            )}
+
+                            {tests.map((test, index) => (
+                                <div key={index} className="test-card">
+                                    <div className="test-card-top">
+                                        <span className="test-card-title">Test {index + 1}</span>
+                                        <button
+                                            type="button"
+                                            className="test-remove-btn"
+                                            onClick={() => handleRemoveTest(index)}
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </div>
+
+                                    <label className="form-label" htmlFor={`test-code-${index}`}>
+                                        Código del test
+                                    </label>
+                                    <textarea
+                                        id={`test-code-${index}`}
+                                        className="form-input form-textarea form-code"
+                                        rows={4}
+                                        value={test.codigo}
+                                        onChange={(e) => handleTestChange(index, 'codigo', e.target.value)}
+                                    />
+
+                                    <label className="form-label" htmlFor={`test-output-${index}`}>
+                                        Salida esperada
+                                    </label>
+                                    <input
+                                        id={`test-output-${index}`}
+                                        type="text"
+                                        className="form-input"
+                                        value={test.salidaEsperada}
+                                        onChange={(e) => handleTestChange(index, 'salidaEsperada', e.target.value)}
+                                    />
+                                </div>
+                            ))}
                         </div>
 
                         <div className="profile-actions">

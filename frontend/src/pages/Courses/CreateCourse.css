@@ -194,3 +194,77 @@
     background-position: right 0.85rem center;
     padding-right: 2rem;
 }
+
+.tests-section {
+    border-top: 1px solid #ececec;
+    padding-top: 1rem;
+}
+
+.tests-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.6rem;
+}
+
+.tests-section-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.tests-btn {
+    font-size: 0.78rem;
+    padding: 0.4rem 0.65rem;
+}
+
+.tests-empty {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin: 0;
+}
+
+.test-card {
+    background: #f9fafb;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 0.8rem;
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.test-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.test-card-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.test-remove-btn {
+    border: none;
+    background: #ef4444;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+}
+
+@media (max-width: 640px) {
+    .tests-section-actions {
+        width: 100%;
+    }
+
+    .tests-btn {
+        flex: 1;
+    }
+}

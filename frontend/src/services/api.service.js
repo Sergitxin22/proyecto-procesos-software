@@ -151,7 +151,16 @@ export const courseService = {
         });
         return handleResponse(res);
     },
-    
+
+    createExerciseTests: async (idExercise, tests) => {
+        const res = await fetch(`${API_BASE_URL}/courses/exercices/${idExercise}/tests`, {
+            method: 'POST',
+            headers: getHeaders(true),
+            body: JSON.stringify(tests)
+        });
+        return handleResponse(res);
+    },
+
     deleteCurso: async (id) => {
         const res = await fetch(`${API_BASE_URL}/courses/deleteCurso?cursoId=${id}`, {
             method: 'DELETE',
@@ -160,7 +169,7 @@ export const courseService = {
         return handleResponse(res);
     },
 
-    submitSolution : async (solutionData) => {
+    submitSolution: async (solutionData) => {
         const res = await fetch(`${API_BASE_URL}/exercises/verify`, {
             method: 'POST',
             headers: getHeaders(true),
