@@ -128,9 +128,12 @@ Puedes lanzar consultas crudas hacia la API accediendo al entorno integrado de S
 ### Opción B: Entorno de Producción (Deploy Orquestado / Full Docker)
 Ideal para probar su instalación en un servidor de producción. Este método **obvia las instalaciones de Node y Java**, envolviendo por completo backend y frontend y base de datos con `deploy.yaml`.
 
-⚠️ **Importante antes de desplegar:** Tienes que modificar una línea en el archivo de configuración del backend `application.properties`. 
-En la propiedad `spring.datasource.url`, donde pone `"localhost"` debes cambiarlo a `"db"` (el nombre del servicio de la base de datos en Docker).
+⚠️ **Importante antes de desplegar:** Tienes que modificar la configuración para poder conectar con los contenedores.
+1. En el archivo del backend `application.properties` (propiedad `spring.datasource.url`), donde pone `"localhost"` debes cambiarlo a `"db"` (el nombre del servicio de la base de datos en Docker):
 `spring.datasource.url=jdbc:postgresql://db:5432/postgres`
+
+2. En el archivo `PistonGateway.java` (ruta `src/main/java/com/sergitxin/flexilearn/external/PistonGateway.java`), debes comentar la variable `API_URL` que usa `"localhost"` y descomentar la que usa `"piston"`:
+`private final String API_URL = "http://piston:2000/api/v2/";`
 
 Una vez cambiado, abre una terminal en la raíz del proyecto y ejecuta:
 ```bash
