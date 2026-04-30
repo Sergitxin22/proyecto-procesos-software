@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class PistonGateway {
 
     private final String API_URL = "http://localhost:2000/api/v2/";
+    // private final String API_URL = "http://piston:2000/api/v2/";
 
     private final HttpClient httpClient;
 
@@ -51,25 +52,28 @@ public class PistonGateway {
 		
 		try {
 			HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create("http://localhost:2000/api/v2/execute"))
+                .uri(URI.create(API_URL + "execute"))
                 .version(HttpClient.Version.HTTP_1_1)
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
 			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-			 
+			System.out.println("Enviado");
 			if (response.statusCode() == 200) {
                 mapper = new ObjectMapper();
                 JsonNode responseRoot = mapper.readTree(response.body());
 
                 String stdout = responseRoot.path("run").path("stdout").asText();
-                System.out.println(stdout);
+                System.out.println("Salida de Piston: " + stdout);
                 return stdout;
 			} else {
+                System.out.println("Error Status Code: " + response.statusCode());
+                System.out.println("Error Body: " + response.body());
 				return null;
 			}
 		} catch (Exception e) {
+            e.printStackTrace();
 			return null;
 		}
 	}
