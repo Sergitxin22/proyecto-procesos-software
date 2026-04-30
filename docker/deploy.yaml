@@ -24,17 +24,48 @@ services:
       dockerfile: docker/frontend/Dockerfile
     ports:
       - "5173:80"
-  
+
+  piston_init:
+    image: curlimages/curl:8.13.0
+    depends_on:
+      - piston
+    restart: "no"
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        echo "Esperando a que Piston responda..."
+        until curl -sf http://piston:2000/api/v2/runtimes >/dev/null; do
+          sleep 2
+        done
+
+        echo "Instalando Java 15.0.2..."
+        curl -sf -X POST http://piston:2000/api/v2/packages \
+          -H "Content-Type: application/json" \
+          -H "Accept: application/json" \
+          -d '{"language":"java","version":"15.0.2"}'
+
+        echo "Instalando Python 3.9.1..."
+        curl -sf -X POST http://piston:2000/api/v2/packages \
+          -H "Content-Type: application/json" \
+          -H "Accept: application/json" \
+          -d '{"language":"python","version":"3.9.1"}'
+
+        echo "Paquetes de Piston instalados."
+
   piston:
     image: ghcr.io/engineer-man/piston
     container_name: piston_api
     privileged: true
+    restart: unless-stopped
     ports:
-      - 2000:2000
+      - "2000:2000"
     volumes:
-      - ./data/piston/packages:/piston/packages
+      - piston_packages:/piston/packages
     tmpfs:
       - /tmp:exec
 
 volumes:
   postgres_flexilearn:
+  piston_packages:
