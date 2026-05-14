@@ -1,6 +1,7 @@
 package com.sergitxin.flexilearn.service;
 
 import java.util.List;
+import java.util.Date;
 import java.util.ArrayList;
 
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import com.sergitxin.flexilearn.dao.UsuarioDao;
 import com.sergitxin.flexilearn.entity.Curso;
 import com.sergitxin.flexilearn.entity.Dificultad;
 import com.sergitxin.flexilearn.entity.Ejercicio;
+import com.sergitxin.flexilearn.entity.Mensaje;
 import com.sergitxin.flexilearn.entity.Modulo;
 import com.sergitxin.flexilearn.entity.Test;
 import com.sergitxin.flexilearn.entity.Usuario;
@@ -141,4 +143,32 @@ public class CursoService {
 
         return false;
     }
+
+    public Mensaje guardarMensaje(String token, String texto, Long cursoId) {
+        Usuario user = usuarioDAO.findByToken(token).get();
+        Curso curso = cursoDAO.findById(cursoId).get();
+        if ((user.getCursosMatriculados().contains(curso) || user.getCursosCreados().contains(curso)) == false) {
+            return null;
+        }
+
+        Mensaje mensaje = new Mensaje();
+        mensaje.setCurso(curso);
+        mensaje.setFecha(new Date());
+        mensaje.setTexto(texto);
+        mensaje.setUsuario(user);
+        
+        curso.getMensajes().add(mensaje);
+        cursoDAO.save(curso);
+        return mensaje;
+    }
+
+    public List<Mensaje> getMessages(Long cursoId, String token) {
+        Usuario user = usuarioDAO.findByToken(token).get();
+        Curso curso = cursoDAO.findById(cursoId).get();
+        if ((user.getCursosMatriculados().contains(curso) || user.getCursosCreados().contains(curso)) == false) {
+            return new ArrayList<>();
+        }
+        return curso.getMensajes();
+    }
+
 }

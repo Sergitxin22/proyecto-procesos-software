@@ -1,5 +1,6 @@
 package com.sergitxin.flexilearn.facade;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -17,12 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sergitxin.flexilearn.dto.CursoRequestDTO;
 import com.sergitxin.flexilearn.dto.EjercicioRequestDTO;
+import com.sergitxin.flexilearn.dto.ForumMessageResponseDTO;
+import com.sergitxin.flexilearn.dto.MessageDTO;
 import com.sergitxin.flexilearn.dto.MessageResponseDto;
 import com.sergitxin.flexilearn.dto.ModuloRequestDTO;
 import com.sergitxin.flexilearn.dto.TestRequestDTO;
 import com.sergitxin.flexilearn.entity.Curso;
 import com.sergitxin.flexilearn.entity.Dificultad;
 import com.sergitxin.flexilearn.entity.Ejercicio;
+import com.sergitxin.flexilearn.entity.Mensaje;
 import com.sergitxin.flexilearn.service.CursoService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -139,5 +143,46 @@ public class CursoController {
         return ResponseEntity.ok(1);
         }
         return ResponseEntity.ok(0); 
+    }
+
+    @Operation(summary = "Enviar mensaje al foro de un curso")
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping("/{id}/messages")
+    public ResponseEntity<ForumMessageResponseDTO> sendMessage(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @PathVariable("id") Long cursoId,
+            @RequestBody MessageDTO mensaje) {
+        if (authHeader == null || !authHeader.startsWith("Bearer "))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        String token = authHeader.substring(7);
+        Mensaje message = cursoService.guardarMensaje(token, mensaje.getMensaje(), cursoId);
+        if (message == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        ForumMessageResponseDTO mensajeDTO = new ForumMessageResponseDTO();
+        mensajeDTO.setDate(message.getFecha().toString());
+        mensajeDTO.setMensaje(message.getTexto());
+        mensajeDTO.setUsername(message.getUsuario().getNombre());
+        return ResponseEntity.ok(mensajeDTO);
+    }
+
+    @Operation(summary = "Obtener mensajes de un curso")
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/{id}/messages")
+    public ResponseEntity<List<ForumMessageResponseDTO>> getMessages(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
+        @PathVariable("id") Long cursoId) {
+        String token = authHeader.substring(7);
+        List<Mensaje> mensajes = cursoService.getMessages(cursoId, token);
+        List<ForumMessageResponseDTO> messages = new ArrayList<>();
+        for (Mensaje mensaje : mensajes) {
+            ForumMessageResponseDTO mensajeDTO = new ForumMessageResponseDTO();
+            mensajeDTO.setMensaje(mensaje.getTexto());
+            mensajeDTO.setUsername(mensaje.getUsuario().getNombre());
+            mensajeDTO.setDate(mensaje.getFecha().toString());
+            messages.add(mensajeDTO);
+        } 
+
+    	return ResponseEntity.ok(messages);
     }
 }

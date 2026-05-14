@@ -80,6 +80,9 @@ export default function CourseDetail() {
                                 <span className="course-info-label">Descripción</span>
                                 <span className="course-info-value">{courseData.descripcion}</span>
                             </div>
+                            <button className="btn-primary" onClick={() => navigate(`forum`)}>
+                                Ver foro
+                            </button>
                         </div>
 )}
 

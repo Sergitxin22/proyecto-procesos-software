@@ -38,6 +38,9 @@ public class Curso {
     @JsonIgnore
     private List<Usuario> usuariosMatriculados = new ArrayList<>();
 
+    @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Mensaje> mensajes = new ArrayList<>();
+
     public Long getId() {
         return id;
     }
@@ -100,5 +103,13 @@ public class Curso {
     
     public void setUsuariosMatriculados(List<Usuario> usuariosMatriculados) { 
     	this.usuariosMatriculados = usuariosMatriculados; 
+    }
+
+    public List<Mensaje> getMensajes() {
+        return mensajes;
+    }
+
+    public void setMensajes(List<Mensaje> mensajes) {
+        this.mensajes = mensajes;
     }
 }
