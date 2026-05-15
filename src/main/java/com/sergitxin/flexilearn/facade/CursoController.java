@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sergitxin.flexilearn.dto.CursoRequestDTO;
+import com.sergitxin.flexilearn.dto.CursoStatsDTO;
 import com.sergitxin.flexilearn.dto.EjercicioRequestDTO;
 import com.sergitxin.flexilearn.dto.ForumMessageResponseDTO;
 import com.sergitxin.flexilearn.dto.MessageDTO;
@@ -184,5 +185,21 @@ public class CursoController {
         } 
 
     	return ResponseEntity.ok(messages);
+    }
+
+    @Operation(summary = "Obtiene estadísticas del curso", description = "Devuelve estadísticas como cantidad de alumnos, ejercicios y el progreso de cada alumno")
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/{id}/stats")
+    public ResponseEntity<CursoStatsDTO> getCourseStats(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authorizationHeader) {
+        
+        String token = authorizationHeader.replace("Bearer ", "");
+        CursoStatsDTO stats = cursoService.getCourseStats(token, id);
+        
+        if (stats == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(stats);
     }
 }

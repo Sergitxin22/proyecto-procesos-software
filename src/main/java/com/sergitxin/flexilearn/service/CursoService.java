@@ -19,6 +19,8 @@ import com.sergitxin.flexilearn.entity.Modulo;
 import com.sergitxin.flexilearn.entity.Test;
 import com.sergitxin.flexilearn.entity.Usuario;
 import com.sergitxin.flexilearn.dto.TestRequestDTO;
+import com.sergitxin.flexilearn.dto.CursoStatsDTO;
+import com.sergitxin.flexilearn.dto.AlumnoProgresoDTO;
 
 @Service
 public class CursoService {
@@ -169,6 +171,49 @@ public class CursoService {
             return new ArrayList<>();
         }
         return curso.getMensajes();
+    }
+
+    public CursoStatsDTO getCourseStats(String token, Long cursoId) {
+        Usuario profesor = usuarioDAO.findByToken(token).orElseThrow();
+        Curso curso = cursoDAO.findById(cursoId).orElseThrow();
+
+        if (!curso.getUsuario().getId().equals(profesor.getId()) && !profesor.getEsAdmin()) {
+            return null; // Return null if not authorized
+        }
+
+        CursoStatsDTO stats = new CursoStatsDTO();
+        
+        List<Usuario> matriculados = curso.getUsuariosMatriculados();
+        stats.setTotalAlumnos(matriculados.size());
+        
+        List<Ejercicio> ejerciciosCurso = new ArrayList<>();
+        for (Modulo m : curso.getModulos()) {
+            ejerciciosCurso.addAll(m.getEjercicios());
+        }
+        stats.setTotalEjercicios(ejerciciosCurso.size());
+
+        List<AlumnoProgresoDTO> progresos = new ArrayList<>();
+        for (Usuario alumno : matriculados) {
+            AlumnoProgresoDTO progreso = new AlumnoProgresoDTO();
+            progreso.setId(alumno.getId());
+            progreso.setNombre(alumno.getNombre());
+            progreso.setEmail(alumno.getEmail());
+
+            int completados = 0;
+            int puntos = 0;
+            for (Ejercicio ej : alumno.getEjerciciosCompletados()) {
+                if (ej.getModulo() != null && ej.getModulo().getCurso() != null && ej.getModulo().getCurso().getId().equals(curso.getId())) {
+                    completados++;
+                    puntos += ej.getPuntos();
+                }
+            }
+            progreso.setEjerciciosCompletados(completados);
+            progreso.setPuntosTotales(puntos);
+            progresos.add(progreso);
+        }
+        stats.setProgresoAlumnos(progresos);
+
+        return stats;
     }
 
 }
