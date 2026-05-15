@@ -125,6 +125,14 @@ export const courseService = {
         return handleResponse(res);
     },
 
+    getCourseStats: async (id) => {
+        const res = await fetch(`${API_BASE_URL}/courses/${id}/stats`, {
+            method: 'GET',
+            headers: getHeaders(true)
+        });
+        return handleResponse(res);
+    },
+
     getMessages: async (id) => {
         const res = await fetch(`${API_BASE_URL}/courses/${id}/messages`, {
             method: 'GET',
@@ -138,13 +146,13 @@ export const courseService = {
             method: 'POST',
             headers: getHeaders(true),
             body: JSON.stringify({
-            mensaje: message
-        })
+                mensaje: message
+            })
         });
         return handleResponse(res);
     },
 
-    
+
 
     getAllCourses: async () => {
         const res = await fetch(`${API_BASE_URL}/courses/`, {

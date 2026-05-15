@@ -18,6 +18,9 @@ export default function CourseDetail() {
     const [exerciseStatement, setExerciseStatement] = useState('');
     const [exercisePoints, setExercisePoints] = useState('');
 
+    const [viewMode, setViewMode] = useState('modules'); // 'modules' or 'stats'
+    const [stats, setStats] = useState(null);
+
     const token = localStorage.getItem('token');
 
     const courseId = window.location.pathname.split('/').pop();
@@ -41,6 +44,24 @@ export default function CourseDetail() {
             setError(err.message);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchStats = async () => {
+        try {
+            const data = await courseService.getCourseStats(courseId);
+            setStats(data);
+        } catch (err) {
+            console.error("Error fetching stats", err);
+        }
+    };
+
+    const toggleView = () => {
+        if (viewMode === 'modules') {
+            setViewMode('stats');
+            if (!stats) fetchStats();
+        } else {
+            setViewMode('modules');
         }
     };
 
@@ -98,13 +119,72 @@ export default function CourseDetail() {
 
                     <div className="courses-header">
                         <h1>{courseName}</h1>
-                        <p className="profile-email">{modules.length} módulos</p>
+                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                            <p className="profile-email">{modules.length} módulos</p>
+                            <button className="btn-secondary" onClick={toggleView}>
+                                {viewMode === 'modules' ? 'Ver Estadísticas' : 'Ver Módulos'}
+                            </button>
+                        </div>
                     </div>
 
                     {loading && <div className="loading-spinner">Cargando módulos...</div>}
                     {error && <div className="profile-card error-card"><p>{error}</p></div>}
 
-                    {!loading && !error && (
+                    {!loading && !error && viewMode === 'stats' && stats && (
+                        <div className="profile-card" style={{ marginTop: '1.5rem', padding: '2rem' }}>
+                            <div className="profile-info">
+                                <h2>Estadísticas del Curso</h2>
+                                <div style={{ display: 'flex', gap: '2rem', marginTop: '1rem', marginBottom: '2rem' }}>
+                                    <div><strong>Alumnos matriculados:</strong> {stats.totalAlumnos}</div>
+                                    <div><strong>Total de ejercicios:</strong> {stats.totalEjercicios}</div>
+                                </div>
+                            </div>
+                            <h3>Progreso de Alumnos</h3>
+                            <div className="users-table-container">
+                                <table className="users-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Email</th>
+                                            <th>Ejercicios Completados</th>
+                                            <th>Puntos Totales</th>
+                                            <th>Progreso</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {stats.progresoAlumnos.map(al => {
+                                            const progress = stats.totalEjercicios > 0
+                                                ? Math.round((al.ejerciciosCompletados / stats.totalEjercicios) * 100)
+                                                : 0;
+                                            return (
+                                                <tr key={al.id}>
+                                                    <td>{al.nombre}</td>
+                                                    <td>{al.email}</td>
+                                                    <td>{al.ejerciciosCompletados} / {stats.totalEjercicios}</td>
+                                                    <td>{al.puntosTotales} pts</td>
+                                                    <td>
+                                                        <div style={{ background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden', width: '100%', height: '8px' }}>
+                                                            <div style={{ background: '#3e76a6', width: `${progress}%`, height: '100%' }}></div>
+                                                        </div>
+                                                        <small>{progress}%</small>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                        {stats.progresoAlumnos.length === 0 && (
+                                            <tr>
+                                                <td colSpan="5" style={{ textAlign: 'center', padding: '1rem' }}>
+                                                    No hay alumnos matriculados.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+
+                    {!loading && !error && viewMode === 'modules' && (
                         <>
                             {/* Module list */}
                             <div className="modules-list">
