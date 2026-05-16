@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sergitxin.flexilearn.dto.DeleteRequestDTO;
 import com.sergitxin.flexilearn.dto.MessageResponseDto;
+import com.sergitxin.flexilearn.dto.UsuarioActivityStatsDTO;
 import com.sergitxin.flexilearn.dto.UsuarioDTO;
 import com.sergitxin.flexilearn.entity.Usuario;
 import com.sergitxin.flexilearn.service.AdminService;
@@ -88,6 +89,22 @@ public class AdminController {
         return ResponseEntity.ok(1);
         }
         return ResponseEntity.ok(0); 
+    }
+
+    @Operation(summary = "Actividad de usuarios", description = "Obtiene estadísticas de actividad por usuario: cursos creados, matriculaciones y ejercicios completados")
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/usersStats")
+    public ResponseEntity<?> getUsersActivityStats(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
+        }
+
+        String token = authHeader.substring(7);
+        List<UsuarioActivityStatsDTO> usersStats = adminService.obtenerActividadUsuarios(token);
+        if (usersStats == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new MessageResponseDto("Acceso denegado: se requieren permisos de administrador"));
+        }
+        return ResponseEntity.ok(usersStats);
     }
 }
 
