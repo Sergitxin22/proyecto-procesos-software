@@ -226,5 +226,13 @@ export const adminService = {
             body: JSON.stringify({ nombreUsuario })
         });
         return handleResponse(res);
+    },
+
+    getUsersStats: async () => {
+        const res = await fetch(`${API_BASE_URL}/admin/usersStats`, {
+            method: 'GET',
+            headers: getHeaders(true)
+        });
+        return handleResponse(res);
     }
 };

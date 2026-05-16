@@ -1,0 +1,44 @@
+.activity-detail-card {
+    max-width: 500px;
+}
+
+.activity-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin: 2rem 0;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.stat-value.points {
+    color: #2e7d32;
+}
+
+@media (max-width: 600px) {
+    .activity-stats {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}

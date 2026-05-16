@@ -47,12 +47,10 @@ export default function Admin() {
 
     const navigateToUserList = () => {
         navigate('/admin/users');
-
     };
 
     const navigateToCourseList = () => {
         navigate('/admin/courses');
-
     };
 
     if (loading) {
@@ -78,6 +76,7 @@ export default function Admin() {
     return (
         <div className="profile-layout">
             <Navbar>
+                <a onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }}>Mi perfil</a>
                 <a href="#cursos">Mis Cursos</a>
                 <button onClick={handleLogout} className="btn-secondary">Cerrar sesión</button>
             </Navbar>

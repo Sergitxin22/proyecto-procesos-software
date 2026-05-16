@@ -168,13 +168,21 @@ export default function UserList() {
                                             </span>
                                         </td>
                                         <td style={tdStyle}>
-                                            <button
-                                                onClick={() => handleDelete(u)}
-                                                disabled={deletingId === u.id}
-                                                style={deleteBtnStyle(deletingId === u.id)}
-                                            >
-                                                {deletingId === u.id ? 'Eliminando...' : 'Eliminar'}
-                                            </button>
+                                            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                                                <button
+                                                    onClick={() => navigate(`/admin/users/${u.id}/activity`)}
+                                                    style={activityBtnStyle}
+                                                >
+                                                    Ver actividad
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(u)}
+                                                    disabled={deletingId === u.id}
+                                                    style={deleteBtnStyle(deletingId === u.id)}
+                                                >
+                                                    {deletingId === u.id ? 'Eliminando...' : 'Eliminar'}
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
@@ -204,6 +212,18 @@ const deleteBtnStyle = (disabled) => ({
     cursor: disabled ? 'not-allowed' : 'pointer',
     transition: 'background 0.2s',
 });
+
+const activityBtnStyle = {
+    padding: '0.35rem 0.8rem',
+    borderRadius: '6px',
+    border: 'none',
+    background: '#3f51b5',
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: '0.82rem',
+    cursor: 'pointer',
+    transition: 'background 0.2s',
+};
 
 
 const thStyle = {
