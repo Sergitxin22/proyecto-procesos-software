@@ -1,10 +1,15 @@
 package com.sergitxin.flexilearn.service;
 
+import jakarta.transaction.Transactional;
+
 import java.util.List;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 import com.sergitxin.flexilearn.dao.CursoDAO;
 import com.sergitxin.flexilearn.dao.EjercicioDAO;
@@ -21,6 +26,9 @@ import com.sergitxin.flexilearn.entity.Usuario;
 import com.sergitxin.flexilearn.dto.TestRequestDTO;
 import com.sergitxin.flexilearn.dto.CursoStatsDTO;
 import com.sergitxin.flexilearn.dto.AlumnoProgresoDTO;
+import com.sergitxin.flexilearn.dto.CursoUpdateDTO;
+import com.sergitxin.flexilearn.dto.CursoUpdateDTO.ModuloUpdateDTO;
+import com.sergitxin.flexilearn.dto.CursoUpdateDTO.EjercicioUpdateDTO;
 
 @Service
 public class CursoService {
@@ -197,7 +205,8 @@ public class CursoService {
 
     public int getTotalPuntosByCurso(Long cursoId) {
         cursoDAO.findById(cursoId).orElseThrow();
-        return cursoDAO.getTotalPuntosByCursoId(cursoId);
+        Integer total = cursoDAO.getTotalPuntosByCursoId(cursoId);
+        return total != null ? total : 0;
     }
 
     public CursoStatsDTO getCourseStats(String token, Long cursoId) {

@@ -228,7 +228,7 @@ export const courseService = {
             headers: getHeaders(false),
         });
         return handleResponse(res);
-    }
+    },
 	
 	updateCourse: async (id, courseData) => {
 	    const res = await fetch(`${API_BASE_URL}/courses/${id}`, {

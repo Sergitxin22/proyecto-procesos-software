@@ -1,6 +1,8 @@
 package com.sergitxin.flexilearn.dto;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.PutMapping;
+import com.sergitxin.flexilearn.dto.CursoUpdateDTO;
 
 public class CursoUpdateDTO {
     private String nombre;

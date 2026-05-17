@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import com.sergitxin.flexilearn.dto.CursoRequestDTO;
 import com.sergitxin.flexilearn.dto.CursoStatsDTO;
@@ -24,6 +25,7 @@ import com.sergitxin.flexilearn.dto.MessageDTO;
 import com.sergitxin.flexilearn.dto.MessageResponseDto;
 import com.sergitxin.flexilearn.dto.ModuloRequestDTO;
 import com.sergitxin.flexilearn.dto.TestRequestDTO;
+import com.sergitxin.flexilearn.dto.CursoUpdateDTO;
 import com.sergitxin.flexilearn.entity.Curso;
 import com.sergitxin.flexilearn.entity.Dificultad;
 import com.sergitxin.flexilearn.entity.Ejercicio;
@@ -252,5 +254,3 @@ public class CursoController {
         }
     }
 }
-}
-
