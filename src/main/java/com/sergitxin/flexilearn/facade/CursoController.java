@@ -227,4 +227,30 @@ public class CursoController {
         }
         return ResponseEntity.ok(stats);
     }
+
+    @Operation(summary = "Actualiza un curso completo", description = "Actualiza los datos del curso, sus módulos y ejercicios")
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCurso(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @PathVariable("id") Long cursoId,
+            @RequestBody CursoUpdateDTO cursoUpdateDTO) {
+        
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
+        }
+        
+        String token = authHeader.substring(7);
+        
+        try {
+            Curso cursoActualizado = cursoService.actualizarCurso(token, cursoId, cursoUpdateDTO);
+            return ResponseEntity.ok(cursoActualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new MessageResponseDto(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponseDto("Error al actualizar el curso: " + e.getMessage()));
+        }
+    }
 }
+}
+

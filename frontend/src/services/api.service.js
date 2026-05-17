@@ -229,6 +229,15 @@ export const courseService = {
         });
         return handleResponse(res);
     }
+	
+	updateCourse: async (id, courseData) => {
+	    const res = await fetch(`${API_BASE_URL}/courses/${id}`, {
+	        method: 'PUT',
+	        headers: getHeaders(true),
+	        body: JSON.stringify(courseData)
+	    });
+	    return handleResponse(res);
+	}	
 }
 
 export const adminService = {
