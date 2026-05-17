@@ -143,6 +143,93 @@
     overflow: hidden;
 }
 
+/* Posición dentro del módulo */
+.exercise-position-label {
+    font-size: 0.8rem;
+    color: #888;
+    margin: 0.4rem 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.exercise-last-badge {
+    background: #fef3c7;
+    color: #b45309;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Mensaje fin de módulo */
+.exercise-module-complete {
+    margin: 0 1.5rem 0.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    border: 1.5px solid #6ee7b7;
+    border-radius: 10px;
+    text-align: center;
+    color: #065f46;
+}
+
+.exercise-module-complete-icon {
+    display: block;
+    font-size: 1.8rem;
+    margin-bottom: 0.3rem;
+}
+
+.exercise-module-complete strong {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.exercise-module-complete p {
+    font-size: 0.85rem;
+    margin: 0;
+    opacity: 0.85;
+}
+
+/* Navegación entre ejercicios */
+.exercise-nav {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem 1.5rem;
+    border-top: 1.5px solid #eee;
+    margin-top: auto;
+}
+
+.exercise-nav-btn {
+    flex: 1;
+    padding: 0.55rem 0.75rem;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    background: #f9fafb;
+    color: #374151;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.exercise-nav-btn:hover:not(:disabled) {
+    background: #f0f4ff;
+    border-color: #3f51b5;
+    color: #3f51b5;
+}
+
+.exercise-nav-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.exercise-nav-btn--next {
+    text-align: right;
+}
+
 @media (max-width: 768px) {
     .exercise-main {
         flex-direction: column;

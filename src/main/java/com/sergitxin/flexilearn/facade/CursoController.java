@@ -99,6 +99,13 @@ public class CursoController {
     	return ResponseEntity.ok(cursoService.getExercise(id));
     }
 
+    @Operation(summary = "Obtiene los ejercicios del módulo al que pertenece un ejercicio",
+               description = "Dado el ID de un ejercicio, devuelve la lista ordenada de ejercicios de su módulo")
+    @GetMapping("exercises/{id}/module-exercises")
+    public ResponseEntity<List<Ejercicio>> getModuleExercises(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(cursoService.getEjerciciosDelModulo(id));
+    }
+
     @Operation(summary = "Obtener cursos", description = "Obtiene todos los cursos")
     @GetMapping("/")
     public ResponseEntity<List<Curso>> getCourses() {
@@ -144,6 +151,24 @@ public class CursoController {
         return ResponseEntity.ok(1);
         }
         return ResponseEntity.ok(0); 
+    }
+
+    @Operation(summary = "Obtiene los puntos totales de un curso", description = "Suma los puntos de todos los ejercicios de todos los módulos del curso")
+    @GetMapping("/{id}/puntos")
+    public ResponseEntity<Integer> getTotalPuntos(@PathVariable("id") Long cursoId) {
+        return ResponseEntity.ok(cursoService.getTotalPuntosByCurso(cursoId));
+    }
+
+    @Operation(summary = "Obtiene los puntos completados por el usuario en un curso", description = "Suma los puntos de los ejercicios que el usuario autenticado ha completado en el curso dado")
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/{id}/mis-puntos")
+    public ResponseEntity<?> getMisPuntos(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @PathVariable("id") Long cursoId) {
+        if (authHeader == null || !authHeader.startsWith("Bearer "))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
+        String token = authHeader.substring(7);
+        return ResponseEntity.ok(cursoService.getPuntosCompletadosEnCurso(token, cursoId));
     }
 
     @Operation(summary = "Enviar mensaje al foro de un curso")

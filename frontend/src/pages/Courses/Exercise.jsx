@@ -1,44 +1,52 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../../components/layout/Navbar';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
 import './Exercise.css';
 import { courseService } from '../../services/api.service';
 
 export default function Exercise() {
     const navigate = useNavigate();
+    const { id: exerciseId } = useParams();
+
     const [exercise, setExercise] = useState(null);
     const [code, setCode] = useState('');
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [result, setResult] = useState(null); // null | 'success' | 'error'
     const [activeTab, setActiveTab] = useState('enunciado'); // 'enunciado' | 'teoria'
+    const [moduleExercises, setModuleExercises] = useState([]);
 
     const token = localStorage.getItem('token');
-
-    // URL pattern: /exercise/:id
-    const exerciseId = window.location.pathname.split('/').pop();
 
     useEffect(() => {
         if (!token) {
             navigate('/auth');
             return;
         }
+        // Resetear estado al cambiar de ejercicio
+        setExercise(null);
+        setCode('');
+        setResult(null);
+        setActiveTab('enunciado');
+        setModuleExercises([]);
+        setLoading(true);
         fetchExercise();
-    }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [exerciseId]);
 
     const fetchExercise = async () => {
         try {
-            // Replace with your actual endpoint
-            const res = await fetch(`http://localhost:8080/api/courses/exercises/${exerciseId}`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-            });
-            const data = await res.json();
-            if (res.ok) {
-                setExercise(data);
-                setCode(data.codigoInicial || '');
-            }
+            const [exerciseData, siblings] = await Promise.all([
+                fetch(`http://localhost:8080/api/courses/exercises/${exerciseId}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                }).then(r => r.json()),
+                courseService.getModuleExercises(exerciseId),
+            ]);
+            setExercise(exerciseData);
+            setCode(exerciseData.codigoInicial || '');
+            setModuleExercises(siblings || []);
         } catch (err) {
             console.error(err);
         } finally {
@@ -46,12 +54,19 @@ export default function Exercise() {
         }
     };
 
+    // Calcular posición dentro del módulo
+    const currentIndex = moduleExercises.findIndex(ex => String(ex.id) === String(exerciseId));
+    const prevExercise = currentIndex > 0 ? moduleExercises[currentIndex - 1] : null;
+    const nextExercise = currentIndex >= 0 && currentIndex < moduleExercises.length - 1
+        ? moduleExercises[currentIndex + 1]
+        : null;
+    const isLastExercise = moduleExercises.length > 0 && currentIndex === moduleExercises.length - 1;
+
     const handleSubmit = async () => {
         setSubmitting(true);
         setResult(null);
         try {
-            // Replace with your actual submit endpoint
-            const res = await courseService.submitSolution({idEjercicio: exercise.id, codigo: code})
+            const res = await courseService.submitSolution({ idEjercicio: exercise.id, codigo: code });
             if (res) {
                 setResult('success');
             } else {
@@ -101,6 +116,14 @@ export default function Exercise() {
                             <span className="exercise-points-badge">⭐ {exercise?.puntos} pts</span>
                         </div>
                         <h1 className="exercise-title">{exercise?.nombre}</h1>
+                        {moduleExercises.length > 1 && (
+                            <p className="exercise-position-label">
+                                Ejercicio {currentIndex + 1} de {moduleExercises.length}
+                                {isLastExercise && (
+                                    <span className="exercise-last-badge">Último del módulo</span>
+                                )}
+                            </p>
+                        )}
                     </div>
 
                     <div className="exercise-tabs">
@@ -129,7 +152,40 @@ export default function Exercise() {
 
                     {result && (
                         <div className={`exercise-result ${result}`}>
-                            {result === 'success' ? '✅ ¡Correcto! Ejercicio superado.' : '❌ Respuesta incorrecta, inténtalo de nuevo.'}
+                            {result === 'success'
+                                ? '✅ ¡Correcto! Ejercicio superado.'
+                                : '❌ Respuesta incorrecta, inténtalo de nuevo.'}
+                        </div>
+                    )}
+
+                    {/* Mensaje de fin de módulo */}
+                    {isLastExercise && result === 'success' && (
+                        <div className="exercise-module-complete">
+                            <span className="exercise-module-complete-icon">🎉</span>
+                            <strong>¡Módulo completado!</strong>
+                            <p>Has terminado todos los ejercicios de este módulo.</p>
+                        </div>
+                    )}
+
+                    {/* Navegación entre ejercicios */}
+                    {moduleExercises.length > 1 && (
+                        <div className="exercise-nav">
+                            <button
+                                className="exercise-nav-btn"
+                                onClick={() => navigate(`/exercises/${prevExercise.id}`)}
+                                disabled={!prevExercise}
+                                title={prevExercise ? prevExercise.nombre : ''}
+                            >
+                                ← Anterior
+                            </button>
+                            <button
+                                className="exercise-nav-btn exercise-nav-btn--next"
+                                onClick={() => navigate(`/exercises/${nextExercise.id}`)}
+                                disabled={!nextExercise}
+                                title={nextExercise ? nextExercise.nombre : ''}
+                            >
+                                Siguiente →
+                            </button>
                         </div>
                     )}
                 </aside>

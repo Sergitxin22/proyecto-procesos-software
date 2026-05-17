@@ -133,6 +133,21 @@ export const courseService = {
         return handleResponse(res);
     },
 
+    getTotalPuntos: async (id) => {
+        const res = await fetch(`${API_BASE_URL}/courses/${id}/puntos`, {
+            method: 'GET',
+        });
+        return handleResponse(res);
+    },
+
+    getMisPuntos: async (id) => {
+        const res = await fetch(`${API_BASE_URL}/courses/${id}/mis-puntos`, {
+            method: 'GET',
+            headers: getHeaders(true),
+        });
+        return handleResponse(res);
+    },
+
     getMessages: async (id) => {
         const res = await fetch(`${API_BASE_URL}/courses/${id}/messages`, {
             method: 'GET',
@@ -205,6 +220,14 @@ export const courseService = {
             body: JSON.stringify(solutionData)
         });
         return res.json()
+    },
+
+    getModuleExercises: async (exerciseId) => {
+        const res = await fetch(`${API_BASE_URL}/courses/exercises/${exerciseId}/module-exercises`, {
+            method: 'GET',
+            headers: getHeaders(false),
+        });
+        return handleResponse(res);
     }
 }
 

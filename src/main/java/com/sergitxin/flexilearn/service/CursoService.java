@@ -115,6 +115,13 @@ public class CursoService {
         return ejercicioDAO.findById(id).get();
     }
 
+    public List<Ejercicio> getEjerciciosDelModulo(Long ejercicioId) {
+        Ejercicio ejercicio = ejercicioDAO.findById(ejercicioId).orElseThrow();
+        Modulo modulo = ejercicio.getModulo();
+        if (modulo == null) return List.of(ejercicio);
+        return moduloDAO.findById(modulo.getId()).orElseThrow().getEjercicios();
+    }
+
     public List<Curso> getAllCursos() {
         return cursoDAO.findAll();
     }
@@ -171,6 +178,26 @@ public class CursoService {
             return new ArrayList<>();
         }
         return curso.getMensajes();
+    }
+
+    public int getPuntosCompletadosEnCurso(Usuario usuario, Curso curso) {
+        return usuario.getEjerciciosCompletados().stream()
+                .filter(e -> e.getModulo() != null
+                        && e.getModulo().getCurso() != null
+                        && e.getModulo().getCurso().getId().equals(curso.getId()))
+                .mapToInt(Ejercicio::getPuntos)
+                .sum();
+    }
+
+    public int getPuntosCompletadosEnCurso(String token, Long cursoId) {
+        Usuario usuario = usuarioDAO.findByToken(token).orElseThrow();
+        Curso curso = cursoDAO.findById(cursoId).orElseThrow();
+        return getPuntosCompletadosEnCurso(usuario, curso);
+    }
+
+    public int getTotalPuntosByCurso(Long cursoId) {
+        cursoDAO.findById(cursoId).orElseThrow();
+        return cursoDAO.getTotalPuntosByCursoId(cursoId);
     }
 
     public CursoStatsDTO getCourseStats(String token, Long cursoId) {
