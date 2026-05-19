@@ -75,7 +75,6 @@ public class AuthController {
      * @param request Objeto JSON con el correo electrónico y la contraseña del usuario.
      * @return 200 (OK) con el token si las credenciales son válidas, o 401 (UNAUTHORIZED) en caso contrario.
      */
-    public ResponseEntity<?> iniciarSesion(@RequestBody LoginRequestDto request) {
     public ResponseEntity<?> iniciarSesion(@Parameter(description = "Credenciales del usuario (email y contraseña)") @RequestBody LoginRequestDto request) {
         try {
             String token = authService.iniciarSesion(request.getEmail(), request.getPassword());
