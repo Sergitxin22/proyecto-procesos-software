@@ -41,10 +41,19 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/courses")
 @CrossOrigin(origins = "*")
 @Tag(name = "Cursos", description = "Operaciones relacionadas con la gestión de cursos de la plataforma")
+/**
+ * Controlador REST para la gestión de cursos.
+ * Proporciona endpoints para crear, obtener, actualizar y eliminar cursos,
+ * así como interactuar con módulos, ejercicios y foros.
+ */
 public class CursoController {
 
     private final CursoService cursoService;
 
+    /**
+     * Construye un nuevo controlador REST para cursos gestionando operaciones a través del servicio correspondiente.
+     * @param cursoService El servicio que gestiona la lógica de negocio subyacente para los cursos.
+     */
     public CursoController(CursoService cursoService) {
         this.cursoService = cursoService;
     }
@@ -52,6 +61,12 @@ public class CursoController {
     @Operation(summary = "Crea un curso", description = "Añade en la base de datos un curso con los datos introducidos")
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/")
+    /**
+     * Crea y registra un nuevo curso en el sistema asociado al usuario que lo crea.
+     * @param authHeader El token de autorización del usuario que actúa como profesor/creador.
+     * @param request El conjunto de datos necesarios (DTO) para la creación del curso.
+     * @return 200 (OK) con el identificador o respuesta de éxito al crear el curso.
+     */
     public ResponseEntity<?> createCurso(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestBody CursoRequestDTO request) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
         	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
@@ -64,12 +79,22 @@ public class CursoController {
 
     @Operation(summary = "Añade un módulo a un curso", description = "Añade en la base de datos un módulo a un curso con los datos introducidos")
     @PostMapping("/modules")
+    /**
+     * Agrega un nuevo módulo de contenido a un curso ya existente.
+     * @param request El objeto que encapsula la información del módulo y el ID del curso relacionado.
+     * @return 200 (OK) con el identificador único (Long) del módulo recién generado.
+     */
     public ResponseEntity<Long> createModulo(@RequestBody ModuloRequestDTO request) {
         return ResponseEntity.ok(cursoService.crearModulo(request.getNombre(), request.getDescripcion(), request.getIdCurso()));
     }
 
     @Operation(summary = "Añade un ejercicio a un módulo", description = "Añade en la base de datos un ejercicio a un módulo con los datos introducidos")
     @PostMapping("/exercises")
+    /**
+     * Crea un nuevo ejercicio (teoría, código, etc.) y lo asocia a su respectivo módulo.
+     * @param request DTO con los detalles del ejercicio, puntaje y lenguaje.
+     * @return 200 (OK) con el número (Long) de ID del componente recién insertado.
+     */
     public ResponseEntity<Long> createEjercicio(@RequestBody EjercicioRequestDTO request) {
         return ResponseEntity.ok(cursoService.crearEjercicio(request.getNombre(), request.getTeoria(), request.getCodigoInicial(), request.getPuntos(), request.getEnunciado(), request.getLenguaje(), request.getIdModulo()));
     }
@@ -77,6 +102,13 @@ public class CursoController {
     @Operation(summary = "Añade tests a un ejercicio", description = "Guarda tests para un ejercicio existente")
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/exercices/{idExercise}/tests")
+    /**
+     * Vincula un conjunto de validaciones (tests) a un ejercicio puntual en el servidor.
+     * @param authHeader Token validando los permisos para operar.
+     * @param idExercise Identificador del ejercicio correspondiente que será probado.
+     * @param tests Lista JSON de parámetros de pruebas para el ejercicio.
+     * @return 200 (OK) con la confirmación de la inserción, o 401 si falla la autorización.
+     */
     public ResponseEntity<?> createExerciseTests(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
             @PathVariable("idExercise") Long idExercise,
@@ -90,12 +122,22 @@ public class CursoController {
     }
 
     @GetMapping("/{id}/")
+    /**
+     * Obtiene los detalles de un curso específico dado su ID.
+     * @param id Identificador del curso.
+     * @return El curso correspondiente al ID.
+     */
     public ResponseEntity<Curso> getCourse(
 	@PathVariable("id") Long id) {
     	return ResponseEntity.ok(cursoService.getCurso(id));
     }
 
     @GetMapping("exercises/{id}")
+    /**
+     * Obtiene los detalles de un ejercicio específico dado su ID.
+     * @param id Identificador del ejercicio.
+     * @return El ejercicio correspondiente al ID.
+     */
     public ResponseEntity<Ejercicio> getExercise(
 	@PathVariable("id") Long id) {
     	return ResponseEntity.ok(cursoService.getExercise(id));
@@ -104,12 +146,21 @@ public class CursoController {
     @Operation(summary = "Obtiene los ejercicios del módulo al que pertenece un ejercicio",
                description = "Dado el ID de un ejercicio, devuelve la lista ordenada de ejercicios de su módulo")
     @GetMapping("exercises/{id}/module-exercises")
+    /**
+     * Entrega todos los ejercicios compañeros y pertenecientes a un mismo módulo en base a uno de sus IDs de ejercicio.
+     * @param id El ID del ejercicio cuyo módulo se desea consultar.
+     * @return Lista JSON con todos los Ejercicios de dicho módulo en código 200 (OK).
+     */
     public ResponseEntity<List<Ejercicio>> getModuleExercises(@PathVariable("id") Long id) {
         return ResponseEntity.ok(cursoService.getEjerciciosDelModulo(id));
     }
 
     @Operation(summary = "Obtener cursos", description = "Obtiene todos los cursos")
     @GetMapping("/")
+    /**
+     * Consulta el catálogo global de cursos disponibles.
+     * @return Una respuesta con la lista de objetos de Curso (200 OK).
+     */
     public ResponseEntity<List<Curso>> getCourses() {
     	return ResponseEntity.ok(cursoService.getAllCursos());
     }
@@ -117,6 +168,12 @@ public class CursoController {
     @Operation(summary = "Matricula al usuario en un curso")
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/{id}/enroll")
+    /**
+     * Inscribe oficialmente al usuario solicitante en el curso especificado.
+     * @param authHeader Token de acceso Bearer del estudiante o usuario.
+     * @param cursoId Referencia identificadora del curso a matricularse.
+     * @return Una respuesta de éxito 200 detallando el logro o 401 si no está autenticado.
+     */
     public ResponseEntity<?> enrollCourse(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
             @PathVariable("id") Long cursoId) {
@@ -130,6 +187,11 @@ public class CursoController {
     @Operation(summary = "Obtiene los cursos en los que está matriculado el usuario")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/enrolled")
+    /**
+     * Genera un listado de los cursos activos en los que se encuentra participando el usuario emitivo.
+     * @param authHeader El token Bearer validando la sesión.
+     * @return 200 (OK) con un arreglo de cursos del usuario. 401 si falla el token.
+     */
     public ResponseEntity<?> getEnrolledCourses(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer "))
@@ -141,6 +203,12 @@ public class CursoController {
     @Operation(summary = "Eliminar curso", description = "El profesor elimina un curso suyo para que los alumnos dejen de tener acceso")
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/deleteCurso")
+    /**
+     * Borra permanentemente un curso asumiendo que el usuario del token es el dueño creador.
+     * @param authHeader Token autenticador con los privilegios comprobables de pertenencia.
+     * @param cursoId Identidad de la materia a erradicar (Long).
+     * @return 1 dentro del cuerpo 200 OK en caso de éxito, 0 en caso de fallar si no es el creador.
+     */
     public ResponseEntity<?> deleteCurso(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestParam Long cursoId){
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
@@ -157,6 +225,11 @@ public class CursoController {
 
     @Operation(summary = "Obtiene los puntos totales de un curso", description = "Suma los puntos de todos los ejercicios de todos los módulos del curso")
     @GetMapping("/{id}/puntos")
+    /**
+     * Calcula la experiencia o puntos totales posibles que brinda un curso.
+     * @param cursoId El ID del cual queremos saber el límite de puntos en total.
+     * @return El entero numérico (200 OK) que expone los puntos sumados de los ejercicios.
+     */
     public ResponseEntity<Integer> getTotalPuntos(@PathVariable("id") Long cursoId) {
         return ResponseEntity.ok(cursoService.getTotalPuntosByCurso(cursoId));
     }
@@ -164,6 +237,12 @@ public class CursoController {
     @Operation(summary = "Obtiene los puntos completados por el usuario en un curso", description = "Suma los puntos de los ejercicios que el usuario autenticado ha completado en el curso dado")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{id}/mis-puntos")
+    /**
+     * Extrae cuántos puntos el propio estudiante se ha ganado en una disciplina concreta.
+     * @param authHeader El pase necesario del usuario estudiante (token HTTP Bearer).
+     * @param cursoId Identidad para ubicar al curso de la base de datos de consulta.
+     * @return Devuelve código 200 con la puntuación recolectada con éxito.
+     */
     public ResponseEntity<?> getMisPuntos(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
             @PathVariable("id") Long cursoId) {
@@ -176,6 +255,13 @@ public class CursoController {
     @Operation(summary = "Enviar mensaje al foro de un curso")
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/{id}/messages")
+    /**
+     * Inserta un nuevo mensaje dentro del foro comunitario de un curso en particular.
+     * @param authHeader Llave JWT del remitente identificando quién envía el mensaje.
+     * @param cursoId Identidad local del curso donde se agrupa el mensaje.
+     * @param mensaje Cuerpo textual del comentario enviado por el usuario.
+     * @return 200 (OK) en un ForumMessageResponseDTO detallado con los datos de creación, o error si fracasa la validación.
+     */
     public ResponseEntity<ForumMessageResponseDTO> sendMessage(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
             @PathVariable("id") Long cursoId,
@@ -198,6 +284,12 @@ public class CursoController {
     @Operation(summary = "Obtener mensajes de un curso")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{id}/messages")
+    /**
+     * Reúne todos los mensajes mandados por cualquier integrante del foro en un curso concreto.
+     * @param authHeader El JWT Bearer para autorizar que la lectura de foro se da de forma válida.
+     * @param cursoId Referencia a dicho curso del que tomamos mensajes.
+     * @return Lista (JSON 200) de mensajes formados detalladamente (usuario, fecha, texto) ordenados.
+     */
     public ResponseEntity<List<ForumMessageResponseDTO>> getMessages(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
         @PathVariable("id") Long cursoId) {
         String token = authHeader.substring(7);
@@ -217,6 +309,12 @@ public class CursoController {
     @Operation(summary = "Obtiene estadísticas del curso", description = "Devuelve estadísticas como cantidad de alumnos, ejercicios y el progreso de cada alumno")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{id}/stats")
+    /**
+     * Entrega información analítica agregada con datos del curso como participantes o ejercicios.
+     * @param id Identidad del recurso de curso evaluado.
+     * @param authorizationHeader Componente Header incluyendo el JWT verificado por seguridad.
+     * @return Una respuesta DTO con los detalles del alcance en 200 OK.
+     */
     public ResponseEntity<CursoStatsDTO> getCourseStats(
             @PathVariable Long id,
             @RequestHeader("Authorization") String authorizationHeader) {
@@ -233,6 +331,13 @@ public class CursoController {
     @Operation(summary = "Actualiza un curso completo", description = "Actualiza los datos del curso, sus módulos y ejercicios")
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{id}")
+    /**
+     * Aplica nuevas modificaciones generales a la configuración principal de un curso previamente alojado.
+     * @param authHeader El código de sesión del profesor (token).
+     * @param cursoId Modificando recurso en este ID.
+     * @param cursoUpdateDTO Payload principal con la versión nueva de nombre, etc.
+     * @return El recurso reconstruido si éxito (200), u otros mensajes de error internos o autoritativos.
+     */
     public ResponseEntity<?> updateCurso(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
             @PathVariable("id") Long cursoId,

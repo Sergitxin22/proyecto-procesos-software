@@ -1,0 +1,78 @@
+name: Deploy Docusaurus and Javadoc to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+s
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: docs-site/package-lock.json
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'gradle'
+          
+      - name: Cache Docusaurus
+        uses: actions/cache@v4
+        with:
+          path: |
+            docs-site/.docusaurus
+            docs-site/node_modules
+          key: ${{ runner.os }}-docusaurus-${{ hashFiles('docs-site/package-lock.json') }}-${{ hashFiles('docs-site/src/**') }}
+          restore-keys: |
+            ${{ runner.os }}-docusaurus-${{ hashFiles('docs-site/package-lock.json') }}-
+            ${{ runner.os }}-docusaurus-
+
+      - name: Install dependencies (Docusaurus)
+        run: npm ci
+        working-directory: ./docs-site
+
+      - name: Generate Markdown from Javadoc
+        run: node generate_javadoc_md.mjs
+        working-directory: ./docs-site
+
+      - name: Build Docusaurus
+        run: npm run build
+        working-directory: ./docs-site
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs-site/build
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

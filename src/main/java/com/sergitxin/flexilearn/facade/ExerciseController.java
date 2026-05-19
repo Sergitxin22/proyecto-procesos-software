@@ -26,6 +26,10 @@ public class ExerciseController {
 
     private final ExerciseService exerciseService;
 
+    /**
+     * Construye un controlador dedicado a la verificación de ejercicios en la plataforma.
+     * @param exerciseService Proveedor del servicio para correr validaciones y pruebas.
+     */
     public ExerciseController(ExerciseService exerciseService) {
         this.exerciseService = exerciseService;
     }
@@ -33,6 +37,12 @@ public class ExerciseController {
     @Operation(summary = "Verificar ejercicio", description = "Comprueba si la solución recibida es correcta")
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/verify")
+    /**
+     * Encola e inicia de modo externo o aislado los tests o validadores del bloque de código suministrados como solución por un alumno.
+     * @param authHeader El token Bearer que identifica al usuario como alumno registrado en la plataforma.
+     * @param request La solicitud JSON representando el ID del ejercicio original junto al código fuente que compone la "solución" a verificar.
+     * @return Una respuesta booleana empaquetada como ResponseEntity conteniendo código de confirmación de aprobación.
+     */
     public ResponseEntity<Boolean> verifyExercise(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestBody SolucionDTO request) {
         String token = authHeader.substring(7);
     	boolean result = exerciseService.verifyExercise(request.getIdEjercicio(), request.getCodigo(), token);

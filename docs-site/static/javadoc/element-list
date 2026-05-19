@@ -1,0 +1,7 @@
+com.sergitxin.flexilearn
+com.sergitxin.flexilearn.dao
+com.sergitxin.flexilearn.dto
+com.sergitxin.flexilearn.entity
+com.sergitxin.flexilearn.external
+com.sergitxin.flexilearn.facade
+com.sergitxin.flexilearn.service

@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html","k":"18"},{"l":"com.sergitxin.flexilearn"},{"l":"com.sergitxin.flexilearn.dao"},{"l":"com.sergitxin.flexilearn.dto"},{"l":"com.sergitxin.flexilearn.entity"},{"l":"com.sergitxin.flexilearn.external"},{"l":"com.sergitxin.flexilearn.facade"},{"l":"com.sergitxin.flexilearn.service"}];updateSearchResults();

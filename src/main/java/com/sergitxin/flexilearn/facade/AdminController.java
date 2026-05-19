@@ -32,11 +32,19 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/admin")
 @CrossOrigin(origins = "*")
 @Tag(name = "Admins", description = "Operaciones relacionadas con las operaciones de administrador")
-
+/**
+ * Controlador REST para las utilidades de administración de la plataforma.
+ * Permite a los usuarios con rol de administrador eliminar usuarios, gestionar
+ * cursos de forma global y obtener estadísticas detalladas sobre el uso del sitio.
+ */
 public class AdminController {
    
     private final AdminService adminService;
 
+    /**
+     * Instancia el controlador de administrador y proporciona el servicio de negocio.
+     * @param adminService Servicio principal para las funciones de administración.
+     */
     public AdminController(AdminService adminService) {
             this.adminService = adminService;
     }
@@ -44,6 +52,12 @@ public class AdminController {
     @Operation(summary = "Eliminar usuario", description = "Comprobar si es admin para poder eliminar usuarios")
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/deleteUser")
+    /**
+     * Elimina a un usuario de la base de datos de la plataforma en base a su nombre de usuario.
+     * @param authHeader Token Bearer de la sesión actual de administración.
+     * @param request Objeto que encapsula el nombre de usuario a eliminar.
+     * @return 1 si ha sido eliminado satisfactoriamente, o 0 en caso contrario. Además de mensajes HTTP de error.
+     */
     public ResponseEntity<?> deleteUser(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestBody DeleteRequestDTO request){
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
@@ -60,6 +74,10 @@ public class AdminController {
 
     @Operation(summary = "Usuarios", description = "Obtiene todos los usuarios")
     @GetMapping("/users")
+    /**
+     * Consulta y devuelve la lista completa de usuarios registrados en el sistema, convertidos en su representación DTO.
+     * @return Una respuesta HTTP OK (200) que contiene la colección de usuariosDTO.
+     */
     public ResponseEntity<List<UsuarioDTO>> getAllUsers(){
         List<Usuario> usuarios = adminService.getAllUsers();
         List<UsuarioDTO> usuariosDTO = new ArrayList<>();
@@ -77,6 +95,12 @@ public class AdminController {
     @Operation(summary = "Eliminar curso", description = "Eliminar un curso para que estudiantes y profesores dejen de tener acceso")
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/deleteCurso")
+    /**
+     * Permite a un administrador forzar la eliminación de un curso por su ID y su contenido subyacente de la plataforma.
+     * @param authHeader Token de autorización del administrador.
+     * @param cursoId Identificador numérico local del curso en la base de datos a borrar.
+     * @return Código de éxito 1 si ha sido un borrado exitoso, de lo contrario 0.
+     */
     public ResponseEntity<?> deleteCurso(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestParam Long cursoId){
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
@@ -94,6 +118,11 @@ public class AdminController {
     @Operation(summary = "Actividad de usuarios", description = "Obtiene estadísticas de actividad por usuario: cursos creados, matriculaciones y ejercicios completados")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/usersStats")
+    /**
+     * Recopila un informe estadístico sobre la actividad de todos los usuarios dentro de la plataforma (cursos, matriculas, ejercicios).
+     * @param authHeader Token de seguridad Bearer que debe pertenecer a un usuario administrador.
+     * @return 200 (OK) con la lista estadística agregada o un código no autorizado si el token es falso o no corresponde a admin.
+     */
     public ResponseEntity<?> getUsersActivityStats(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));

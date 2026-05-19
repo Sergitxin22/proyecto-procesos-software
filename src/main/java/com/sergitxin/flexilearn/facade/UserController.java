@@ -24,6 +24,10 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * Controlador encargado del servicio de usuario y sus operaciones derivadas.
+     * @param userService Gestor de datos a nivel de capa de lógica de servicio.
+     */
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -31,6 +35,11 @@ public class UserController {
     @Operation(summary = "Obtener todos los cursos creados por el usuario", description = "Recupera la lista de todos los cursos creados por el usuario")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/createdCourses")
+    /**
+     * Recupera y emite mediante protocolo HTTP el conjunto íntegro de cursos donde un educador ha originado sus materiales.
+     * @param authHeader Constante JWT enviada que autentica la identidad original del creador.
+     * @return 200 (OK) con la formación de listas correspondientes o en su defecto de accesos denegados u originados incorrectos (401).
+     */
     public ResponseEntity<?> getAllUsers(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));

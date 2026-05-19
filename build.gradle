@@ -96,3 +96,47 @@ jacocoTestCoverageVerification {
 tasks.named('check') {
 	dependsOn jacocoTestCoverageVerification
 }
+
+tasks.register('docs', Exec) {
+	description = 'Generates MD Javadoc and starts the Docusaurus development server'
+	group = 'documentation'
+	def os = System.getProperty("os.name").toLowerCase()
+	def npmCmd = os.contains("win") ? "npm.cmd" : "npm"
+	def nodeCmd = os.contains("win") ? "node.exe" : "node"
+
+	workingDir new File(projectDir, "docs-site")
+	commandLine npmCmd, 'install'
+
+	doLast {
+		exec {
+			workingDir new File(projectDir, "docs-site")
+			commandLine nodeCmd, 'generate_javadoc_md.mjs'
+		}
+		exec {
+			workingDir new File(projectDir, "docs-site")
+			commandLine npmCmd, 'run', 'start'
+		}
+	}
+}
+
+tasks.register('docsBuild', Exec) {
+	description = 'Generates MD Javadoc and builds the Docusaurus production site'
+	group = 'documentation'
+	def os = System.getProperty("os.name").toLowerCase()
+	def npmCmd = os.contains("win") ? "npm.cmd" : "npm"
+	def nodeCmd = os.contains("win") ? "node.exe" : "node"
+
+	workingDir new File(projectDir, "docs-site")
+	commandLine npmCmd, 'install'
+
+	doLast {
+		exec {
+			workingDir new File(projectDir, "docs-site")
+			commandLine nodeCmd, 'generate_javadoc_md.mjs'
+		}
+		exec {
+			workingDir new File(projectDir, "docs-site")
+			commandLine npmCmd, 'run', 'build'
+		}
+	}
+}

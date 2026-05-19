@@ -35,16 +35,29 @@ import io.swagger.v3.oas.annotations.tags.Tag;
     bearerFormat = "JWT",
     scheme = "bearer"
 )
+/**
+ * Controlador REST para la autenticación de usuarios.
+ * Expone endpoints para el registro y login.
+ */
 public class AuthController {
 
     private final AuthService authService;
 
+    /**
+     * Instancia el controlador de autenticación proporcionando el servicio necesario.
+     * @param authService Servicio principal para la lógica de autenticación y gestión de usuarios.
+     */
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
 
     @Operation(summary = "Crear cuenta", description = "Registra un nuevo usuario en el sistema")
     @PostMapping("/registro")
+    /**
+     * Registra un nuevo usuario en la base de datos a partir de los datos recibidos.
+     * @param request Objeto JSON con el nombre, correo electrónico y contraseña del usuario.
+     * @return 201 (CREATED) si el registro fue exitoso, o 400 (BAD REQUEST) si hubo un error.
+     */
     public ResponseEntity<?> registrar(@RequestBody RegisterRequestDto request) {
         try {
             authService.registrarUsuario(request.getNombre(), request.getEmail(), request.getPassword());
@@ -56,6 +69,11 @@ public class AuthController {
 
     @Operation(summary = "Iniciar sesión", description = "Autentica al usuario y devuelve un token de acceso")
     @PostMapping("/login")
+    /**
+     * Autentica a un usuario y le proporciona un token JWT de acceso.
+     * @param request Objeto JSON con el correo electrónico y la contraseña del usuario.
+     * @return 200 (OK) con el token si las credenciales son válidas, o 401 (UNAUTHORIZED) en caso contrario.
+     */
     public ResponseEntity<?> iniciarSesion(@RequestBody LoginRequestDto request) {
         try {
             String token = authService.iniciarSesion(request.getEmail(), request.getPassword());
@@ -68,6 +86,11 @@ public class AuthController {
     @Operation(summary = "Cerrar sesión", description = "Invalida el token activo del usuario")
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/logout")
+    /**
+     * Invalida el token de acceso actual del usuario registrado.
+     * @param authHeader El encabezado de autorización que contiene el token JWT.
+     * @return 200 (OK) con un mensaje de éxito, o 401 si no hay token o es inválido.
+     */
     public ResponseEntity<?> cerrarSesion(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -85,6 +108,11 @@ public class AuthController {
     @Operation(summary = "Eliminar cuenta", description = "Elimina la cuenta del usuario ")
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/delete")
+    /**
+     * Elimina permanentemente la cuenta del usuario autenticado de la base de datos.
+     * @param authHeader El encabezado de autorización que contiene el token JWT validado del solicitante.
+     * @return 200 (OK) si la operación fue exitosa, o código HTTP correspondiente a falta de autorización o no encontrado.
+     */
     public ResponseEntity<?> eliminarCuenta(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -106,6 +134,11 @@ public class AuthController {
     @Operation(summary = "Obtener usuario por token (comentar en produción)", description = "Recupera la información del usuario asociado al token proporcionado")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/user")
+    /**
+     * Recupera y devuelve el perfil del usuario utilizando su token actual activo.
+     * @param authHeader El encabezado de autorización HTTP con el Bearer token correspondiente.
+     * @return 200 (OK) con la información del usuario en el cuerpo o 401 si no hay coincidencia.
+     */
     public ResponseEntity<?> getUsuarioByToken(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader) {
 		try {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -123,6 +156,10 @@ public class AuthController {
 
     @Operation(summary = "Obtener todos los usuarios (comentar en produción)", description = "Recupera la lista de todos los usuarios registrados")
     @GetMapping("/users")
+    /**
+     * Consulta y extrae el listado con todos los usuarios registrados. Principalmente para pruebas.
+     * @return Respuesta HTTP (OK) con una lista de todos los objetos Usuario registrados.
+     */
     public ResponseEntity<java.util.List<Usuario>> getAllUsers() {
         return ResponseEntity.ok(authService.obtenerTodosLosUsuarios());
     }
