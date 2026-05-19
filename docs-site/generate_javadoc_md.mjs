@@ -1,5 +1,9 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function walkSync(dir, filelist = []) {
     const files = fs.readdirSync(dir);
@@ -23,8 +27,8 @@ function escapeMdx(str) {
         .replace(/\}/g, '&#125;');
 }
 
-const javaFiles = walkSync('src/main/java');
-const outDir = 'docs-site/docs/api';
+const javaFiles = walkSync(path.join(__dirname, '../src/main/java'));
+const outDir = path.join(__dirname, 'docs/api');
 
 if (fs.existsSync(outDir)) {
     fs.rmSync(outDir, { recursive: true, force: true });
