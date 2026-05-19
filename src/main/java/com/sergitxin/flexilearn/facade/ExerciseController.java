@@ -33,7 +33,7 @@ public class ExerciseController {
     @Operation(summary = "Verificar ejercicio", description = "Comprueba si la solución recibida es correcta")
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/verify")
-    public ResponseEntity<Boolean> verifyExercise(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestBody SolucionDTO request) {
+    public ResponseEntity<Boolean> verifyExercise(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @Parameter(description = "DTO con la solución propuesta y el identificador del ejercicio") @RequestBody SolucionDTO request) {
         String token = authHeader.substring(7);
     	boolean result = exerciseService.verifyExercise(request.getIdEjercicio(), request.getCodigo(), token);
         return ResponseEntity.ok(result);

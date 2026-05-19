@@ -44,7 +44,7 @@ public class AdminController {
     @Operation(summary = "Eliminar usuario", description = "Comprobar si es admin para poder eliminar usuarios")
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/deleteUser")
-    public ResponseEntity<?> deleteUser(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestBody DeleteRequestDTO request){
+    public ResponseEntity<?> deleteUser(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @Parameter(description = "DTO con el nombre de usuario a eliminar") @RequestBody DeleteRequestDTO request){
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
         }
@@ -77,7 +77,7 @@ public class AdminController {
     @Operation(summary = "Eliminar curso", description = "Eliminar un curso para que estudiantes y profesores dejen de tener acceso")
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/deleteCurso")
-    public ResponseEntity<?> deleteCurso(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestParam Long cursoId){
+    public ResponseEntity<?> deleteCurso(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @Parameter(description = "Identificador del curso a eliminar") @RequestParam Long cursoId){
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
         }

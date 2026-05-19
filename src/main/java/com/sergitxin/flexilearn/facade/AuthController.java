@@ -45,7 +45,7 @@ public class AuthController {
 
     @Operation(summary = "Crear cuenta", description = "Registra un nuevo usuario en el sistema")
     @PostMapping("/registro")
-    public ResponseEntity<?> registrar(@RequestBody RegisterRequestDto request) {
+    public ResponseEntity<?> registrar(@Parameter(description = "Datos de registro del usuario (nombre, email y contraseña)") @RequestBody RegisterRequestDto request) {
         try {
             authService.registrarUsuario(request.getNombre(), request.getEmail(), request.getPassword());
             return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponseDto("Usuario registrado exitosamente"));
@@ -56,7 +56,7 @@ public class AuthController {
 
     @Operation(summary = "Iniciar sesión", description = "Autentica al usuario y devuelve un token de acceso")
     @PostMapping("/login")
-    public ResponseEntity<?> iniciarSesion(@RequestBody LoginRequestDto request) {
+    public ResponseEntity<?> iniciarSesion(@Parameter(description = "Credenciales del usuario (email y contraseña)") @RequestBody LoginRequestDto request) {
         try {
             String token = authService.iniciarSesion(request.getEmail(), request.getPassword());
             return ResponseEntity.ok(new LoginResponseDto(token, "Inicio de sesión exitoso"));
