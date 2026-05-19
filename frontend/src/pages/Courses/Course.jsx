@@ -17,6 +17,8 @@ export default function CourseDetail() {
     const [courseData, setCourseData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [misPuntos, setMisPuntos] = useState(0);
+    const [totalPuntos, setTotalPuntos] = useState(0);
 
     const token = localStorage.getItem('token');
     const courseId = window.location.pathname.split('/').pop();
@@ -27,21 +29,33 @@ export default function CourseDetail() {
             return;
         }
         fetchModules();
+        fetchProgress();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [navigate, token]);
 
+    const fetchProgress = async () => {
+        try {
+            const myPts = await courseService.getMisPuntos(courseId);
+            const totalPts = await courseService.getTotalPuntos(courseId);
+            setMisPuntos(myPts);
+            setTotalPuntos(totalPts);
+        } catch (err) {
+            console.error("Error fetching progress", err);
+        }
+    };
+
     const fetchModules = async () => {
-    try {
-        const data = await courseService.getCourse(courseId);
-        setCourseName(data.nombre);
-        setCourseData(data);
-        setModules(data.modulos ?? []);
-    } catch (err) {
-        setError(err.message);
-    } finally {
-        setLoading(false);
-    }
-};
+        try {
+            const data = await courseService.getCourse(courseId);
+            setCourseName(data.nombre);
+            setCourseData(data);
+            setModules(data.modulos ?? []);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const navigateToCourses = () => {
         navigate('/courses');
@@ -60,6 +74,18 @@ export default function CourseDetail() {
                         <h1>{courseName}</h1>
                         <p className="profile-email">{modules.length} módulos</p>
                     </div>
+
+                    {totalPuntos > 0 && (
+                        <div style={{ marginBottom: '2rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                                <span>Progreso del curso</span>
+                                <span>{misPuntos} / {totalPuntos} puntos ({Math.round((misPuntos / totalPuntos) * 100)}%)</span>
+                            </div>
+                            <div style={{ background: '#e2e8f0', borderRadius: '8px', overflow: 'hidden', width: '100%', height: '16px' }}>
+                                <div style={{ background: '#3e76a6', width: `${Math.round((misPuntos / totalPuntos) * 100)}%`, height: '100%', transition: 'width 0.3s ease' }}></div>
+                            </div>
+                        </div>
+                    )}
 
                     {loading && <div className="loading-spinner">Cargando módulos...</div>}
                     {error && <div className="profile-card error-card"><p>{error}</p></div>}
@@ -84,7 +110,7 @@ export default function CourseDetail() {
                                 Ver foro
                             </button>
                         </div>
-)}
+                    )}
 
                     {!loading && !error && (
                         <div className="modules-list">
