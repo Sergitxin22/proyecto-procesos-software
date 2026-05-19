@@ -153,6 +153,24 @@ Este proyecto implementa Piston, un entorno de ejecución aislado y seguro, para
 
 ---
 
+## 📚 Documentación del Código (Docusaurus)
+
+El proyecto cuenta con una documentación estática interactiva generada automáticamente a partir del Javadoc del backend y alojada en **Docusaurus**. 
+
+Para construir y visualizar la documentación de forma local, utiliza los custom tasks de Gradle desde la raíz del proyecto (requiere tener Node.js instalado):
+
+**Para desarrollo (extraer Javadoc a Markdown y levantar servidor interactivo):**
+- Linux / macOS / WSL: `./gradlew docs`
+- Windows (PowerShell/CMD): `.\gradlew.bat docs`
+*(Este comando generará los `.md` en la carpeta `docs-site/docs/api/` y levantará el portal web en `http://localhost:3000` o similar).*
+
+**Para producción (construir estáticos HTML listos para servir):**
+- Linux / macOS / WSL: `./gradlew docsBuild`
+- Windows (PowerShell/CMD): `.\gradlew.bat docsBuild`
+*(Los archivos web finales se empaquetarán en el directorio `docs-site/build/`. Además, hay un workflow en GitHub Actions que ejecuta esta tarea y despliega automáticamente la documentación en **GitHub Pages** tras cada push a la rama `main`).*
+
+---
+
 ## ✅ Ejecutar Todos los Tests
 
 Para lanzar **todos los tests automatizados del proyecto** (backend, JUnit/JUnitPerf), ejecuta desde la raíz:
