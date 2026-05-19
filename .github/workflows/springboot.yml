@@ -37,3 +37,5 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/testdb
           SPRING_DATASOURCE_USERNAME: admin
           SPRING_DATASOURCE_PASSWORD: flexilearn
+          GRADLE_OPTS: -Xmx2g
+          _JAVA_OPTIONS: -Xmx2g
