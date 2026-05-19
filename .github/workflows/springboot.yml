@@ -10,6 +10,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    container: gradle:8.7-jdk21
+
     services:
       db:
         image: postgres:15
@@ -17,10 +19,8 @@ jobs:
           POSTGRES_DB: testdb
           POSTGRES_USER: admin
           POSTGRES_PASSWORD: flexilearn
-        ports:
-          - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U test"
+          --health-cmd="pg_isready -U admin"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -28,12 +28,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          cache: gradle
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h db -p 5432 -U admin; do
+            echo "Waiting for postgres..."
+            sleep 2
+          done
+
+      - name: Grant execute permission
+        run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build --stacktrace 
+        run: ./gradlew build --stacktrace
