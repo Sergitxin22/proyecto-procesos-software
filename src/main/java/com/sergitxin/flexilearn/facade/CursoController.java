@@ -68,6 +68,7 @@ public class CursoController {
      * @return 200 (OK) con el identificador o respuesta de éxito al crear el curso.
      */
     public ResponseEntity<?> createCurso(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestBody CursoRequestDTO request) {
+    public ResponseEntity<?> createCurso(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @Parameter(description = "Datos para crear el nuevo curso") @RequestBody CursoRequestDTO request) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
         	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
         }
@@ -85,6 +86,7 @@ public class CursoController {
      * @return 200 (OK) con el identificador único (Long) del módulo recién generado.
      */
     public ResponseEntity<Long> createModulo(@RequestBody ModuloRequestDTO request) {
+    public ResponseEntity<Long> createModulo(@Parameter(description = "Datos para crear el nuevo módulo") @RequestBody ModuloRequestDTO request) {
         return ResponseEntity.ok(cursoService.crearModulo(request.getNombre(), request.getDescripcion(), request.getIdCurso()));
     }
 
@@ -96,6 +98,7 @@ public class CursoController {
      * @return 200 (OK) con el número (Long) de ID del componente recién insertado.
      */
     public ResponseEntity<Long> createEjercicio(@RequestBody EjercicioRequestDTO request) {
+    public ResponseEntity<Long> createEjercicio(@Parameter(description = "Datos para crear el nuevo ejercicio") @RequestBody EjercicioRequestDTO request) {
         return ResponseEntity.ok(cursoService.crearEjercicio(request.getNombre(), request.getTeoria(), request.getCodigoInicial(), request.getPuntos(), request.getEnunciado(), request.getLenguaje(), request.getIdModulo()));
     }
 
@@ -154,6 +157,7 @@ public class CursoController {
      * @return Lista JSON con todos los Ejercicios de dicho módulo en código 200 (OK).
      */
     public ResponseEntity<List<Ejercicio>> getModuleExercises(@PathVariable("id") Long id) {
+    public ResponseEntity<List<Ejercicio>> getModuleExercises(@Parameter(description = "Identificador base del ejercicio para ubicar al módulo") @PathVariable("id") Long id) {
         return ResponseEntity.ok(cursoService.getEjerciciosDelModulo(id));
     }
 
@@ -212,6 +216,7 @@ public class CursoController {
      * @return 1 dentro del cuerpo 200 OK en caso de éxito, 0 en caso de fallar si no es el creador.
      */
     public ResponseEntity<?> deleteCurso(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestParam Long cursoId){
+    public ResponseEntity<?> deleteCurso(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @Parameter(description = "Identificador del curso del profesor a eliminar") @RequestParam Long cursoId){
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
         }
@@ -233,6 +238,7 @@ public class CursoController {
      * @return El entero numérico (200 OK) que expone los puntos sumados de los ejercicios.
      */
     public ResponseEntity<Integer> getTotalPuntos(@PathVariable("id") Long cursoId) {
+    public ResponseEntity<Integer> getTotalPuntos(@Parameter(description = "Identificador del curso de los puntos") @PathVariable("id") Long cursoId) {
         return ResponseEntity.ok(cursoService.getTotalPuntosByCurso(cursoId));
     }
 
