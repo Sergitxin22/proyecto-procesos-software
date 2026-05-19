@@ -3,7 +3,7 @@ package com.sergitxin.flexilearn.external;
 import org.springframework.stereotype.Component;
 
 /**
- * Ejemplo de adaptador para validar tokens mediante la API de Google.
+ * Ejemplo de adaptador para validar tokens de autenticación mediante la API de Google.
  */
 @Component("googleAuthAdapter")
 public class GoogleAuthExternalAdapter implements AuthExternalPort {
