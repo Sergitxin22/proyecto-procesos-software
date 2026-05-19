@@ -45,3 +45,5 @@ docker/data/
 docs-site/docs/api/
 docs-site/build/
 docs-site/.docusaurus/
+
+deploy-build/

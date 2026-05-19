@@ -15,8 +15,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @Component
 public class PistonGateway {
 
-    private final String API_URL = "http://localhost:2000/api/v2/";
-    // private final String API_URL = "http://piston:2000/api/v2/";
+    // private final String API_URL = "http://localhost:2000/api/v2/";
+    private final String API_URL = "http://piston:2000/api/v2/";
 
     private final HttpClient httpClient;
 
