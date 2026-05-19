@@ -58,7 +58,6 @@ public class AuthController {
      * @param request Objeto JSON con el nombre, correo electrónico y contraseña del usuario.
      * @return 201 (CREATED) si el registro fue exitoso, o 400 (BAD REQUEST) si hubo un error.
      */
-    public ResponseEntity<?> registrar(@RequestBody RegisterRequestDto request) {
     public ResponseEntity<?> registrar(@Parameter(description = "Datos de registro del usuario (nombre, email y contraseña)") @RequestBody RegisterRequestDto request) {
         try {
             authService.registrarUsuario(request.getNombre(), request.getEmail(), request.getPassword());
