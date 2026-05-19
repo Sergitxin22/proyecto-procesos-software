@@ -31,5 +31,9 @@ jobs:
       - name: Grant execute permission
         run: chmod +x gradlew
 
-      - name: Build with Gradle
+      - name: Build
         run: ./gradlew build --stacktrace
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/testdb
+          SPRING_DATASOURCE_USERNAME: admin
+          SPRING_DATASOURCE_PASSWORD: flexilearn
