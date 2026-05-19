@@ -111,8 +111,8 @@ public class CursoController {
      */
     public ResponseEntity<?> createExerciseTests(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
-            @PathVariable("idExercise") Long idExercise,
-            @RequestBody List<TestRequestDTO> tests) {
+            @Parameter(description = "Identificador numérico del ejercicio") @PathVariable("idExercise") Long idExercise,
+            @Parameter(description = "Lista con los tests a añadir") @RequestBody List<TestRequestDTO> tests) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
         }
@@ -121,6 +121,7 @@ public class CursoController {
         return ResponseEntity.ok(cursoService.crearTestsEjercicio(token, idExercise, tests));
     }
 
+    @Operation(summary = "Obtener curso por ID", description = "Recupera la información de un curso específico a partir de su identificador")
     @GetMapping("/{id}/")
     /**
      * Obtiene los detalles de un curso específico dado su ID.
@@ -128,10 +129,11 @@ public class CursoController {
      * @return El curso correspondiente al ID.
      */
     public ResponseEntity<Curso> getCourse(
-	@PathVariable("id") Long id) {
+	@Parameter(description = "Identificador exclusivo del curso") @PathVariable("id") Long id) {
     	return ResponseEntity.ok(cursoService.getCurso(id));
     }
 
+    @Operation(summary = "Obtener ejercicio por ID", description = "Recupera la información de un ejercicio específico a partir de su identificador")
     @GetMapping("exercises/{id}")
     /**
      * Obtiene los detalles de un ejercicio específico dado su ID.
@@ -139,7 +141,7 @@ public class CursoController {
      * @return El ejercicio correspondiente al ID.
      */
     public ResponseEntity<Ejercicio> getExercise(
-	@PathVariable("id") Long id) {
+	@Parameter(description = "Identificador del ejercicio a recuperar") @PathVariable("id") Long id) {
     	return ResponseEntity.ok(cursoService.getExercise(id));
     }
 
@@ -155,7 +157,7 @@ public class CursoController {
         return ResponseEntity.ok(cursoService.getEjerciciosDelModulo(id));
     }
 
-    @Operation(summary = "Obtener cursos", description = "Obtiene todos los cursos")
+    @Operation(summary = "Obtener cursos", description = "Obtiene todos los cursos disponibles en la plataforma")
     @GetMapping("/")
     /**
      * Consulta el catálogo global de cursos disponibles.
@@ -165,7 +167,7 @@ public class CursoController {
     	return ResponseEntity.ok(cursoService.getAllCursos());
     }
     
-    @Operation(summary = "Matricula al usuario en un curso")
+    @Operation(summary = "Matricula al usuario en un curso", description = "Asocia al usuario autenticado como estudiante del curso indicado")
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/{id}/enroll")
     /**
@@ -176,7 +178,7 @@ public class CursoController {
      */
     public ResponseEntity<?> enrollCourse(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
-            @PathVariable("id") Long cursoId) {
+            @Parameter(description = "Identificador del curso a matricular") @PathVariable("id") Long cursoId) {
         if (authHeader == null || !authHeader.startsWith("Bearer "))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
         String token = authHeader.substring(7);
@@ -184,7 +186,7 @@ public class CursoController {
         return ResponseEntity.ok(new MessageResponseDto("Matriculado correctamente"));
     }
 
-    @Operation(summary = "Obtiene los cursos en los que está matriculado el usuario")
+    @Operation(summary = "Obtiene los cursos en los que está matriculado el usuario", description = "Devuelve una lista de los cursos donde el usuario autenticado está inscrito")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/enrolled")
     /**
@@ -245,14 +247,14 @@ public class CursoController {
      */
     public ResponseEntity<?> getMisPuntos(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
-            @PathVariable("id") Long cursoId) {
+            @Parameter(description = "Identificador del curso de los puntos") @PathVariable("id") Long cursoId) {
         if (authHeader == null || !authHeader.startsWith("Bearer "))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
         String token = authHeader.substring(7);
         return ResponseEntity.ok(cursoService.getPuntosCompletadosEnCurso(token, cursoId));
     }
 
-    @Operation(summary = "Enviar mensaje al foro de un curso")
+    @Operation(summary = "Enviar mensaje al foro de un curso", description = "Permite enviar un mensaje nuevo al foro asociado a un curso específico")
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/{id}/messages")
     /**
@@ -264,8 +266,8 @@ public class CursoController {
      */
     public ResponseEntity<ForumMessageResponseDTO> sendMessage(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
-            @PathVariable("id") Long cursoId,
-            @RequestBody MessageDTO mensaje) {
+            @Parameter(description = "Identificador del curso objetivo") @PathVariable("id") Long cursoId,
+            @Parameter(description = "Contenido y DTO del mensaje a enviar") @RequestBody MessageDTO mensaje) {
         if (authHeader == null || !authHeader.startsWith("Bearer "))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         String token = authHeader.substring(7);
@@ -281,7 +283,7 @@ public class CursoController {
         return ResponseEntity.ok(mensajeDTO);
     }
 
-    @Operation(summary = "Obtener mensajes de un curso")
+    @Operation(summary = "Obtener mensajes de un curso", description = "Recupera los mensajes del foro de un curso en el que el usuario está matriculado o es creador")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{id}/messages")
     /**
@@ -291,7 +293,7 @@ public class CursoController {
      * @return Lista (JSON 200) de mensajes formados detalladamente (usuario, fecha, texto) ordenados.
      */
     public ResponseEntity<List<ForumMessageResponseDTO>> getMessages(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
-        @PathVariable("id") Long cursoId) {
+        @Parameter(description = "Identificador del curso de donde obtener los mensajes") @PathVariable("id") Long cursoId) {
         String token = authHeader.substring(7);
         List<Mensaje> mensajes = cursoService.getMessages(cursoId, token);
         List<ForumMessageResponseDTO> messages = new ArrayList<>();
@@ -316,9 +318,12 @@ public class CursoController {
      * @return Una respuesta DTO con los detalles del alcance en 200 OK.
      */
     public ResponseEntity<CursoStatsDTO> getCourseStats(
-            @PathVariable Long id,
-            @RequestHeader("Authorization") String authorizationHeader) {
+            @PathVariable("id") Long id,
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
         
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         String token = authorizationHeader.replace("Bearer ", "");
         CursoStatsDTO stats = cursoService.getCourseStats(token, id);
         
@@ -340,8 +345,8 @@ public class CursoController {
      */
     public ResponseEntity<?> updateCurso(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader,
-            @PathVariable("id") Long cursoId,
-            @RequestBody CursoUpdateDTO cursoUpdateDTO) {
+            @Parameter(description = "Identificador del curso a actualizar") @PathVariable("id") Long cursoId,
+            @Parameter(description = "DTO con los datos actualizados del curso y módulos") @RequestBody CursoUpdateDTO cursoUpdateDTO) {
         
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
