@@ -1,5 +1,5 @@
 # Fase de build
-FROM gradle:9.4.1-jdk25 AS gradle
+FROM gradle:9.4.1-jdk21 AS gradle
 
 WORKDIR /app
 

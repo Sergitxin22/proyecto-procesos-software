@@ -97,46 +97,40 @@ tasks.named('check') {
 	dependsOn jacocoTestCoverageVerification
 }
 
-tasks.register('docs', Exec) {
-	description = 'Generates MD Javadoc and starts the Docusaurus development server'
+def os = System.getProperty("os.name").toLowerCase()
+def npmCmd = os.contains("win") ? "npm.cmd" : "npm"
+def nodeCmd = os.contains("win") ? "node.exe" : "node"
+
+tasks.register('npmInstall', Exec) {
 	group = 'documentation'
-	def os = System.getProperty("os.name").toLowerCase()
-	def npmCmd = os.contains("win") ? "npm.cmd" : "npm"
-	def nodeCmd = os.contains("win") ? "node.exe" : "node"
-
-	workingDir new File(projectDir, "docs-site")
+	workingDir = file('docs-site')
 	commandLine npmCmd, 'install'
+}
 
-	doLast {
-		exec {
-			workingDir new File(projectDir, "docs-site")
-			commandLine nodeCmd, 'generate_javadoc_md.mjs'
-		}
-		exec {
-			workingDir new File(projectDir, "docs-site")
-			commandLine npmCmd, 'run', 'start'
-		}
-	}
+tasks.register('generateDocs', Exec) {
+	group = 'documentation'
+	dependsOn 'npmInstall'
+
+	workingDir = file('docs-site')
+	commandLine nodeCmd, 'generate_javadoc_md.mjs'
+}
+
+tasks.register('docs', Exec) {
+	group = 'documentation'
+	description = 'Starts Docusaurus dev server'
+
+	dependsOn 'generateDocs'
+
+	workingDir = file('docs-site')
+	commandLine npmCmd, 'run', 'start'
 }
 
 tasks.register('docsBuild', Exec) {
-	description = 'Generates MD Javadoc and builds the Docusaurus production site'
 	group = 'documentation'
-	def os = System.getProperty("os.name").toLowerCase()
-	def npmCmd = os.contains("win") ? "npm.cmd" : "npm"
-	def nodeCmd = os.contains("win") ? "node.exe" : "node"
+	description = 'Builds Docusaurus production site'
 
-	workingDir new File(projectDir, "docs-site")
-	commandLine npmCmd, 'install'
+	dependsOn 'generateDocs'
 
-	doLast {
-		exec {
-			workingDir new File(projectDir, "docs-site")
-			commandLine nodeCmd, 'generate_javadoc_md.mjs'
-		}
-		exec {
-			workingDir new File(projectDir, "docs-site")
-			commandLine npmCmd, 'run', 'build'
-		}
-	}
+	workingDir = file('docs-site')
+	commandLine npmCmd, 'run', 'build'
 }
