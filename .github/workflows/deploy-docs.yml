@@ -5,7 +5,7 @@ on:
     branches:
       - main
   workflow_dispatch:
-s
+
 permissions:
   contents: read
   pages: write
