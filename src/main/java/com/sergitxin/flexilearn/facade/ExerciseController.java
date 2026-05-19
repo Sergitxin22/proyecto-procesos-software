@@ -44,6 +44,7 @@ public class ExerciseController {
      * @return Una respuesta booleana empaquetada como ResponseEntity conteniendo código de confirmación de aprobación.
      */
     public ResponseEntity<Boolean> verifyExercise(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestBody SolucionDTO request) {
+    public ResponseEntity<Boolean> verifyExercise(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @Parameter(description = "DTO con la solución propuesta y el identificador del ejercicio") @RequestBody SolucionDTO request) {
         String token = authHeader.substring(7);
     	boolean result = exerciseService.verifyExercise(request.getIdEjercicio(), request.getCodigo(), token);
         return ResponseEntity.ok(result);

@@ -59,6 +59,7 @@ public class AdminController {
      * @return 1 si ha sido eliminado satisfactoriamente, o 0 en caso contrario. Además de mensajes HTTP de error.
      */
     public ResponseEntity<?> deleteUser(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestBody DeleteRequestDTO request){
+    public ResponseEntity<?> deleteUser(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @Parameter(description = "DTO con el nombre de usuario a eliminar") @RequestBody DeleteRequestDTO request){
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
         }
@@ -102,6 +103,7 @@ public class AdminController {
      * @return Código de éxito 1 si ha sido un borrado exitoso, de lo contrario 0.
      */
     public ResponseEntity<?> deleteCurso(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @RequestParam Long cursoId){
+    public ResponseEntity<?> deleteCurso(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authHeader, @Parameter(description = "Identificador del curso a eliminar") @RequestParam Long cursoId){
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponseDto("Token no proporcionado o inválido"));
         }
